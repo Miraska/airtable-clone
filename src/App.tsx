@@ -1,10 +1,11 @@
-import {Button} from "@material-tailwind/react"
+import Sidebar from "./elements/sidebar/Sidebar"
+import Table from "./elements/table/Table"
 
-function App() {
+function App() {  
   return (
-    <div>
-      <p>Проверка библиотеки Material Tailwind, если кнопка корректно отображается, то все хорошо</p>
-      <Button>Кнопка</Button>
+    <div id="layout" className="flex">
+      <Sidebar/>
+      <Table/>
     </div>
   )
 }
