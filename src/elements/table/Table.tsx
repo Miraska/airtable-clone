@@ -1,32 +1,38 @@
-import { Card } from "@material-tailwind/react";
+import { Card, Chip } from "@material-tailwind/react";
 
 export default function Table() {
   return(
-    <main id="table" className="w-full px-2 flex items-center">
-      <Card className="overflow-scroll w-full h-[calc(100vh-2rem)] border">
-        <table className="min-w-max w-full table-auto text-left">
+    <main id="table" className="w-full pr-2 flex items-center">
+      <Card className="overflow-scroll w-full h-[calc(100vh-2rem)] border text-gray-900 dark:text-white dark:bg-gray-900 dark:border-gray-800">
+        <table className="min-w-max w-fit table-auto text-left">
           <thead>
             <tr>
-              <th className="border-b p-4 bg-gray-200 border-gray-400">Автономер</th>
-              <th className="border-b p-4 bg-gray-200 border-gray-400">Статус</th>
-              <th className="border-b p-4 bg-gray-200 border-gray-400">№ заявки</th>
+              <th className="border-b p-4 bg-gray-100 dark:bg-[#27272a] dark:border-gray-800">Автономер</th>
+              <th className="border-b p-4 bg-gray-100 dark:bg-[#27272a] dark:border-gray-800">Статус</th>
+              <th className="border-b p-4 bg-gray-100 dark:bg-[#27272a] dark:border-gray-800">№ заявки</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="p-4 border-b">1</td>
-              <td className="p-4 border-b bg-gray-100">Заявка закрыта</td>
-              <td className="p-4 border-b">109087</td>
+            <tr className="dark:hover:bg-[#1e293b]">
+              <td className="p-4 border-b dark:border-gray-800">1</td>
+              <td className="p-4 border-b dark:border-gray-800">
+                <Chip value="Заявка закрыта" variant="ghost" size="sm" color="green"/>
+              </td>
+              <td className="p-4 border-b dark:border-gray-800">109087</td>
             </tr>
-            <tr>
-              <td className="p-4 border-b">2</td>
-              <td className="p-4 border-b bg-gray-100">Заявка закрыта</td>
-              <td className="p-4 border-b">109090</td>
+            <tr className="dark:hover:bg-[#1e293b]">
+              <td className="p-4 border-b dark:border-gray-800">2</td>
+              <td className="p-4 border-b dark:border-gray-800">
+                <Chip value="Заявка закрыта" variant="ghost" size="sm" color="green"/>
+              </td>
+              <td className="p-4 border-b dark:border-gray-800">109090</td>
             </tr>
-            <tr>
-              <td className="p-4 border-b">3</td>
-              <td className="p-4 border-b bg-gray-100">Заявка не закрыта</td>
-              <td className="p-4 border-b">108974</td>
+            <tr className="dark:hover:bg-[#1e293b]">
+              <td className="p-4 border-b dark:border-gray-800">3</td>
+              <td className="p-4 border-b dark:border-gray-800">
+                <Chip value="Заявка не закрыта" variant="ghost" size="sm" color="red"/>
+              </td>
+              <td className="p-4 border-b dark:border-gray-800">108974</td>
             </tr>
           </tbody>
         </table>

@@ -6,12 +6,15 @@ interface Props {
 }
 
 export default function Modal({open, handlerOpen}:Props) {
+  // Нужно сделать через стейт менеджер (Redux или Redux ToolKit)
+  // const [openModal, setOpenModal] = useState(false)
+  
   return (
-    <Dialog open={open} handler={handlerOpen}>
-      <DialogHeader>Это модальное окно</DialogHeader>
-      <DialogBody>А это его контент</DialogBody>
+    <Dialog open={open} handler={handlerOpen} className="dark:bg-gray-900">
+      <DialogHeader className="text-gray-900 dark:text-white">Это модальное окно</DialogHeader>
+      <DialogBody className="text-gray-900 dark:text-white">А это его контент</DialogBody>
       <DialogFooter>
-        <Button variant="text" color="red">Закрыть</Button>
+        <Button variant="text" color="red" onClick={() => handlerOpen()}>Закрыть</Button>
       </DialogFooter>
     </Dialog>
   )
