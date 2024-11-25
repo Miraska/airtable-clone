@@ -2,7 +2,11 @@ import { TableCellsIcon, ChevronDownIcon, SunIcon } from "@heroicons/react/24/so
 import { Accordion, AccordionBody, AccordionHeader, Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 
-export default function Sidebar() {
+interface Props {
+  handler: (state:boolean) => void
+}
+
+export default function Sidebar({ handler }:Props) {
   const [open, setOpen] = useState(false)
   const [dark, setDark] = useState(true)
 
@@ -20,8 +24,8 @@ export default function Sidebar() {
   }, [dark]);
   
   return (
-    <aside className="w-fit h-svh flex items-center px-2">
-      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 border dark:bg-gray-900 dark:border-gray-800">
+    <aside className="w-fit flex items-center p-2">
+      <Card className="h-full w-full max-w-[20rem] p-4 border dark:bg-gray-900 dark:border-gray-800">
         <div className="flex items-center justify-between">
           <Typography variant="h5" className="px-2 text-gray-900 dark:text-white">Airtable Clone</Typography>
           <Button variant="filled" size="sm" className="bg-white border dark:bg-gray-900 dark:border-gray-800" onClick={() => setDark(!dark)}>
@@ -29,8 +33,8 @@ export default function Sidebar() {
           </Button>
         </div>
         <hr className="my-2 dark:border-gray-800"/>
-        <List>
-          <ListItem className="text-gray-900 dark:text-white">
+        <List className="overflow-scroll">
+          <ListItem className="text-gray-900 dark:text-white" onClick={() => { handler(false) }}>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
@@ -51,7 +55,7 @@ export default function Sidebar() {
               </AccordionHeader>
               <AccordionBody className="pb-0">
                 <List className="p-0 dark:text-white">
-                  <ListItem>Менеджеры</ListItem>
+                  <ListItem onClick={() => { handler(true) }}>Менеджеры</ListItem>
                   <ListItem>Телефоны</ListItem>
                   <ListItem>Статусы</ListItem>
                 </List>
