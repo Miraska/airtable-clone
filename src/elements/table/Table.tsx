@@ -2,12 +2,9 @@ import { Card, Chip } from "@material-tailwind/react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import IOrder from "../../interface/IOrder/IOrder";
+import useManagerStore from "../../hooks/useManagerStore/useManagerStore";
 
-interface Props {
-  isVis: boolean
-}
-
-export default function Table({ isVis }:Props) {
+export default function Table() {
   const getQueryData = async () => {
     const headers = {
       "ngrok-skip-browser-warning": "1"
@@ -15,6 +12,8 @@ export default function Table({ isVis }:Props) {
     const response = await axios.get('https://debb-89-110-76-58.ngrok-free.app/api/requests', {headers})
     return response.data
   }
+  
+  const isManagerOpen = useManagerStore((state) => state.isOpen)
   
   const result = useQuery("todos", getQueryData)
   
@@ -24,7 +23,7 @@ export default function Table({ isVis }:Props) {
   
   return(
     <Card className="w-full h-full overflow-scroll border text-gray-900 dark:text-white dark:bg-gray-900 dark:border-gray-800">
-      <table className={`min-w-max w-full table-auto border-collapse text-left ${ isVis ? "hidden" : ""}`}>
+      <table className={`min-w-max w-full table-auto border-collapse text-left ${ isManagerOpen ? "hidden" : ""}`}>
         <thead>
           <tr>
             <th className="border-b border-r p-4 bg-gray-100 dark:bg-[#27272a] dark:border-gray-800">Автономер</th>
@@ -120,7 +119,7 @@ export default function Table({ isVis }:Props) {
           </tr>
         </tbody>
       </table>
-      <table className={`min-w-max w-full table-auto border-collapse text-left ${ isVis ? "" : "hidden"}`}>
+      <table className={`min-w-max w-full table-auto border-collapse text-left ${ isManagerOpen ? "" : "hidden"}`}>
         <thead>
           <tr>
             <th className="border-b p-4 bg-gray-100 dark:bg-[#27272a] dark:border-gray-800">Имя</th>

@@ -1,18 +1,18 @@
 import { TableCellsIcon, ChevronDownIcon, SunIcon } from "@heroicons/react/24/solid";
 import { Accordion, AccordionBody, AccordionHeader, Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
+import useManagerStore from "../../hooks/useManagerStore/useManagerStore";
 
-interface Props {
-  handler: (state:boolean) => void
-}
-
-export default function Sidebar({ handler }:Props) {
+export default function Sidebar() {
   const [open, setOpen] = useState(false)
   const [dark, setDark] = useState(true)
 
   function handleOpen() {
     return setOpen(!open)
   }
+  
+  const openManagerTable = useManagerStore((state) => state.openManagerTable)
+  const closeManagerTable = useManagerStore((state) => state.closeManagerTable)
   
   // Обновляем класс `dark` в `<html>` при изменении состояния
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function Sidebar({ handler }:Props) {
         </div>
         <hr className="my-2 dark:border-gray-800"/>
         <List className="overflow-scroll">
-          <ListItem className="text-gray-900 dark:text-white" onClick={() => { handler(false) }}>
+          <ListItem className="text-gray-900 dark:text-white" onClick={() => { closeManagerTable() }}>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
@@ -55,7 +55,7 @@ export default function Sidebar({ handler }:Props) {
               </AccordionHeader>
               <AccordionBody className="pb-0">
                 <List className="p-0 dark:text-white">
-                  <ListItem onClick={() => { handler(true) }}>Менеджеры</ListItem>
+                  <ListItem onClick={() => { openManagerTable() }}>Менеджеры</ListItem>
                   <ListItem>Телефоны</ListItem>
                   <ListItem>Статусы</ListItem>
                 </List>

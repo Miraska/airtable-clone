@@ -5,12 +5,7 @@ import { useState } from "react"
 import Modal from "./elements/modal/Modal"
 
 function App() {
-  const [isVisible, setIsVisible] = useState(false)
   const [openModal, setOpenModal] = useState(false)
-  
-  function handlerVisibility(state: boolean) {
-    setIsVisible(state)
-  }
   
   function handlerModal(state?: boolean) {
     if (state == undefined) {
@@ -22,7 +17,7 @@ function App() {
   
   return (
     <div className="flex w-full h-full">
-      <Sidebar handler={ handlerVisibility } />
+      <Sidebar/>
       <main className="pt-2 pb-2 pr-2 flex flex-col w-full overflow-scroll">
         <Card className="w-ful border mb-2 p-4 overflow-y-scroll dark:text-white dark:bg-gray-900 dark:border-gray-800">
           <div className="flex flex-row gap-4 min-w-max">
@@ -31,7 +26,7 @@ function App() {
             </Button>
           </div>
         </Card>
-        <Table isVis={isVisible} />
+        <Table/>
       </main>
       <Modal open={ openModal } handlerOpen={handlerModal} />
     </div>
