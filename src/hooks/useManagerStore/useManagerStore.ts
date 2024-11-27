@@ -1,5 +1,10 @@
 import { create } from "zustand"
-import IManagerState from "../../interface/IManagerState/IManagerState"
+
+interface IManagerState {
+  isOpen: boolean,
+  openManagerTable: () => void,
+  closeManagerTable: () => void
+}
 
 const useManagerStore = create<IManagerState>((set) => ({
   isOpen: false,
