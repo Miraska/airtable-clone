@@ -2,7 +2,9 @@ const express = require('express');
 const requestController = require('../controllers/requestController.js');
 const router = express.Router();
 
-router.get('/requests', requestController.getAllRequests);
-router.post('/requests', requestController.createRequest);
+router.get('/', requestController.getAllRequests);
+router.post('/', requestController.createRequest);
+router.put('/', requestController.updateAllRequests);
+router.get('/:id', requestController.getRequestById);
 
 module.exports = router;

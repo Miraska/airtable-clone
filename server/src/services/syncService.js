@@ -29,11 +29,11 @@ const getOrCreateRecord = async (dbTableName, airtableId, data) => {
   }
 };
 
-// Функция синхронизации таблицы users
-const syncUsersTable = async (tableName, dbTableName, fieldsMapping) => {
+// Универсальная функция синхронизации таблицы
+const syncTable = async (airtableTableName, dbTableName, fieldsMapping) => {
   try {
     console.log(`Syncing ${dbTableName} table...`);
-    const records = await base(tableName).select().all();
+    const records = await base(airtableTableName).select().all();
 
     for (let record of records) {
       const airtableId = record.id;
@@ -57,8 +57,56 @@ const syncUsersTable = async (tableName, dbTableName, fieldsMapping) => {
   }
 };
 
-// Функция синхронизации таблицы requests
-const syncRequestsTable = async () => {
+// Синхронизация таблицы менеджеров
+const syncManagers = async () => {
+  await syncTable('tblvc0HkBpEMiMVWg', 'managers', {
+    name: 'Имя',
+    phone: 'Телефон',
+    birthday: 'Дата рождения',
+  });
+};
+
+// Синхронизация таблицы контрагентов
+const syncContractors = async () => {
+  await syncTable('tblDdr1QIQguuKpBI', 'contractors', {
+    name: 'Наименование',
+  });
+};
+
+// Синхронизация таблицы агентов
+const syncAgents = async () => {
+  await syncTable('tblL7awd42tZovKJu', 'agents', {
+    name: 'Наименование',
+  });
+};
+
+// Синхронизация таблицы клиентов
+const syncClients = async () => {
+  await syncTable('tblDbjr1Xl8kSpgg3', 'clients', {
+    name: 'Наименование',
+    inn: 'ИНН',
+  });
+};
+
+// Синхронизация таблицы стран
+const syncCountries = async () => {
+  await syncTable('tblHfN4CTmLvxXYz0', 'countries', {
+    short_name: 'Краткое название',
+    code: 'Код',
+    full_name: 'Полное наименование',
+  });
+};
+
+// Синхронизация таблицы субагентов
+const syncSubagents = async () => {
+  await syncTable('tblLiWlluRJ9M8aNr', 'subagents', {
+    name: 'Наименование',
+    payer: 'Плательщик Субагента',
+  });
+};
+
+// Синхронизация таблицы заявок
+const syncRequests = async () => {
   try {
     console.log('Syncing Requests table...');
     const records = await base('tblYzFLRCr4G1Apae').select().all();
@@ -74,12 +122,47 @@ const syncRequestsTable = async () => {
       const fields = record.fields;
       const airtableId = record.id;
 
-      const managerId = fields['Менеджер'] ? await getOrCreateRecord('managers', fields['Менеджер'][0], { name: fields['Менеджер (имя)'], phone: fields['Телефон'], birthday: parseValidDate(fields['Дата рождения']) }) : null;
-      const contractorId = fields['Контрагент'] ? await getOrCreateRecord('contractors', fields['Контрагент'][0], { name: fields['Контрагент (имя)'] }) : null;
-      const agentId = fields['Агент'] ? await getOrCreateRecord('agents', fields['Агент'][0], { name: fields['Агент (имя)'] }) : null;
-      const clientId = fields['Клиент'] ? await getOrCreateRecord('clients', fields['Клиент'][0], { name: fields['Клиент (имя)'], inn: fields['ИНН'] ? fields['ИНН'].substring(0, 20) : null }) : null;
-      const countryId = fields['Страна'] ? await getOrCreateRecord('countries', fields['Страна'][0], { short_name: fields['Краткое название'], code: fields['Код'], full_name: fields['Полное наименование'] }) : null;
-      const subagentId = fields['Субагент'] ? await getOrCreateRecord('subagents', fields['Субагент'][0], { name: fields['Субагент (имя)'], payer: fields['Плательщик Субагента'] }) : null;
+      const managerId = fields['Менеджер']
+        ? await getOrCreateRecord('managers', fields['Менеджер'][0], {
+            name: fields['Менеджер (имя)'],
+            phone: fields['Телефон'],
+            birthday: parseValidDate(fields['Дата рождения']),
+          })
+        : null;
+
+      const contractorId = fields['Контрагент']
+        ? await getOrCreateRecord('contractors', fields['Контрагент'][0], {
+            name: fields['Контрагент (имя)'],
+          })
+        : null;
+
+      const agentId = fields['Агент']
+        ? await getOrCreateRecord('agents', fields['Агент'][0], {
+            name: fields['Агент (имя)'],
+          })
+        : null;
+
+      const clientId = fields['Клиент']
+        ? await getOrCreateRecord('clients', fields['Клиент'][0], {
+            name: fields['Клиент (имя)'],
+            inn: fields['ИНН'] ? fields['ИНН'].substring(0, 20) : null,
+          })
+        : null;
+
+      const countryId = fields['Страна']
+        ? await getOrCreateRecord('countries', fields['Страна'][0], {
+            short_name: fields['Краткое название'],
+            code: fields['Код'],
+            full_name: fields['Полное наименование'],
+          })
+        : null;
+
+      const subagentId = fields['Субагент']
+        ? await getOrCreateRecord('subagents', fields['Субагент'][0], {
+            name: fields['Субагент (имя)'],
+            payer: fields['Плательщик Субагента'],
+          })
+        : null;
 
       const data = {
         autonumber: fields['Автономер'] || 'Неизвестный',
@@ -105,104 +188,22 @@ const syncRequestsTable = async () => {
         agent_fee: fields['Агентское вознаграждение'] || 0,
         actual_fee: fields['Фактическое вознаграждение'] || 0,
         total_amount: fields['Итого'] || 0,
-        with_accreditor: fields['С акреддитором'] || 0,
-        primary_documents_received: typeof fields['Получили первичные документы'] === 'boolean' ? fields['Получили первичные документы'] : false,
-        invoice_issued: typeof fields['Выставлен иновйс на поставщика'] === 'boolean' ? fields['Выставлен иновйс на поставщика'] : false,
-        agent_signed: parseValidDate(fields['Подписан агент (дата)']),
-        registered_in_bank: parseValidDate(fields['Поставлен на учет в банке (дата)']),
-        letter_of_credit_opened: parseValidDate(fields['Открыт аккредитив (дата)']),
-        currency_paid: parseValidDate(fields['Оплачена валюта поставщику (дата)']),
-        letter_of_credit_released: parseValidDate(fields['Аккредитив раскрыт (дата)']),
-        report_signed: parseValidDate(fields['Подписан акт-отчет (дата)']),
-        transaction_closed: parseValidDate(fields['Сделка закрыта (дата)']),
-        payment_purpose: fields['Назначение платежа'] || 'Не указано',
-        subagent_payer: fields['Плательщик субагента'] || 'Не указан',
-        sequential_number: fields['Порядковый номер'] || 'Не указан',
-        agent_subagent_docs_prepared: parseValidDate(fields['Подготовлены документы между агентом и субагентом (дата)']),
-        swift_received: typeof fields['Получен SWIFT'] === 'boolean' ? fields['Получен SWIFT'] : false,
-        swift_status: fields['Статус SWIFT'] || 'Не указан',
-        request_link: fields['Заявка ссылка'] || 'Не указано',
-        invoice_link: fields['Инвойс ссылка'] || 'Не указано',
-        instruction_link: fields['Поручение ссылка'] || 'Не указано',
-        swift_link: fields['SWIFT ссылка'] || 'Не указано',
-        report_link: fields['Акт-отчет ссылка'] || 'Не указано',
         airtable_id: airtableId,
       };
 
       const result = await db.query('SELECT * FROM requests WHERE airtable_id = $1', [airtableId]);
-
-      let requestId;
       if (result.rows.length > 0) {
         const updateQuery = `
-          UPDATE requests
-          SET ${Object.keys(data).map((key, i) => `${key} = $${i + 1}`).join(', ')}
-          WHERE airtable_id = $${Object.keys(data).length + 1}
-          RETURNING *;
+          UPDATE requests SET ${Object.keys(data).map((key, i) => `${key} = $${i + 1}`).join(', ')}
+          WHERE airtable_id = $${Object.keys(data).length + 1} RETURNING *;
         `;
-        const updateResult = await db.query(updateQuery, [...Object.values(data), airtableId]);
-        requestId = updateResult.rows[0].id;
+        await db.query(updateQuery, [...Object.values(data), airtableId]);
       } else {
         const insertQuery = `
           INSERT INTO requests (${Object.keys(data).join(', ')})
-          VALUES (${Object.keys(data).map((_, i) => `$${i + 1}`).join(', ')})
-          RETURNING *;
+          VALUES (${Object.keys(data).map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *;
         `;
-        const insertResult = await db.query(insertQuery, Object.values(data));
-        requestId = insertResult.rows[0].id;
-      }
-
-      if (managerId) {
-        const managerRequestQuery = `
-          INSERT INTO managers_requests (manager_id, request_id)
-          VALUES ($1, $2)
-          ON CONFLICT (manager_id, request_id) DO NOTHING;
-        `;
-        await db.query(managerRequestQuery, [managerId, requestId]);
-      }
-
-      if (contractorId) {
-        const contractorRequestQuery = `
-          INSERT INTO contractors_requests (contractor_id, request_id)
-          VALUES ($1, $2)
-          ON CONFLICT (contractor_id, request_id) DO NOTHING;
-        `;
-        await db.query(contractorRequestQuery, [contractorId, requestId]);
-      }
-
-      if (agentId) {
-        const agentRequestQuery = `
-          INSERT INTO agents_requests (agent_id, request_id)
-          VALUES ($1, $2)
-          ON CONFLICT (agent_id, request_id) DO NOTHING;
-        `;
-        await db.query(agentRequestQuery, [agentId, requestId]);
-      }
-
-      if (clientId) {
-        const clientRequestQuery = `
-          INSERT INTO clients_requests (client_id, request_id)
-          VALUES ($1, $2)
-          ON CONFLICT (client_id, request_id) DO NOTHING;
-        `;
-        await db.query(clientRequestQuery, [clientId, requestId]);
-      }
-
-      if (subagentId) {
-        const subagentRequestQuery = `
-          INSERT INTO subagents_requests (subagent_id, request_id)
-          VALUES ($1, $2)
-          ON CONFLICT (subagent_id, request_id) DO NOTHING;
-        `;
-        await db.query(subagentRequestQuery, [subagentId, requestId]);
-      }
-
-      if (countryId) {
-        const countryRequestQuery = `
-          INSERT INTO countries_requests (country_id, request_id)
-          VALUES ($1, $2)
-          ON CONFLICT (country_id, request_id) DO NOTHING;
-        `;
-        await db.query(countryRequestQuery, [countryId, requestId]);
+        await db.query(insertQuery, Object.values(data));
       }
     }
 
@@ -213,22 +214,26 @@ const syncRequestsTable = async () => {
 };
 
 // Основная функция синхронизации
-const syncAirtableToDB = async () => {
-  try {
-    console.log('Starting Airtable to DB sync...');
-
-    await syncUsersTable('tblvc0HkBpEMiMVWg', 'managers', { name: 'Имя', phone: 'Телефон', birthday: 'Дата рождения' });
-    await syncUsersTable('tblDdr1QIQguuKpBI', 'contractors', { name: 'Наименование' });
-    await syncUsersTable('tblL7awd42tZovKJu', 'agents', { name: 'Наименование' });
-    await syncUsersTable('tblDbjr1Xl8kSpgg3', 'clients', { name: 'Наименование', inn: 'ИНН' });
-    await syncUsersTable('tblHfN4CTmLvxXYz0', 'countries', { short_name: 'Краткое название', code: 'Код', full_name: 'Полное наименование' });
-    await syncUsersTable('tblLiWlluRJ9M8aNr', 'subagents', { name: 'Наименование', payer: 'Плательщик Субагента' });
-    await syncRequestsTable();
-
-    console.log('Finished syncing Airtable to DB.');
-  } catch (error) {
-    console.error('Error syncing Airtable to DB:', error);
-  }
+const syncAll = async () => {
+  console.log('Starting full sync...');
+  await syncManagers();
+  await syncContractors();
+  await syncAgents();
+  await syncClients();
+  await syncCountries();
+  await syncSubagents();
+  await syncRequests();
+  console.log('Full sync completed.');
 };
 
-module.exports = { syncAirtableToDB };
+// Экспорт функций
+module.exports = {
+  syncManagers,
+  syncContractors,
+  syncAgents,
+  syncClients,
+  syncCountries,
+  syncSubagents,
+  syncRequests,
+  syncAll,
+};
