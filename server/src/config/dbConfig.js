@@ -1,21 +1,21 @@
-require("dotenv").config();
-const { Pool } = require("pg");
+require('dotenv').config();
+const { Pool } = require('pg');
 
-// Конфигурация для подключения к базе данных
 const pool = new Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT || 8080,
+  port: process.env.PG_PORT || 5432,
 });
 
 const checkDatabaseConnection = async () => {
   try {
-    const res = await pool.query("SELECT NOW()");
-    console.log("Database connected:", res.rows[0]);
+    await pool.query('SELECT NOW()');
+    console.log('Database connected successfully');
   } catch (error) {
-    console.error("Error connecting to database:", error);
+    console.error('Error connecting to database:', error.message);
+    process.exit(1);
   }
 };
 
