@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface IModalState {
   isOpen: boolean,
-  handlerModal: (state?: boolean) => void,
+  handlerModal: (state: boolean) => void,
 }
 
 const useModalStore = create<IModalState>((set) => ({

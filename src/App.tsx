@@ -1,6 +1,6 @@
 import { Card, Button } from "@material-tailwind/react"
 import Sidebar from "./elements/sidebar/Sidebar"
-import Table from "./elements/table/Table"
+import Tables from "./elements/table/Tables"
 import Modal from "./elements/modal/Modal"
 import { ArrowPathIcon } from "@heroicons/react/24/solid"
 import useModalStore from "./hooks/useModalStore/useModalStore"
@@ -22,7 +22,7 @@ function App() {
             </Button>
           </div>
         </Card>
-        <Table/>
+        <Tables/>
       </main>
       <Modal/>
     </div>

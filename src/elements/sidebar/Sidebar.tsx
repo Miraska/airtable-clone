@@ -1,7 +1,7 @@
 import { TableCellsIcon, ChevronDownIcon, SunIcon } from "@heroicons/react/24/solid";
 import { Accordion, AccordionBody, AccordionHeader, Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import useManagerStore from "../../hooks/useManagerStore/useManagerStore";
+import { useTableStore } from "../../hooks/useTableStore/useTableStore";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false)
@@ -11,8 +11,7 @@ export default function Sidebar() {
     return setOpen(!open)
   }
   
-  const openManagerTable = useManagerStore((state) => state.openManagerTable)
-  const closeManagerTable = useManagerStore((state) => state.closeManagerTable)
+  const setCurrentTable = useTableStore((store) => store.setCurrentTable)
   
   // Обновляем класс `dark` в `<html>` при изменении состояния
   useEffect(() => {
@@ -34,7 +33,9 @@ export default function Sidebar() {
         </div>
         <hr className="my-2 dark:border-gray-800"/>
         <List className="overflow-scroll">
-          <ListItem className="text-gray-900 dark:text-white" onClick={() => { closeManagerTable() }}>
+          <ListItem className="text-gray-900 dark:text-white" onClick={() => {
+            setCurrentTable("order")
+          }}>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
@@ -55,9 +56,27 @@ export default function Sidebar() {
               </AccordionHeader>
               <AccordionBody className="pb-0">
                 <List className="p-0 dark:text-white">
-                  <ListItem onClick={() => { openManagerTable() }}>Менеджеры</ListItem>
-                  <ListItem>Телефоны</ListItem>
-                  <ListItem>Статусы</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("manager")
+                  }}>Менеджеры</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("contragent")
+                  }}>Контрагенты</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("agent")
+                  }}>Агенты</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("client")
+                  }}>Клиенты</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("country")
+                  }}>Страна</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("subagent")
+                  }}>Субагенты</ListItem>
+                  <ListItem onClick={() => {
+                    setCurrentTable("subagent_payer")
+                  }}>Плательщики субагентов</ListItem>
                 </List>
               </AccordionBody>
             </ListItem>
