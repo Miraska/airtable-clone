@@ -1,67 +1,66 @@
-const managerService = require('../services/managerService.js');
+const { managerService } = require('../services');
 
-// Контроллер для получения всех менеджеров
 const getAllManagers = async (req, res) => {
   try {
-    const managers = await managerService.getAllManagers();
+    const managers = await managerService.getAll();
     res.json(managers);
   } catch (error) {
-    res.status(500).json({ error: 'Не удалось получить менеджеров' });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Контроллер для создания нового менеджера
-const createManager = async (req, res) => {
-  try {
-    const newManager = await managerService.createManager(req.body);
-    res.status(201).json(newManager);
-  } catch (error) {
-    res.status(500).json({ error: 'Не удалось создать менеджера' });
-  }
-};
-
-// Контроллер для получения менеджера по ID
 const getManagerById = async (req, res) => {
   try {
-    const manager = await managerService.getManagerById(req.params.id);
+    const manager = await managerService.getById(req.params.id);
     if (manager) {
       res.json(manager);
     } else {
-      res.status(404).json({ error: 'Менеджер не найден' });
+      res.status(404).json({ error: 'Manager not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Не удалось получить менеджера' });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Контроллер для обновления менеджера по ID
-const updateManagerById = async (req, res) => {
+const createManager = async (req, res) => {
   try {
-    const updatedManager = await managerService.updateManagerById(req.params.id, req.body);
+    const newManager = await managerService.create(req.body);
+    res.status(201).json(newManager);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const updateManager = async (req, res) => {
+  try {
+    const updatedManager = await managerService.update(req.params.id, req.body);
     if (updatedManager) {
       res.json(updatedManager);
     } else {
-      res.status(404).json({ error: 'Менеджер не найден' });
+      res.status(404).json({ error: 'Manager not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Не удалось обновить менеджера' });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Контроллер для удаления менеджера по ID
-const deleteManagerById = async (req, res) => {
+const deleteManager = async (req, res) => {
   try {
-    await managerService.deleteManagerById(req.params.id);
-    res.status(200).json({ message: 'Менеджер успешно удален' });
+    const deletedManager = await managerService.delete(req.params.id);
+    if (deletedManager) {
+      res.json({ message: 'Manager deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Manager not found' });
+    }
   } catch (error) {
-    res.status(500).json({ error: 'Не удалось удалить менеджера' });
+    res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
   getAllManagers,
-  createManager,
   getManagerById,
-  updateManagerById,
-  deleteManagerById,
+  createManager,
+  updateManager,
+  deleteManager,
 };

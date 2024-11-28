@@ -1,67 +1,66 @@
-const agentService = require('../services/agentService');
+const { agentService } = require('../services');
 
-// Controller for getting all agents
 const getAllAgents = async (req, res) => {
   try {
-    const agents = await agentService.getAllAgents();
+    const agents = await agentService.getAll();
     res.json(agents);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch agents', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Controller for creating a new agent
-const createAgent = async (req, res) => {
-  try {
-    const newAgent = await agentService.createAgent(req.body);
-    res.status(201).json(newAgent);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create agent', details: error.message });
-  }
-};
-
-// Controller for getting an agent by ID
 const getAgentById = async (req, res) => {
   try {
-    const agent = await agentService.getAgentById(req.params.id);
+    const agent = await agentService.getById(req.params.id);
     if (agent) {
       res.json(agent);
     } else {
-      res.status(404).json({ error: 'Agent not found' });
+      res.status(404).json({ error: 'Агент не найден' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch agent', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Controller for updating an agent by ID
-const updateAgentById = async (req, res) => {
+const createAgent = async (req, res) => {
   try {
-    const updatedAgent = await agentService.updateAgentById(req.params.id, req.body);
+    const newAgent = await agentService.create(req.body);
+    res.status(201).json(newAgent);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const updateAgent = async (req, res) => {
+  try {
+    const updatedAgent = await agentService.update(req.params.id, req.body);
     if (updatedAgent) {
       res.json(updatedAgent);
     } else {
-      res.status(404).json({ error: 'Agent not found' });
+      res.status(404).json({ error: 'Агент не найден' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update agent', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Controller for deleting an agent by ID
-const deleteAgentById = async (req, res) => {
+const deleteAgent = async (req, res) => {
   try {
-    await agentService.deleteAgentById(req.params.id);
-    res.status(200).json({ message: 'Agent deleted successfully' });
+    const deletedAgent = await agentService.delete(req.params.id);
+    if (deletedAgent) {
+      res.json({ message: 'Агент успешно удалён' });
+    } else {
+      res.status(404).json({ error: 'Агент не найден' });
+    }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete agent', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
   getAllAgents,
-  createAgent,
   getAgentById,
-  updateAgentById,
-  deleteAgentById,
+  createAgent,
+  updateAgent,
+  deleteAgent,
 };

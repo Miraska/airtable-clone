@@ -1,11 +1,27 @@
-require('dotenv').config();
+require('./config/dotenv');
 const http = require('http');
-const app = require('./app.js');
+const app = require('./app');
+const { PORT } = require('./config/appConfig');
+const sequelize = require('./db/connection');
 
-const PORT = process.env.PORT || 5000;
+// Импортируем и инициализируем ассоциации между моделями
+const { associateModels } = require('./models/associations');
+associateModels();
 
-const server = http.createServer(app);
+// Проверяем подключение к базе данных и запускаем сервер
+sequelize.authenticate()
+  .then(() => {
+    console.log('Database connection has been established successfully.');
+    return sequelize.sync();  // Убедитесь, что таблицы созданы
+  })
+  .then(() => {
+    const server = http.createServer(app);
 
-server.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+    server.listen(PORT, () => {
+      console.log(`Server is running on port: ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Unable to connect to the database:', error);
+    process.exit(1); // Завершаем процесс, если не удается подключиться к базе данных
+  });

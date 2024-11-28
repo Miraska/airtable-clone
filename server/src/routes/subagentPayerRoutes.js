@@ -1,11 +1,12 @@
 const express = require('express');
-const subagentPayerController = require('../controllers/subagentPayerController'); // Make sure the path is correct
+const { getAllSubagentPayers, getSubagentPayerById, createSubagentPayer, updateSubagentPayer, deleteSubagentPayer } = require('../controllers/subagentPayerController');
+
 const router = express.Router();
 
-router.get('/', subagentPayerController.getAllSubagentPayers);
-router.post('/', subagentPayerController.createSubagentPayer);
-router.get('/:id', subagentPayerController.getSubagentPayerById);
-router.put('/:id', subagentPayerController.updateSubagentPayerById);
-router.delete('/:id', subagentPayerController.deleteSubagentPayerById);
+router.get('/', getAllSubagentPayers);
+router.get('/:id', getSubagentPayerById);
+router.post('/', createSubagentPayer);
+router.put('/:id', updateSubagentPayer);
+router.delete('/:id', deleteSubagentPayer);
 
 module.exports = router;

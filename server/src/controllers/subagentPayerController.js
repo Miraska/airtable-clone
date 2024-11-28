@@ -1,67 +1,66 @@
-const subagentPayerService = require('../services/subagentPayerService');
+const { subagentPayerService } = require('../services');
 
-// Controller for getting all subagent payers
 const getAllSubagentPayers = async (req, res) => {
   try {
-    const subagentPayers = await subagentPayerService.getAllSubagentPayers();
-    res.json(subagentPayers);
+    const payers = await subagentPayerService.getAll();
+    res.json(payers);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch subagent payers', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Controller for creating a new subagent payer
-const createSubagentPayer = async (req, res) => {
-  try {
-    const newSubagentPayer = await subagentPayerService.createSubagentPayer(req.body);
-    res.status(201).json(newSubagentPayer);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create subagent payer', details: error.message });
-  }
-};
-
-// Controller for getting a subagent payer by ID
 const getSubagentPayerById = async (req, res) => {
   try {
-    const subagentPayer = await subagentPayerService.getSubagentPayerById(req.params.id);
-    if (subagentPayer) {
-      res.json(subagentPayer);
+    const payer = await subagentPayerService.getById(req.params.id);
+    if (payer) {
+      res.json(payer);
     } else {
       res.status(404).json({ error: 'Subagent payer not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch subagent payer', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Controller for updating a subagent payer by ID
-const updateSubagentPayerById = async (req, res) => {
+const createSubagentPayer = async (req, res) => {
   try {
-    const updatedSubagentPayer = await subagentPayerService.updateSubagentPayerById(req.params.id, req.body);
-    if (updatedSubagentPayer) {
-      res.json(updatedSubagentPayer);
+    const newPayer = await subagentPayerService.create(req.body);
+    res.status(201).json(newPayer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const updateSubagentPayer = async (req, res) => {
+  try {
+    const updatedPayer = await subagentPayerService.update(req.params.id, req.body);
+    if (updatedPayer) {
+      res.json(updatedPayer);
     } else {
       res.status(404).json({ error: 'Subagent payer not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update subagent payer', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Controller for deleting a subagent payer by ID
-const deleteSubagentPayerById = async (req, res) => {
+const deleteSubagentPayer = async (req, res) => {
   try {
-    await subagentPayerService.deleteSubagentPayerById(req.params.id);
-    res.status(200).json({ message: 'Subagent payer deleted successfully' });
+    const deletedPayer = await subagentPayerService.delete(req.params.id);
+    if (deletedPayer) {
+      res.json({ message: 'Subagent payer deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Subagent payer not found' });
+    }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete subagent payer', details: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
   getAllSubagentPayers,
-  createSubagentPayer,
   getSubagentPayerById,
-  updateSubagentPayerById,
-  deleteSubagentPayerById,
+  createSubagentPayer,
+  updateSubagentPayer,
+  deleteSubagentPayer,
 };

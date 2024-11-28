@@ -1,11 +1,12 @@
 const express = require('express');
-const subagentController = require('../controllers/subagentController'); // Ensure the path is correct
+const { getAllSubagents, getSubagentById, createSubagent, updateSubagent, deleteSubagent } = require('../controllers/subagentController');
+
 const router = express.Router();
 
-router.get('/', subagentController.getAllSubagents);
-router.post('/', subagentController.createSubagent);
-router.get('/:id', subagentController.getSubagentById);
-router.put('/:id', subagentController.updateSubagentById);
-router.delete('/:id', subagentController.deleteSubagentById);
+router.get('/', getAllSubagents);
+router.get('/:id', getSubagentById);
+router.post('/', createSubagent);
+router.put('/:id', updateSubagent);
+router.delete('/:id', deleteSubagent);
 
 module.exports = router;

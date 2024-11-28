@@ -1,11 +1,12 @@
 const express = require('express');
-const clientController = require('../controllers/clientController'); // Make sure the path is correct
+const { getAllClients, getClientById, createClient, updateClient, deleteClient } = require('../controllers/clientController');
+
 const router = express.Router();
 
-router.get('/', clientController.getAllClients);
-router.post('/', clientController.createClient);
-router.get('/:id', clientController.getClientById);
-router.put('/:id', clientController.updateClientById);
-router.delete('/:id', clientController.deleteClientById);
+router.get('/', getAllClients);
+router.get('/:id', getClientById);
+router.post('/', createClient);
+router.put('/:id', updateClient);
+router.delete('/:id', deleteClient);
 
 module.exports = router;
