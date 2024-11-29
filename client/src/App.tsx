@@ -1,12 +1,29 @@
 import { Card, Button } from "@material-tailwind/react"
 import Sidebar from "./elements/sidebar/Sidebar"
-import Tables from "./elements/table/Tables"
 import Modal from "./elements/modal/Modal"
 import { ArrowPathIcon } from "@heroicons/react/24/solid"
 import useModalStore from "./hooks/useModalStore/useModalStore"
+import SubagentTable from "./elements/table/SubagentTable"
+import { useTableStore } from "./hooks/useTableStore/useTableStore"
+import SubagentPayerTable from "./elements/table/SubagentPayerTable"
+import OrderTable from "./elements/table/Order"
 
 function App() {
-  const handlerModal = useModalStore((state) => state.handlerModal)
+  const handlerModal = useModalStore((store) => store.handlerModal)
+  const CURRENT_TABLE = useTableStore((store) => store.currentTable)
+  let renderComponent: JSX.Element | undefined;
+  
+  switch (CURRENT_TABLE) {
+    case "order":
+      renderComponent = <OrderTable/>
+    break
+    case "subagent_payer":
+      renderComponent = <SubagentPayerTable/>
+    break
+    case "subagent":
+      renderComponent = <SubagentTable/>
+    break
+  }
   
   return (
     <div className="flex w-full h-full">
@@ -22,7 +39,11 @@ function App() {
             </Button>
           </div>
         </Card>
-        <Tables/>
+        <Card className="w-full h-full overflow-scroll border text-gray-900 dark:text-white dark:bg-gray-900 dark:border-gray-800">
+          {
+            renderComponent
+          }
+        </Card>
       </main>
       <Modal/>
     </div>

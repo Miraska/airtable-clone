@@ -1,15 +1,10 @@
-import { TableCellsIcon, ChevronDownIcon, SunIcon } from "@heroicons/react/24/solid";
-import { Accordion, AccordionBody, AccordionHeader, Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
+import { TableCellsIcon, SunIcon } from "@heroicons/react/24/solid";
+import { Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { useTableStore } from "../../hooks/useTableStore/useTableStore";
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(false)
   const [dark, setDark] = useState(true)
-
-  function handleOpen() {
-    return setOpen(!open)
-  }
   
   const setCurrentTable = useTableStore((store) => store.setCurrentTable)
   
@@ -24,7 +19,7 @@ export default function Sidebar() {
   
   return (
     <aside className="w-fit flex items-center p-2">
-      <Card className="h-full w-full max-w-[20rem] p-4 border dark:bg-gray-900 dark:border-gray-800">
+      <Card className="h-full w-full max-w-72 p-4 border dark:bg-gray-900 dark:border-gray-800">
         <div className="flex items-center justify-between">
           <Typography variant="h5" className="px-2 text-gray-900 dark:text-white">Airtable Clone</Typography>
           <Button variant="filled" size="sm" className="bg-white border dark:bg-gray-900 dark:border-gray-800" onClick={() => setDark(!dark)}>
@@ -32,55 +27,55 @@ export default function Sidebar() {
           </Button>
         </div>
         <hr className="my-2 dark:border-gray-800"/>
-        <List className="overflow-scroll">
-          <ListItem className="text-gray-900 dark:text-white" onClick={() => {
-            setCurrentTable("order")
-          }}>
+        <List className="overflow-scroll text-gray-900 dark:text-white">
+          <ListItem onClick={() => { setCurrentTable("order") }}>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             <Typography className="font-normal">Заявки</Typography>
           </ListItem>
-          <Accordion open={open} icon={
-            <ChevronDownIcon
-              strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
-            />
-          }>
-            <ListItem className="p-0 flex flex-col dark:text-white" selected={open}>
-              <AccordionHeader onClick={() => handleOpen()} className="border-b-0 p-3 text-gray-900 dark:text-white">
-                <ListItemPrefix>
-                  <TableCellsIcon className="h-5 w-5"/>
-                </ListItemPrefix>
-                <Typography className="mr-auto font-normal">Справочники</Typography>
-              </AccordionHeader>
-              <AccordionBody className="pb-0">
-                <List className="p-0 dark:text-white">
-                  <ListItem onClick={() => {
-                    setCurrentTable("manager")
-                  }}>Менеджеры</ListItem>
-                  <ListItem onClick={() => {
-                    setCurrentTable("contragent")
-                  }}>Контрагенты</ListItem>
-                  <ListItem onClick={() => {
-                    setCurrentTable("agent")
-                  }}>Агенты</ListItem>
-                  <ListItem onClick={() => {
-                    setCurrentTable("client")
-                  }}>Клиенты</ListItem>
-                  <ListItem onClick={() => {
-                    setCurrentTable("country")
-                  }}>Страна</ListItem>
-                  <ListItem onClick={() => {
-                    setCurrentTable("subagent")
-                  }}>Субагенты</ListItem>
-                  <ListItem onClick={() => {
-                    setCurrentTable("subagent_payer")
-                  }}>Плательщики субагентов</ListItem>
-                </List>
-              </AccordionBody>
-            </ListItem>
-          </Accordion>
+          <ListItem onClick={() => { setCurrentTable("manager") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Менеджеры
+          </ListItem>
+          <ListItem onClick={() => { setCurrentTable("contragent") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Контрагенты
+          </ListItem>
+          <ListItem onClick={() => { setCurrentTable("agent") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Агенты
+          </ListItem>
+          <ListItem onClick={() => { setCurrentTable("client") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Клиенты
+          </ListItem>
+          <ListItem onClick={() => { setCurrentTable("country") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Страна
+          </ListItem>
+          <ListItem onClick={() => { setCurrentTable("subagent") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Субагенты
+          </ListItem>
+          <ListItem onClick={() => { setCurrentTable("subagent_payer") }}>
+            <ListItemPrefix>
+              <TableCellsIcon className="h-5 w-5"/>
+            </ListItemPrefix>
+            Плательщики субагентов
+          </ListItem>
         </List>
       </Card>
     </aside>
