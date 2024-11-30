@@ -1,10 +1,9 @@
-import React, {useState} from "react"
+import {useState} from "react"
 import {useQuery, useMutation, useQueryClient} from "react-query"
 import {api} from "../api"
 import {DataTable} from "../components/DataTable"
 import {Modal} from "../components/Modal"
 import {OrderForm} from "../components/OrderForm"
-import {format} from "date-fns"
 import {toast} from "react-toastify"
 import type {IOrder} from "../types"
 
@@ -80,7 +79,7 @@ export const OrdersPage = () => {
       queryClient.invalidateQueries("orders")
       setIsModalOpen(false)
       setSelectedOrder(null)
-      toast.success("Order created successfully")
+      toast.success("Заявка успешно создана!")
     },
   })
 
@@ -89,14 +88,14 @@ export const OrdersPage = () => {
       queryClient.invalidateQueries("orders")
       setIsModalOpen(false)
       setSelectedOrder(null)
-      toast.success("Order updated successfully")
+      toast.success("Заявка обновлена успешно!")
     },
   })
 
   const deleteMutation = useMutation((id: number) => api.orders.delete(id), {
     onSuccess: () => {
       queryClient.invalidateQueries("orders")
-      toast.success("Order deleted successfully")
+      toast.success("Заявка удалена успешно!")
     },
   })
 
@@ -114,7 +113,7 @@ export const OrdersPage = () => {
   }
 
   const handleDelete = async (order: IOrder) => {
-    if (window.confirm("Are you sure you want to delete this order?")) {
+    if (window.confirm("Вы хотите удалить эту заявку?")) {
       deleteMutation.mutate(order.id!)
     }
   }
@@ -125,8 +124,8 @@ export const OrdersPage = () => {
         id,
         data: {[key]: value},
       })
-    } catch (error) {
-      toast.error("Failed to update cell")
+    } catch {
+      toast.error("Ошибка обновления ячейки")
     }
   }
 
@@ -154,7 +153,7 @@ export const OrdersPage = () => {
           setIsModalOpen(false)
           setSelectedOrder(null)
         }}
-        title={selectedOrder ? "Edit Order" : "Add New Order"}
+        title={selectedOrder ? "Изменить заявку" : "Добавить новую заявку"}
       >
         <OrderForm onSubmit={handleSubmit} initialData={selectedOrder || {}} isLoading={createMutation.isLoading || updateMutation.isLoading} />
       </Modal>

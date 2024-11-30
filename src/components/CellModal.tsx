@@ -8,7 +8,7 @@ interface CellModalProps {
   data: any;
   column: { key: string; label: string };
   onEdit: () => void;
-  onSave: (value: any) => Promise<void>;
+  onSave: (value: string) => Promise<void>;
 }
 
 export const CellModal: React.FC<CellModalProps> = ({
@@ -16,7 +16,6 @@ export const CellModal: React.FC<CellModalProps> = ({
   onClose,
   data,
   column,
-  onEdit,
   onSave,
 }) => {
   const [isEditing, setIsEditing] = useState(false);

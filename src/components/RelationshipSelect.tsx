@@ -16,6 +16,11 @@ interface RelationshipSelectProps {
   placeholder?: string;
 }
 
+interface IDataItem {
+  id: number;
+  name: string
+}
+
 export const RelationshipSelect: React.FC<RelationshipSelectProps> = ({
   type,
   value,
@@ -27,7 +32,7 @@ export const RelationshipSelect: React.FC<RelationshipSelectProps> = ({
 
   const options: Option[] = React.useMemo(() => {
     if (!data?.data) return [];
-    return data.data.map((item: any) => ({
+    return data.data.map((item: IDataItem) => ({
       value: item.id.toString(),
       label: item.name,
     }));

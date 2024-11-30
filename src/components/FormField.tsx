@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 interface FormFieldProps {
   label: string;
   type?: string;
-  value: string | number;
+  value?: string | number;
   onChange: (value: string) => void;
   required?: boolean;
   options?: { value: string; label: string }[];

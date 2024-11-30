@@ -7,6 +7,8 @@ import type { ISubagent } from '../types';
 
 const columns = [
   { key: 'name', label: 'Наименование' },
+  { key: 'subagent_payer', label: 'Плательщик Субагента' },
+  { key: 'order', label: 'Заявки'},
 ];
 
 export const SubagentsPage = () => {
