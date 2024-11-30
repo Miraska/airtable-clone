@@ -3,15 +3,15 @@ import { create } from "zustand";
 interface IModalState {
   isOpen: boolean;
   modalHeader: string;
-  handlerModal: (header?: string) => void;
+  handlerModal: (state?: boolean, header?: string) => void;
 }
 
 const useModalStore = create<IModalState>((set) => ({
   isOpen: false,
   modalHeader: "",
-  handlerModal: (header?:string) => set((store) => (
+  handlerModal: (state?: boolean, header?:string) => set(() => (
     {
-      isOpen: !store.isOpen,
+      isOpen: state,
       modalHeader: header,
     }
   )),

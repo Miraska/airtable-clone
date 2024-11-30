@@ -1,4 +1,4 @@
-import { Input, Typography } from "@material-tailwind/react";
+import { Input } from "@material-tailwind/react";
 import { useTheme } from "../../hooks/useTheme/useTheme";
 
 interface Props {
@@ -11,8 +11,7 @@ export default function FormCell({label, value}:Props) {
   
   return (
     <div>
-      <Typography variant="small">{ label }</Typography>
-      <Input labelProps={{className: "hidden"}} color={isDark ? "white" : "black"} defaultValue={ value } />
+      <Input crossOrigin={false} label={label} color={isDark ? "white" : "black"} defaultValue={ value } />
     </div>
   )
 }

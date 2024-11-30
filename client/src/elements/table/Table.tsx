@@ -7,7 +7,7 @@ import useEditStore from "../../hooks/useEditStore/useEditStore";
 interface TableProps {
   tableName: string;
   data: ITable[];
-  columns: ICols[];
+  columns: ICols;
 }
 
 export default function Table({columns, data, tableName }:TableProps) {
@@ -22,10 +22,10 @@ export default function Table({columns, data, tableName }:TableProps) {
       <table className="w-full min-w-max table-auto text-left">
         <thead>
           <tr>
-            {columns.map((column) => {
+            {Object.values(columns).map((value, index) => {
               return (
-                <th key={column.key} className="border-y p-4 bg-gray-100 dark:bg-gray-700 dark:border-gray-800">
-                  {column.label}
+                <th key={index} className="border p-4 bg-gray-100 dark:bg-gray-700 dark:border-gray-800">
+                  {value}
                 </th>
               )
             })}
@@ -36,7 +36,7 @@ export default function Table({columns, data, tableName }:TableProps) {
             return (
               <tr key={row.id} onClick={() => {
                   handlerEdit(row.id, row, columns)
-                  handlerModal(`Изменить "${row.name}"`)
+                  handlerModal(true, `Изменить "${row.name}"`)
                 }
               }>
                 {

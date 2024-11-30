@@ -4,8 +4,8 @@ export interface ITable {
 }
 
 export interface ICols {
-  key: string;
-  label: string;
+  id: string;
+  name: string;
 }
 
 export interface ISubagent extends ITable {

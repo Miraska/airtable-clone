@@ -14,7 +14,8 @@ export default function Modal() {
         <EditModal />
       </DialogBody>
       <DialogFooter>
-        <Button variant="text" color="red" onClick={() => handlerModal}>Закрыть</Button>
+        <Button variant="gradient" color="green" className="mr-4">Изменить</Button>
+        <Button variant="gradient" color="red" onClick={() => handlerModal(false)}>Закрыть</Button>
       </DialogFooter>
     </Dialog>
   )
