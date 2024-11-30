@@ -1,24 +1,20 @@
 import { create } from "zustand";
 
 interface IModalState {
-  isOpen: boolean,
-  modalHeader: string,
-  modalData: object[],
-  handlerModal: (state?: boolean, header?:string) => void,
-  setDataModal: (data: []) => void
+  isOpen: boolean;
+  modalHeader: string;
+  handlerModal: (header?: string) => void;
 }
 
 const useModalStore = create<IModalState>((set) => ({
   isOpen: false,
   modalHeader: "",
-  modalData: [],
-  handlerModal: (state?:boolean, header?:string) => set(() => (
+  handlerModal: (header?:string) => set((store) => (
     {
-      isOpen: state,
-      modalHeader: header
+      isOpen: !store.isOpen,
+      modalHeader: header,
     }
   )),
-  setDataModal: (data: []) => set(() => ({modalData: data}))
 }))
 
 export default useModalStore

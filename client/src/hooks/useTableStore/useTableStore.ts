@@ -16,6 +16,6 @@ export const useTableStore = create<TableStore>((set) => ({
   bufferTable: [],
   headerTable: [],
   setDataBuffer: (newData: object[]) => set({ dataTable: newData }),
-  currentTable: "order",
+  currentTable: "subagent",
   setCurrentTable: (tableName) => set({ currentTable: tableName })
 }));

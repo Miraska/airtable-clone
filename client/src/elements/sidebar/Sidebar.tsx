@@ -1,28 +1,29 @@
 import { TableCellsIcon, SunIcon } from "@heroicons/react/24/solid";
 import { Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useTableStore } from "../../hooks/useTableStore/useTableStore";
+import { useTheme } from "../../hooks/useTheme/useTheme";
 
 export default function Sidebar() {
-  const [dark, setDark] = useState(true)
+  const {isDark, setDark} = useTheme()
   
   const setCurrentTable = useTableStore((store) => store.setCurrentTable)
   
   // Обновляем класс `dark` в `<html>` при изменении состояния
   useEffect(() => {
-      if (dark) {
+      if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-  }, [dark]);
+  }, [isDark]);
   
   return (
     <aside className="w-fit flex items-center p-2">
       <Card className="h-full w-full max-w-72 p-4 border dark:bg-gray-900 dark:border-gray-800">
         <div className="flex items-center justify-between">
           <Typography variant="h5" className="px-2 text-gray-900 dark:text-white">Airtable Clone</Typography>
-          <Button variant="filled" size="sm" className="bg-white border dark:bg-gray-900 dark:border-gray-800" onClick={() => setDark(!dark)}>
+          <Button variant="filled" size="sm" className="bg-white border dark:bg-gray-900 dark:border-gray-800" onClick={() => setDark(!isDark)}>
             <SunIcon className="h-5 w-5 text-gray-900 dark:text-white"/>
           </Button>
         </div>
