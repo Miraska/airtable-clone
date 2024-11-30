@@ -8,13 +8,13 @@ export const queryClient = new QueryClient({
       retry: 1,
       staleTime: 5 * 60 * 1000,
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'An error occurred while fetching data');
+        toast.error(error?.response?.data?.message || 'При загрузке данных произошла ошибка');
       },
     },
     mutations: {
       retry: 0,
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'An error occurred while saving data');
+        toast.error(error?.response?.data?.message || 'При сохранении данных произошла ошибка');
       },
     },
   },

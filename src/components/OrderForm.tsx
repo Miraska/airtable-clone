@@ -11,10 +11,10 @@ interface OrderFormProps {
 }
 
 const statusOptions = [
-  { value: 'new', label: 'New' },
-  { value: 'В процессе', label: 'In Progress' },
-  { value: 'Завершен', label: 'Completed' },
-  { value: 'Закрыт', label: 'Closed' },
+  { value: 'Новый', label: 'Новый' },
+  { value: 'В процессе', label: 'В процессе' },
+  { value: 'Завершен', label: 'Завершен' },
+  { value: 'Закрыт', label: 'Закрыт' },
 ];
 
 const currencyOptions = [
@@ -36,19 +36,19 @@ export const OrderForm: React.FC<OrderFormProps> = ({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
-          label="Order Number"
+          label="Номер Заявки"
           type="number"
-          {...register('order_number', { required: 'Order number is required' })}
+          {...register('order_number', { required: 'Введите номер заявки' })}
           error={errors.order_number?.message}
         />
 
         <Controller
           name="status"
           control={control}
-          rules={{ required: 'Status is required' }}
+          rules={{ required: 'Введите статус' }}
           render={({ field }) => (
             <FormField
-              label="Status"
+              label="Статус"
               options={statusOptions}
               {...field}
               error={errors.status?.message}
@@ -57,8 +57,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         />
 
         <FormField
-          label="Agency Name"
-          {...register('name_agency', { required: 'Agency name is required' })}
+          label="Имя агента"
+          {...register('name_agency', { required: 'Введите агента' })}
           error={errors.name_agency?.message}
         />
 
@@ -67,7 +67,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           control={control}
           render={({ field }) => (
             <FormField
-              label="Currency"
+              label="Валюта"
               options={currencyOptions}
               {...field}
             />
@@ -75,19 +75,19 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         />
 
         <FormField
-          label="SWIFT Code"
+          label="SWIFT Код"
           {...register('swift_code')}
         />
 
         <FormField
-          label="Order Sum"
+          label="Сумма заявки"
           type="number"
           {...register('sum_order')}
         />
 
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Managers
+            Менеджеры
           </label>
           <Controller
             name="manager"
@@ -97,7 +97,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 type="managers"
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Select managers"
+                placeholder="Выберите менеджера"
               />
             )}
           />
@@ -105,7 +105,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Agents
+            Агенты
           </label>
           <Controller
             name="agent"
@@ -115,7 +115,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 type="agents"
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Select agents"
+                placeholder="Выберите агента"
               />
             )}
           />
@@ -123,7 +123,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Clients
+            Клиенты
           </label>
           <Controller
             name="client"
@@ -133,7 +133,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 type="clients"
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Select clients"
+                placeholder="Выберите клиента"
               />
             )}
           />
@@ -141,7 +141,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Country
+            Страны
           </label>
           <Controller
             name="country"
@@ -152,7 +152,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 value={[field.value || '']}
                 onChange={(values) => field.onChange(values[0])}
                 isMulti={false}
-                placeholder="Select country"
+                placeholder="Выберите страну"
               />
             )}
           />
@@ -165,14 +165,14 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           onClick={() => window.history.back()}
           className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
         >
-          Cancel
+          Закрыть
         </button>
         <button
           type="submit"
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
           disabled={isLoading}
         >
-          {isLoading ? 'Saving...' : 'Save'}
+          {isLoading ? 'Сохранение...' : 'Сохранить'}
         </button>
       </div>
     </form>

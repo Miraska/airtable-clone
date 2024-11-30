@@ -8,7 +8,7 @@ interface CellModalProps {
   data: any;
   column: { key: string; label: string };
   onEdit: () => void;
-  onSave: (value: string) => Promise<void>;
+  onSave: (value: any) => Promise<void>;
 }
 
 export const CellModal: React.FC<CellModalProps> = ({
@@ -16,6 +16,7 @@ export const CellModal: React.FC<CellModalProps> = ({
   onClose,
   data,
   column,
+  onEdit,
   onSave,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +31,7 @@ export const CellModal: React.FC<CellModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`${column.label} Details`}
+      title={column.label}
     >
       <div className="space-y-4">
         {isEditing ? (
@@ -46,9 +47,9 @@ export const CellModal: React.FC<CellModalProps> = ({
                 variant="secondary"
                 onClick={() => setIsEditing(false)}
               >
-                Cancel
+                Закрыть
               </Button>
-              <Button onClick={handleSave}>Save</Button>
+              <Button onClick={handleSave}>Сохранить</Button>
             </div>
           </div>
         ) : (
@@ -58,7 +59,7 @@ export const CellModal: React.FC<CellModalProps> = ({
               <p className="mt-1 text-lg">{data[column.key] || '-'}</p>
             </div>
             <div className="flex justify-end">
-              <Button onClick={() => setIsEditing(true)}>Edit</Button>
+              <Button onClick={() => setIsEditing(true)}>Редактировать</Button>
             </div>
           </div>
         )}

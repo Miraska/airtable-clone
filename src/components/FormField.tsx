@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 interface FormFieldProps {
   label: string;
   type?: string;
-  value?: string | number;
+  value: string | number;
   onChange: (value: string) => void;
   required?: boolean;
   options?: { value: string; label: string }[];
@@ -44,7 +44,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           required={required}
           multiple={multiple}
         >
-          {!multiple && <option value="">Select {label}</option>}
+          {!multiple && <option value="">Выберите {label}</option>}
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

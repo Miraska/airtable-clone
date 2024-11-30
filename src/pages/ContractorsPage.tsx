@@ -6,7 +6,7 @@ import { Modal } from '../components/Modal';
 import type { IContragent } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Name' },
+  { key: 'name', label: 'Имя' },
 ];
 
 export const ContractorsPage = () => {
@@ -37,7 +37,7 @@ export const ContractorsPage = () => {
   return (
     <>
       <DataTable
-        title="Contractors"
+        title="Контрагенты"
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
@@ -47,12 +47,12 @@ export const ContractorsPage = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Add New Contractor"
+        title="Добавление нового контрагента"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Name
+              Имя
             </label>
             <input
               type="text"
@@ -69,14 +69,14 @@ export const ContractorsPage = () => {
               onClick={() => setIsModalOpen(false)}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              Закрыть
             </button>
             <button
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
               disabled={createMutation.isLoading}
             >
-              {createMutation.isLoading ? 'Saving...' : 'Save'}
+              {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         </form>

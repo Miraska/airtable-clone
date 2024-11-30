@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   FileText, 
@@ -16,14 +16,14 @@ import {
 import { clsx } from 'clsx';
 
 const navItems = [
-  { path: '/orders', label: 'Orders', icon: FileText },
-  { path: '/managers', label: 'Managers', icon: Users },
-  { path: '/contractors', label: 'Contractors', icon: Building2 },
-  { path: '/agents', label: 'Agents', icon: Briefcase },
-  { path: '/clients', label: 'Clients', icon: UserCircle },
-  { path: '/countries', label: 'Countries', icon: Globe2 },
-  { path: '/subagents', label: 'Subagents', icon: UserCog },
-  { path: '/subagent-payers', label: 'Subagent Payers', icon: CreditCard },
+  { path: '/orders', label: 'Заявки', icon: FileText },
+  { path: '/managers', label: 'Менеджеры', icon: Users },
+  { path: '/contractors', label: 'Контрагенты', icon: Building2 },
+  { path: '/agents', label: 'Агенты', icon: Briefcase },
+  { path: '/clients', label: 'Клиенты', icon: UserCircle },
+  { path: '/countries', label: 'Страны', icon: Globe2 },
+  { path: '/subagents', label: 'Субагенты', icon: UserCog },
+  { path: '/subagent-payers', label: 'Плательщики Субагентов', icon: CreditCard },
 ];
 
 export const Sidebar = () => {
@@ -41,7 +41,7 @@ export const Sidebar = () => {
           'flex items-center p-4 border-b border-gray-700',
           isCollapsed ? 'justify-center' : 'justify-between'
         )}>
-          {!isCollapsed && <h1 className="text-xl font-bold">Dashboard</h1>}
+          {!isCollapsed && <h1 className="text-xl font-bold">Airtable</h1>}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
@@ -86,7 +86,7 @@ export const Sidebar = () => {
             )}
           >
             <Menu size={20} />
-            {!isCollapsed && <span>Menu</span>}
+            {!isCollapsed && <span>Меню</span>}
           </button>
         </div>
       </div>

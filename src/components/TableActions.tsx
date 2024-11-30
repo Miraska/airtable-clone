@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Eye } from 'lucide-react';
 
 interface TableActionsProps {
   onView?: () => void;
@@ -26,7 +26,7 @@ export const TableActions: React.FC<TableActionsProps> = ({
         <button
           onClick={onDelete}
           className="p-1 text-gray-500 hover:text-red-600 transition-colors"
-          title="Delete"
+          title="Удалить"
         >
           <Trash2 size={18} />
         </button>
