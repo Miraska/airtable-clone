@@ -12,7 +12,7 @@ associateModels();
 sequelize.authenticate()
   .then(() => {
     console.log('Database connection has been established successfully.');
-    return sequelize.sync();  // Убедитесь, что таблицы созданы
+    return sequelize.sync();
   })
   .then(() => {
     const server = http.createServer(app);

@@ -1,9 +1,11 @@
 const BaseService = require('./baseService');
-const { Contractor } = require('../models/entities');
+const { Contractor, Order } = require('../models/entities');
 
 class ContractorService extends BaseService {
   constructor() {
-    super(Contractor);
+    super(Contractor, [
+      { model: Order, as: 'orders' } // Ассоциация контрагентов с заявками
+    ]);
   }
 }
 

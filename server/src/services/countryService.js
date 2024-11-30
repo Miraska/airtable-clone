@@ -1,9 +1,11 @@
 const BaseService = require('./baseService');
-const { Country } = require('../models/entities');
+const { Country, Order } = require('../models/entities');
 
 class CountryService extends BaseService {
   constructor() {
-    super(Country);
+    super(Country, [
+      { model: Order, as: 'orders' } // Ассоциация страны с заявками
+    ]);
   }
 }
 

@@ -17,18 +17,6 @@ const validateOrder = [
     .optional()
     .isFloat({ min: 0 })
     .withMessage('Сумма заявки должна быть положительным числом'),
-
-  check('customer_name')
-    .notEmpty()
-    .withMessage('Имя клиента обязательно')
-    .isString()
-    .withMessage('Имя клиента должно быть строкой'),
-  
-  check('customer_email')
-    .notEmpty()
-    .withMessage('Электронная почта клиента обязательна')
-    .isEmail()
-    .withMessage('Электронная почта должна быть валидной'),
-];
+]
 
 module.exports = validateOrder;

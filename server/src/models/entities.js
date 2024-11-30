@@ -81,7 +81,7 @@ const Order = sequelize.define('Order', {
   swift103_link: { type: DataTypes.STRING, allowNull: true },
   swift199_link: { type: DataTypes.STRING, allowNull: true },
   act_link: { type: DataTypes.STRING, allowNull: true },
-  money_gone: { type: DataTypes.BOOLEAN, allowNull: true },
+  money_gone: { type: DataTypes.BOOLEAN, allowNull: true }
 }, { timestamps: false });
 
 // Менеджер
@@ -117,6 +117,8 @@ const Country = sequelize.define('Country', {
   code: { type: DataTypes.STRING, allowNull: true },
   full_name: { type: DataTypes.STRING, allowNull: true },
 }, { timestamps: false });
+
+sequelize.sync({alter: true});
 
 module.exports = {
   Agent,

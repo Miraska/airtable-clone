@@ -1,9 +1,12 @@
 const BaseService = require('./baseService');
-const { Subagent } = require('../models/entities');
+const { Subagent, Order, SubagentPayer } = require('../models/entities');
 
 class SubagentService extends BaseService {
   constructor() {
-    super(Subagent);
+    super(Subagent, [
+      { model: Order, as: 'orders' },
+      { model: SubagentPayer, as: 'payer' }
+    ]);
   }
 }
 
