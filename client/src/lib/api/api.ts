@@ -1,59 +1,65 @@
-import axios from 'axios';
-import { IOrder } from '../interface/interface';
+import axios from "axios";
+import { IAgent, IClient, IContragent, ICountry, IManager, IOrder, ISubagent, ISubagentPayer } from "../interface/interface";
 
-const API_URL = 'https://5e20-89-110-76-58.ngrok-free.app/api';
+const API_URL = "https://5e20-89-110-76-58.ngrok-free.app/api";
 const AXIOS_HEADER = {
-  'Content-Type': 'application/json',
-  'ngrok-skip-browser-warning': '1'
-}
+  "Content-Type": "application/json",
+  "ngrok-skip-browser-warning": "1",
+};
+
+const instance = axios.create({
+  baseURL: API_URL,
+  headers: AXIOS_HEADER,
+});
 
 export const api = {
   orders: {
-    getAll: () => axios.get('/orders', ),
-    create: (data: IOrder) => axios.post('/orders', AXIOS_HEADER, data),
-    update: (id: number, data:) => axios.put(`/orders/${id}`),
-    delete: (id: number) => axios.delete(`/orders/${id}`),
+    getAll: () => instance.get("/orders"),
+    create: (data: IOrder) => instance.post("/orders", data),
+    update: (id: number, data: IOrder) => instance.put(`/orders/${id}`, data),
+    delete: (id: number) => instance.delete(`/orders/${id}`),
   },
   managers: {
-    getAll: () => axios.get('/managers'),
-    create: () => axios.post('/managers', ),
-    update: (id: number, ) => axios.put(`/managers/${id}`, ),
-    delete: (id: number) => axios.delete(`/managers/${id}`),
+    getAll: () => instance.get("/managers"),
+    create: (data: IManager) => instance.post("/managers", data),
+    update: (id: number, data: IManager) =>
+      instance.put(`/managers/${id}`, data),
+    delete: (id: number) => instance.delete(`/managers/${id}`),
   },
   contractors: {
-    getAll: () => axios.get('/contractors'),
-    create: () => axios.post('/contractors', ),
-    update: (id: number, ) => axios.put(`/contractors/${id}`, ),
-    delete: (id: number) => axios.delete(`/contractors/${id}`),
+    getAll: () => instance.get("/contractors"),
+    create: (data: IContragent) => instance.post("/contractors", data),
+    update: (id: number, data: IContragent) => instance.put(`/contractors/${id}`, data),
+    delete: (id: number) => instance.delete(`/contractors/${id}`),
   },
   agents: {
-    getAll: () => axios.get('/agents'),
-    create: () => axios.post('/agents', ),
-    update: (id: number, ) => axios.put(`/agents/${id}`, ),
-    delete: (id: number) => axios.delete(`/agents/${id}`),
+    getAll: () => instance.get("/agents"),
+    create: (data: IAgent) => instance.post("/agents", data),
+    update: (id: number, data: IAgent) => instance.put(`/agents/${id}`, data),
+    delete: (id: number) => instance.delete(`/agents/${id}`),
   },
   clients: {
-    getAll: () => axios.get('/clients'),
-    create: () => axios.post('/clients', ),
-    update: (id: number, ) => axios.put(`/clients/${id}`, ),
-    delete: (id: number) => axios.delete(`/clients/${id}`),
+    getAll: () => instance.get("/clients"),
+    create: (data: IClient) => instance.post("/clients", data),
+    update: (id: number, data: IClient) => instance.put(`/clients/${id}`, data),
+    delete: (id: number) => instance.delete(`/clients/${id}`),
   },
   countries: {
-    getAll: () => axios.get('/countries'),
-    create: () => axios.post('/countries', ),
-    update: (id: number, ) => axios.put(`/countries/${id}`, ),
-    delete: (id: number) => axios.delete(`/countries/${id}`),
+    getAll: () => instance.get("/countries"),
+    create: (data: ICountry) => instance.post("/countries", data),
+    update: (id: number, data: ICountry) => instance.put(`/countries/${id}`, data),
+    delete: (id: number) => instance.delete(`/countries/${id}`),
   },
   subagents: {
-    getAll: () => axios.get('/subagents'),
-    create: () => axios.post('/subagents', ),
-    update: (id: number, ) => axios.put(`/subagents/${id}`, ),
-    delete: (id: number) => axios.delete(`/subagents/${id}`),
+    getAll: () => instance.get("/subagents"),
+    create: (data: ISubagent) => instance.post("/subagents", data),
+    update: (id: number, data: ISubagent) => instance.put(`/subagents/${id}`, data),
+    delete: (id: number) => instance.delete(`/subagents/${id}`),
   },
   subagentPayers: {
-    getAll: () => axios.get('/subagent-payers'),
-    create: () => axios.post('/subagent-payers', ),
-    update: (id: number, ) => axios.put(`/subagent-payers/${id}`, ),
-    delete: (id: number) => axios.delete(`/subagent-payers/${id}`),
+    getAll: () => instance.get("/subagent-payers"),
+    create: (data: ISubagentPayer) => instance.post("/subagent-payers", data),
+    update: (id: number, data: ISubagentPayer) => instance.put(`/subagent-payers/${id}`, data),
+    delete: (id: number) => instance.delete(`/subagent-payers/${id}`),
   },
 };
