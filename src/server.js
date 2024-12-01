@@ -8,7 +8,7 @@ const sequelize = require('./db/connection');
 const { associateModels } = require('./models/associations');
 associateModels();
 
-// Проверяем подключение к базе данных и запускаем сервер
+// Проверяем подключение к базе данных и запускаем сервер.
 sequelize.authenticate()
   .then(() => {
     console.log('Database connection has been established successfully.');
