@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, Trash2, Eye } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface TableActionsProps {
   onView?: () => void;

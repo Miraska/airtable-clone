@@ -6,9 +6,10 @@ import { Modal } from '../components/Modal';
 import type { ICountry } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Корб. название' },
-  { key: 'code', label: 'Код' },
-  { key: 'full_name', label: 'Полное наименование' },
+  { key: 'name', label: 'Краткое название', sortable: true },
+  { key: 'code', label: 'Код', sortable: true },
+  { key: 'full_name', label: 'Полное наименование', sortable: true },
+  { key: 'order', label: 'Заявки', sortable: true }
 ];
 
 export const CountriesPage = () => {

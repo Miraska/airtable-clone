@@ -16,7 +16,6 @@ export const CellModal: React.FC<CellModalProps> = ({
   onClose,
   data,
   column,
-  onEdit,
   onSave,
 }) => {
   const [isEditing, setIsEditing] = useState(false);

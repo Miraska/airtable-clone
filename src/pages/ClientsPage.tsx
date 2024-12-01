@@ -6,8 +6,9 @@ import { Modal } from '../components/Modal';
 import type { IClient } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Name' },
-  { key: 'inn', label: 'ИНН' },
+  { key: 'name', label: 'Наименование', sortable: true },
+  { key: 'inn', label: 'ИНН', sortable: true },
+  { key: 'order', label: 'Заявки', sortable: true }
 ];
 
 export const ClientsPage = () => {

@@ -8,9 +8,11 @@ import {toast} from "react-toastify"
 import type {IOrder} from "../types"
 
 const columns = [
-  {key: "autonumber", label: "ID", sortable: true},
+  {key: "autonumber", label: "ID (Автономер)", sortable: true},
   {key: "status", label: "Статус", sortable: true},
   {key: "order_number", label: "№ заявки", sortable: true},
+  {key: "manager", label: "Менеджер", sortable: true},
+  {key: "reviewer", label: "Проверяющий", sortable: true},
   {key: "date", label: "Дата размещения", sortable: true},
   {key: "date_hired", label: "Взята в работу", sortable: true},
   {key: "name_agency", label: "Наименование экспортёра или импортёра", sortable: true},
@@ -133,7 +135,7 @@ export const OrdersPage = () => {
     <div className='h-full flex flex-col'>
       <div className='flex-1 overflow-hidden'>
         <DataTable
-          title='Orders'
+          title='Заявки'
           data={orders?.data || []}
           columns={columns}
           onRefresh={() => refetch()}
