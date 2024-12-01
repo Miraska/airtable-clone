@@ -1,13 +1,10 @@
 import { TableCellsIcon, SunIcon } from "@heroicons/react/24/solid";
 import { Card, List, ListItem, ListItemPrefix, Typography, Button } from "@material-tailwind/react";
 import { useEffect } from "react";
-import { useTableStore } from "../../hooks/useTableStore/useTableStore";
 import { useTheme } from "../../hooks/useTheme/useTheme";
 
 export default function Sidebar() {
   const {isDark, setDark} = useTheme()
-  
-  const setCurrentTable = useTableStore((store) => store.setCurrentTable)
   
   // Обновляем класс `dark` в `<html>` при изменении состояния
   useEffect(() => {
@@ -29,49 +26,49 @@ export default function Sidebar() {
         </div>
         <hr className="my-2 dark:border-gray-800"/>
         <List className="overflow-scroll text-gray-900 dark:text-white">
-          <ListItem onClick={() => { setCurrentTable("order") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             <Typography className="font-normal">Заявки</Typography>
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("manager") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             Менеджеры
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("contragent") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             Контрагенты
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("agent") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             Агенты
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("client") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             Клиенты
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("country") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             Страна
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("subagent") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
             Субагенты
           </ListItem>
-          <ListItem onClick={() => { setCurrentTable("subagent_payer") }}>
+          <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5"/>
             </ListItemPrefix>
