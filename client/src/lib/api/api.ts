@@ -1,16 +1,16 @@
-import axios from "axios";
-import { IAgent, IClient, IContragent, ICountry, IManager, IOrder, ISubagent, ISubagentPayer } from "../interface/interface";
+import axios from "axios"
+import {IAgent, IClient, IContragent, ICountry, IManager, IOrder, ISubagent, ISubagentPayer} from "../../interface/interface"
 
-const API_URL = "https://5e20-89-110-76-58.ngrok-free.app/api";
+const API_URL = "https://5e20-89-110-76-58.ngrok-free.app/api"
 const AXIOS_HEADER = {
   "Content-Type": "application/json",
   "ngrok-skip-browser-warning": "1",
-};
+}
 
 const instance = axios.create({
   baseURL: API_URL,
   headers: AXIOS_HEADER,
-});
+})
 
 export const api = {
   orders: {
@@ -22,8 +22,7 @@ export const api = {
   managers: {
     getAll: () => instance.get("/managers"),
     create: (data: IManager) => instance.post("/managers", data),
-    update: (id: number, data: IManager) =>
-      instance.put(`/managers/${id}`, data),
+    update: (id: number, data: IManager) => instance.put(`/managers/${id}`, data),
     delete: (id: number) => instance.delete(`/managers/${id}`),
   },
   contractors: {
@@ -62,4 +61,4 @@ export const api = {
     update: (id: number, data: ISubagentPayer) => instance.put(`/subagent-payers/${id}`, data),
     delete: (id: number) => instance.delete(`/subagent-payers/${id}`),
   },
-};
+}
