@@ -55,7 +55,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       return value ? 'Да' : 'Нет';
     }
     if (Array.isArray(value)) {
-      return value.join(', ');
+      return <StatusBadge status={value.length == 0 ? "–" : value.join(', ')} />;
     }
     return value || '-';
   };
@@ -163,7 +163,9 @@ export const DataTable: React.FC<DataTableProps> = ({
                       className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 cursor-pointer hover:bg-gray-100"
                       onClick={() => handleCellClick(item, column)}
                     >
-                      {renderCell(item, column)}
+                      {
+                        renderCell(item, column)
+                      }
                     </td>
                   ))}
                   {(onView || onEdit || onDelete) && (

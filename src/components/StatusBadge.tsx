@@ -8,7 +8,7 @@ interface StatusBadgeProps {
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'new':
+      case 'новая':
         return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'в процессе':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
