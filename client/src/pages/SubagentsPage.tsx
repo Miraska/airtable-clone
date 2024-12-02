@@ -6,9 +6,10 @@ import { Modal } from '../components/Modal';
 import type { ISubagent } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Наименование' },
-  { key: 'subagent_payer', label: 'Плательщик Субагента' },
-  { key: 'order', label: 'Заявки'},
+  { key: 'id', label: 'ID' },
+  { key: 'name', label: 'Имя' },
+  { key: 'payers', label: 'Плательщики Субагента' },
+  { key: 'orders', label: 'Заявки'},
 ];
 
 export const SubagentsPage = () => {

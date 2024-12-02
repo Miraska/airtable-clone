@@ -7,7 +7,7 @@ interface CellModalProps {
   onClose: () => void;
   data: any;
   column: { key: string; label: string };
-  onEdit: () => void;
+  value?: any;
   onSave: (value: any) => Promise<void>;
 }
 
@@ -16,11 +16,11 @@ export const CellModal: React.FC<CellModalProps> = ({
   onClose,
   data,
   column,
-  onEdit,
+  value: initialValue,
   onSave,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(data[column.key]);
+  const [value, setValue] = useState(initialValue || data[column.key]);
 
   const handleSave = async () => {
     await onSave(value);
@@ -56,7 +56,7 @@ export const CellModal: React.FC<CellModalProps> = ({
           <div className="space-y-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">{column.label}</p>
-              <p className="mt-1 text-lg">{data[column.key] || '-'}</p>
+              <p className="mt-1 text-lg">{value || '-'}</p>
             </div>
             <div className="flex justify-end">
               <Button onClick={() => setIsEditing(true)}>Редактировать</Button>

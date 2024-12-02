@@ -6,7 +6,10 @@ import { Modal } from '../components/Modal';
 import type { ISubagentPayer } from '../types';
 
 const columns = [
+  { key: 'id', label: 'ID' },
   { key: 'name', label: 'Наименование' },
+  { key: 'subagents', label: 'Субагенты' },
+  { key: 'orders', label: 'Заявки' },
 ];
 
 export const SubagentPayersPage = () => {
@@ -39,7 +42,7 @@ export const SubagentPayersPage = () => {
   return (
     <>
       <DataTable
-        title="Плательщик субагента"
+        title="Плательщики субагента"
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}

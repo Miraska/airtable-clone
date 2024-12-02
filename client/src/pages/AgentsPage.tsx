@@ -6,7 +6,9 @@ import { Modal } from '../components/Modal';
 import type { IAgent } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Название' },
+  { key: 'id', label: 'ID' },
+  { key: 'name', label: 'Имя' },
+  { key: 'orders', label: 'Заявки' },
 ];
 
 export const AgentsPage = () => {

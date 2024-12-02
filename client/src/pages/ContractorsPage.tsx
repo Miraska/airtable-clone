@@ -6,7 +6,9 @@ import { Modal } from '../components/Modal';
 import type { IContragent } from '../types';
 
 const columns = [
+  { key: 'id', label: 'ID' },
   { key: 'name', label: 'Имя' },
+  { key: 'orders', label: 'Заявки' },
 ];
 
 export const ContractorsPage = () => {

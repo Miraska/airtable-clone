@@ -41,10 +41,12 @@ export const DataTable: React.FC<DataTableProps> = ({
   const [selectedCell, setSelectedCell] = useState<{
     data: any;
     column: Column;
+    value?: any;
   } | null>(null);
 
   const renderCell = (item: any, column: Column) => {
     const value = item[column.key];
+  
     if (column.render) {
       return column.render(value);
     }
@@ -54,13 +56,41 @@ export const DataTable: React.FC<DataTableProps> = ({
     if (typeof value === 'boolean') {
       return value ? 'Да' : 'Нет';
     }
+
     if (Array.isArray(value)) {
-      return value.join(', ');
+      if (value.length === 0) return "-";
+
+      return (
+        <div className="flex flex-wrap gap-2">
+          {value.map((tag, index) => (
+            <span
+              key={index}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleTagClick(item, column, tag);
+              }}
+              className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 cursor-pointer hover:bg-gray-300"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      );
     }
     return value || '-';
   };
-
+  
+  // Обработчик кликов на тег
+  const handleTagClick = (item: any, column: Column, tag: string) => {
+    setSelectedCell({ data: item, column, value: tag });
+  };
+  
+  // Обработчик кликов на ячейку
   const handleCellClick = (item: any, column: Column) => {
+    const value = item[column.key];
+    if (Array.isArray(value)) {
+      return; // Не открываем модальное окно при клике на элементы массива
+    }
     setSelectedCell({ data: item, column });
   };
 
@@ -188,7 +218,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           onClose={() => setSelectedCell(null)}
           data={selectedCell.data}
           column={selectedCell.column}
-          onEdit={() => {}}
+          value={selectedCell.value}
           onSave={handleCellUpdate}
         />
       )}

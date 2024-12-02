@@ -6,9 +6,11 @@ import { Modal } from '../components/Modal';
 import type { ICountry } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Корб. название' },
+  { key: 'id', label: 'ID' },
+  { key: 'name', label: 'Название' },
   { key: 'code', label: 'Код' },
-  { key: 'full_name', label: 'Полное наименование' },
+  { key: 'full_name', label: 'Полное название' },
+  { key: 'orders', label: 'Заявки' },
 ];
 
 export const CountriesPage = () => {
@@ -41,7 +43,7 @@ export const CountriesPage = () => {
   return (
     <>
       <DataTable
-        title="Страна"
+        title="Страны"
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}

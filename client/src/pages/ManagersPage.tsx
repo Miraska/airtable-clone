@@ -6,9 +6,11 @@ import { Modal } from '../components/Modal';
 import type { IManager } from '../types';
 
 const columns = [
+  { key: 'id', label: 'ID' },
   { key: 'name', label: 'Имя' },
   { key: 'tel', label: 'Номер телефона' },
   { key: 'date', label: 'День рождения' },
+  { key: 'orders', label: 'Заявки' },
 ];
 
 export const ManagersPage = () => {

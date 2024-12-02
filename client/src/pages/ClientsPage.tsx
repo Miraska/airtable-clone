@@ -6,8 +6,10 @@ import { Modal } from '../components/Modal';
 import type { IClient } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Name' },
+  { key: 'id', label: 'ID' },
+  { key: 'name', label: 'Имя' },
   { key: 'inn', label: 'ИНН' },
+  { key: 'orders', label: 'Заявки' },
 ];
 
 export const ClientsPage = () => {
