@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AxiosError } from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://1cb8-89-110-76-58.ngrok-free.app/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -24,6 +24,7 @@ axiosInstance.interceptors.response.use(
 export const api = {
   orders: {
     getAll: () => axiosInstance.get('/orders'),
+    getOne: (id: number) => axiosInstance.get(`/orders/${id}`),
     create: (data: any) => axiosInstance.post('/orders', data),
     update: (id: number, data: any) => axiosInstance.put(`/orders/${id}`, data),
     delete: (id: number) => axiosInstance.delete(`/orders/${id}`),

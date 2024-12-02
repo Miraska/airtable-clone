@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from './Modal';
 import { Button } from './Button';
+import { api } from '../api';
 
 interface CellModalProps {
   isOpen: boolean;
@@ -26,6 +27,13 @@ export const CellModal: React.FC<CellModalProps> = ({
     await onSave(value);
     setIsEditing(false);
   };
+
+  // useEffect(() => {
+  //   api.orders.getOne(value).then((res) => {
+  //     console.log(res.data)
+  //     setValue(res.data.status)
+  //   })
+  // })
 
   return (
     <Modal
@@ -56,7 +64,9 @@ export const CellModal: React.FC<CellModalProps> = ({
           <div className="space-y-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">{column.label}</p>
-              <p className="mt-1 text-lg">{value || '-'}</p>
+              <p className="mt-1 text-lg">{
+                value || '-'
+              }</p>
             </div>
             <div className="flex justify-end">
               <Button onClick={() => setIsEditing(true)}>Редактировать</Button>

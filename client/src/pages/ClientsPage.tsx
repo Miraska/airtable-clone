@@ -7,7 +7,7 @@ import type { IClient } from '../types';
 
 const columns = [
   { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Имя' },
+  { key: 'name', label: 'Наименование' },
   { key: 'inn', label: 'ИНН' },
   { key: 'orders', label: 'Заявки' },
 ];
@@ -56,10 +56,11 @@ export const ClientsPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Имя
+              Наименование
             </label>
             <input
               type="text"
+              placeholder='Введите наименование клиента'
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -73,11 +74,19 @@ export const ClientsPage = () => {
             </label>
             <input
               type="text"
+              placeholder='Введите ИНН клиента'
               value={formData.inn || ''}
               onChange={(e) => setFormData({ ...formData, inn: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            
           </div>
 
           <div className="flex justify-end gap-2 mt-6">
