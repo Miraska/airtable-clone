@@ -5,10 +5,8 @@ interface FormFieldProps {
   label: string;
   placeholder?: string;
   type?: string;
-  placeholder?: string;
   selectText?: string;
   value: string | number;
-  selectText?: string
   onChange: (value: string) => void;
   required?: boolean;
   options?: { value: string; label: string }[];
@@ -29,16 +27,16 @@ export const FormField: React.FC<FormFieldProps> = ({
   error,
 }) => {
   const baseClassName = clsx(
-    "mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+    "mt-1 block w-full dark:bg-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
     {
       'border-red-300': error,
-      'border-gray-300': !error,
+      'border-gray-300 dark:border-gray-800': !error,
     }
   );
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
@@ -65,7 +63,6 @@ export const FormField: React.FC<FormFieldProps> = ({
           onChange={(e) => onChange(e.target.value)}
           className={baseClassName}
           required={required}
-          placeholder={placeholder}
         />
       )}
       {error && (

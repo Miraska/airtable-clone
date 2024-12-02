@@ -35,13 +35,6 @@ export const CellModal: React.FC<CellModalProps> = ({
     setIsEditing(false);
   };
 
-  // useEffect(() => {
-  //   api.orders.getOne(value).then((res) => {
-  //     console.log(res.data)
-  //     setValue(res.data.status)
-  //   })
-  // })
-
   return (
     <Modal
       isOpen={isOpen}

@@ -20,7 +20,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 overflow-y-auto p-4">
         <div className='flex min-h-full items-center justify-center'>
-          <Dialog.Panel className="mx-auto max-w-xl w-full bg-white rounded-lg shadow-xl">
+          <Dialog.Panel className="mx-auto max-w-xl w-full text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-xl">
             <div className="flex justify-between items-center p-4 border-b">
               <Dialog.Title className="text-lg font-semibold">{title}</Dialog.Title>
               <button

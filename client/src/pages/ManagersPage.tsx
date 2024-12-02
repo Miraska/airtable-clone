@@ -6,6 +6,7 @@ import { Modal } from '../components/Modal';
 import type { IManager } from '../types';
 import { RelationshipSelect } from '../components/RelationshipSelect';
 import { Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -18,6 +19,7 @@ const columns = [
 
 export const ManagersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedManager, setSelectedManager] = useState<Partial<IManager> | null>(null);
   const [formData, setFormData] = useState<Partial<IManager>>({
     name: '',
     tel: '',
@@ -40,6 +42,11 @@ export const ManagersPage = () => {
     }
   );
   
+  const handleEdit = (manager: IManager) => {
+    setSelectedManager(manager);
+    setIsModalOpen(true);
+  };
+  
   const { register, handleSubmit, control } = useForm<Partial<IManager>>({
     defaultValues: formData
   })
@@ -54,6 +61,7 @@ export const ManagersPage = () => {
         columns={columns}
         onRefresh={() => refetch()}
         onAdd={() => setIsModalOpen(true)}
+        onEdit={handleEdit}
       />
 
       <Modal

@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
 import type { IOrder } from '../types';
+import { Form } from 'react-router-dom';
 
 interface OrderFormProps {
   onSubmit: (data: Partial<IOrder>) => void;
@@ -59,7 +60,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         />
 
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium mb-1">
             Менеджеры
           </label>
           <Controller
@@ -77,7 +78,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium mb-1">
             Проверяющий
           </label>
           <Controller
@@ -109,7 +110,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         />
         
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium  mb-1">
             Контрагент
           </label>
           <Controller
@@ -127,7 +128,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium  mb-1">
             Агент
           </label>
           <Controller
@@ -145,7 +146,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
 
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium  mb-1">
             Клиент
           </label>
           <Controller
@@ -191,7 +192,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium  mb-1">
             Страна
           </label>
           <Controller
@@ -241,6 +242,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         
         <FormField
           label="Номер поручения"
+          type='number'
           {...register('number_receiving')}
           placeholder='Введите номер поручения'
         />
@@ -267,14 +269,92 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         />
         
         <FormField
-          label="SWIFT Код"
-          {...register('swift_code')}
-        />
-
-        <FormField
           label="Сумма заявки"
           type="number"
           {...register('sum_order')}
+          placeholder='Введите сумму заявки'
+        />
+        
+        <FormField
+          label='Условия VIP'
+          {...register('vip_condition')}
+          type='text'
+          placeholder='Введите условия VIP'
+        />
+        
+        <FormField
+          label='VIP комиссия'
+          {...register('vip_commission')}
+          type='number'
+          placeholder='Введите VIP комиссию'
+        />
+        
+        <FormField
+          label='Скрытая комиссия'
+          {...register('hide_commission')}
+          type='number'
+          placeholder='Введите скрытую комиссию'
+        />
+        
+        <FormField
+          label='Комиссия +% банка'
+          {...register('commision_plus_percent')}
+          type='number'
+          placeholder='Введите комиссию +% банка'
+        />
+        
+        <FormField
+          label='Комиссия + аккред'
+          {...register('commision_plus_accredit')}
+          type='number'
+          placeholder='Введите комиссию + аккред'
+        />
+        
+        <FormField
+          label='Комиссия + эксроу'
+          {...register('commision_plus_escrow')}
+          type='number'
+          placeholder='Введите комиссию + эксроу'
+        />
+        
+        <FormField
+          label='Комиссия + эксроу'
+          {...register('commision_plus_escrow')}
+          type='number'
+          placeholder='Введите комиссию + эксроу'
+        />
+        
+        <FormField
+          label='Курс'
+          {...register('money_rate')}
+          type='number'
+          placeholder='Введите курс рубля (₽)'
+        />
+        
+        <FormField
+          label='Скрытый курс'
+          {...register('hide_money_rate')}
+          type='number'
+          placeholder='Введите скрытый курс рубля (₽)'
+        />
+        
+        <FormField
+          label='Скрытый курс'
+          {...register('hide_money_rate')}
+          type='number'
+          placeholder='Введите скрытый курс рубля (₽)'
+        />
+        
+        <FormField
+          type='date'
+          label='Дата фиксации курса'
+          {...register('date_fixation_rate')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          label="SWIFT Код"
+          {...register('swift_code')}
         />
       </div>
 
@@ -282,13 +362,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          className="px-4 py-2 text-sm font-medium bg-transparent border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
         >
           Закрыть
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
           disabled={isLoading}
         >
           {isLoading ? 'Сохранение...' : 'Сохранить'}
