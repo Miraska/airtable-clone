@@ -25,7 +25,7 @@ const columns = [
   {key: "calc_condition", label: "Условия расчета", sortable: true},
   {key: "type_transaction", label: "Вид сделки", sortable: true},
   {key: "number_receiving", label: "Номер поручения", sortable: true},
-  {key: "date_instruction", label: "Подписано поручение", sortable: true},
+  {key: "date_instruction", label: "Подписано поручение (для Совкомбанка)", sortable: true},
   {key: "currency", label: "Валюта", sortable: true},
   {key: "sum_order", label: "Сумма заявки", sortable: true},
   {key: "vip_commission", label: "VIP Комиссия", sortable: true},

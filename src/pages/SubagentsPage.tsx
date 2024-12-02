@@ -62,7 +62,22 @@ export const SubagentsPage = () => {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
+              placeholder='Введите наименование субагента'
             />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Плательщик субагента
+            </label>
+            
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            
           </div>
 
           <div className="flex justify-end gap-2 mt-6">

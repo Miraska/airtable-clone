@@ -14,6 +14,7 @@ export const ContractorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<IContragent>>({
     name: '',
+    order: []
   });
 
   const queryClient = useQueryClient();
@@ -48,20 +49,28 @@ export const ContractorsPage = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Добавление нового контрагента"
+        title="Добавить нового контрагента"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Имя
+              Наименование
             </label>
             <input
               type="text"
               value={formData.name || ''}
+              placeholder='Введите наименование контрагента'
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
             />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            
           </div>
 
           <div className="flex justify-end gap-2 mt-6">
