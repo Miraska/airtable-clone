@@ -81,11 +81,11 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Проверяющий
           </label>
           <Controller
-            name="manager"
+            name="reviewers"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
-                type="managers"
+                type="reviewers"
                 value={field.value || []}
                 onChange={field.onChange}
                 placeholder="Выберите проверяющего"
