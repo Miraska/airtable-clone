@@ -58,6 +58,7 @@ export const SubagentsPage = () => {
               Наименование
             </label>
             <input
+              placeholder='Введите наименование'
               type="text"
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
