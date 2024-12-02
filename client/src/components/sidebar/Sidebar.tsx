@@ -2,12 +2,12 @@ import {TableCellsIcon, SunIcon} from "@heroicons/react/24/solid"
 import {Card, List, ListItem, ListItemPrefix, Typography, Button} from "@material-tailwind/react"
 import {useEffect} from "react"
 import {useTheme} from "../../store/useTheme/useTheme"
-import useModalStore from "../../store/useModalStore/useModalStore"
+import useCreateModalStore from "../../store/useCreateModalStore/useCreateModalStore"
 import useEditModalStore from "../../store/useEditModalStore/useEditModalStore"
 
 export default function Sidebar() {
   const {isDark, setDark} = useTheme()
-  const handlerModal = useModalStore(store => store.handlerModal)
+  const handlerModal = useCreateModalStore(store => store.handler)
   const handlerEdit = useEditModalStore(store => store.handlerEdit)
 
   // Обновляем класс `dark` в `<html>` при изменении состояния

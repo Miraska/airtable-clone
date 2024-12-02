@@ -110,7 +110,7 @@ export interface IManager extends IData {
   name: string | null;
   tel: string | null;
   date: string | null;
-  order: number[] | null | string;
+  orders: number[] | null | string;
   review_table: number[] | null | string;
 }
 
