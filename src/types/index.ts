@@ -54,7 +54,7 @@ export interface IManager {
   name: string | null;
   tel: string | null;
   date: string | null;
-  order: number[] | null | string;
+  order: string[] | null;
   review_table: number[] | null | string;
 }
 

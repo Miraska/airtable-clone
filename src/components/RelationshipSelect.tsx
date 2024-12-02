@@ -9,7 +9,7 @@ interface Option {
 }
 
 interface RelationshipSelectProps {
-  type: 'managers' | 'agents' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
+  type: 'orders' | 'managers' | 'agents' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
   value: string[];
   onChange: (value: string[]) => void;
   isMulti?: boolean;

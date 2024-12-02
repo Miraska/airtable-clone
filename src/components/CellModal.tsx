@@ -11,12 +11,18 @@ interface CellModalProps {
   onSave: (value: any) => Promise<void>;
 }
 
+const statusOptions = [
+  { value: 'Новый', label: 'Новый' },
+  { value: 'В процессе', label: 'В процессе' },
+  { value: 'Завершен', label: 'Завершен' },
+  { value: 'Закрыт', label: 'Закрыт' },
+];
+
 export const CellModal: React.FC<CellModalProps> = ({
   isOpen,
   onClose,
   data,
   column,
-  onEdit,
   onSave,
 }) => {
   const [isEditing, setIsEditing] = useState(false);

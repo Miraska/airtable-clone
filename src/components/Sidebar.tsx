@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   FileText, 
@@ -11,7 +11,6 @@ import {
   CreditCard,
   ChevronLeft,
   ChevronRight,
-  Menu
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -77,18 +76,6 @@ export const Sidebar = () => {
             })}
           </div>
         </nav>
-
-        <div className="p-4 border-t border-gray-700">
-          <button
-            className={clsx(
-              'flex items-center gap-3 p-3 rounded-lg transition-colors w-full text-gray-300 hover:bg-gray-700',
-              isCollapsed ? 'justify-center' : ''
-            )}
-          >
-            <Menu size={20} />
-            {!isCollapsed && <span>Меню</span>}
-          </button>
-        </div>
       </div>
     </div>
   );

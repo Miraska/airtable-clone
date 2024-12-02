@@ -6,9 +6,10 @@ import { Modal } from '../components/Modal';
 import type { ICountry } from '../types';
 
 const columns = [
-  { key: 'name', label: 'Корб. название' },
-  { key: 'code', label: 'Код' },
-  { key: 'full_name', label: 'Полное наименование' },
+  { key: 'name', label: 'Краткое название', sortable: true },
+  { key: 'code', label: 'Код', sortable: true },
+  { key: 'full_name', label: 'Полное наименование', sortable: true },
+  { key: 'order', label: 'Заявки', sortable: true }
 ];
 
 export const CountriesPage = () => {
@@ -56,7 +57,7 @@ export const CountriesPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Кор. название
+              Краткое название
             </label>
             <input
               type="text"
@@ -64,6 +65,7 @@ export const CountriesPage = () => {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
+              placeholder='Введите краткое название страны'
             />
           </div>
 
@@ -74,6 +76,7 @@ export const CountriesPage = () => {
             <input
               type="text"
               value={formData.code || ''}
+              placeholder='Введите код страны'
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
@@ -86,11 +89,19 @@ export const CountriesPage = () => {
             </label>
             <input
               type="text"
+              placeholder='Введите полное наименование страны'
               value={formData.full_name || ''}
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
             />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            
           </div>
 
           <div className="flex justify-end gap-2 mt-6">

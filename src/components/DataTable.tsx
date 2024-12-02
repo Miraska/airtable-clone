@@ -55,7 +55,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       return value ? 'Да' : 'Нет';
     }
     if (Array.isArray(value)) {
-      return value.join(', ');
+      return <StatusBadge status={value.length == 0 ? "–" : value.join(', ')} />;
     }
     return value || '-';
   };
@@ -116,7 +116,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   <th
                     key={column.key}
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50"
+                    className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50"
                     onClick={() => column.sortable && handleSort(column.key)}
                     style={{ cursor: column.sortable ? 'pointer' : 'default' }}
                   >
@@ -163,7 +163,9 @@ export const DataTable: React.FC<DataTableProps> = ({
                       className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 cursor-pointer hover:bg-gray-100"
                       onClick={() => handleCellClick(item, column)}
                     >
-                      {renderCell(item, column)}
+                      {
+                        renderCell(item, column)
+                      }
                     </td>
                   ))}
                   {(onView || onEdit || onDelete) && (
