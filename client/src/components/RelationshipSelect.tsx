@@ -2,6 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 import { useQuery } from 'react-query';
 import { api } from '../api';
+import "../styles/select.css"
 
 interface Option {
   value: string;
@@ -9,7 +10,7 @@ interface Option {
 }
 
 interface RelationshipSelectProps {
-  type: 'managers' | 'agents' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
+  type: 'orders' | 'managers' | 'agents' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
   value: string[];
   onChange: (value: string[]) => void;
   isMulti?: boolean;
@@ -41,6 +42,7 @@ export const RelationshipSelect: React.FC<RelationshipSelectProps> = ({
     <Select
       isMulti={isMulti}
       options={options}
+      unstyled
       value={selectedOptions}
       onChange={(selected) => {
         const values = isMulti

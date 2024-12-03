@@ -6,6 +6,7 @@ import { Modal } from '../components/Modal';
 import type { IManager } from '../types';
 import { RelationshipSelect } from '../components/RelationshipSelect';
 import { Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -18,6 +19,7 @@ const columns = [
 
 export const ManagersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedManager, setSelectedManager] = useState<Partial<IManager> | null>(null);
   const [formData, setFormData] = useState<Partial<IManager>>({
     name: '',
     tel: '',
@@ -39,11 +41,17 @@ export const ManagersPage = () => {
       },
     }
   );
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createMutation.mutate(formData);
+  
+  const handleEdit = (manager: IManager) => {
+    setSelectedManager(manager);
+    setIsModalOpen(true);
   };
+  
+  const { register, handleSubmit, control } = useForm<Partial<IManager>>({
+    defaultValues: formData
+  })
+  
+  const submit = () => createMutation.mutate(formData);
 
   return (
     <>
@@ -53,6 +61,7 @@ export const ManagersPage = () => {
         columns={columns}
         onRefresh={() => refetch()}
         onAdd={() => setIsModalOpen(true)}
+        onEdit={handleEdit}
       />
 
       <Modal
@@ -60,7 +69,7 @@ export const ManagersPage = () => {
         onClose={() => setIsModalOpen(false)}
         title="Добавить нового менеджера"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(submit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Имя
@@ -70,7 +79,7 @@ export const ManagersPage = () => {
               placeholder='Введите имя менеджера'
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>
@@ -84,7 +93,7 @@ export const ManagersPage = () => {
               placeholder='Введите номер телефона менеджера'
               value={formData.tel || ''}
               onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>
@@ -98,8 +107,44 @@ export const ManagersPage = () => {
               type="date"
               value={formData.date || ''}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            <Controller
+              name='order'
+              control={control}
+              render={({field}) => (
+                <RelationshipSelect
+                  type='orders'
+                  value={field.value || []}
+                  onChange={field.onChange}
+                  placeholder='Выберите заявки'
+                />
+              )}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Проверяю
+            </label>
+            <Controller
+              name='order'
+              control={control}
+              render={({field}) => (
+                <RelationshipSelect
+                  type='orders'
+                  value={field.value || []}
+                  onChange={field.onChange}
+                  placeholder='Выберите заявки'
+                />
+              )}
             />
           </div>
 
@@ -125,13 +170,13 @@ export const ManagersPage = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
             >
               Закрыть
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
               disabled={createMutation.isLoading}
             >
               {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}

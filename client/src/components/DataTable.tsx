@@ -5,7 +5,6 @@ import { TableActions } from './TableActions';
 import { useTableSort } from '../hooks/useTableSort';
 import { useTableFilter } from '../hooks/useTableFilter';
 import { CellModal } from './CellModal';
-import { api } from '../api';
 
 interface Column {
   key: string;
@@ -70,7 +69,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 e.stopPropagation();
                 handleTagClick(item, column, tag);
               }}
-              className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 cursor-pointer hover:bg-gray-300"
+              className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-600 hover:bg-gray-300"
             >
               {tag}
             </span>
@@ -103,10 +102,10 @@ export const DataTable: React.FC<DataTableProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="sticky top-0 z-20 bg-white p-6 border-b border-gray-200">
+    <div className="flex flex-col h-full transition-all duration-300">
+      <div className="sticky mx-a top-0 z-20 bg-white p-6 border-b border-gray-200 dark:bg-gray-800 dark:border-gray-600 transition-all">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</h2>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="relative">
               <input
@@ -114,17 +113,17 @@ export const DataTable: React.FC<DataTableProps> = ({
                 placeholder="Поиск..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg dark:text-white border border-gray-300 dark:border-gray-500 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={onRefresh}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-600"
                 title="Refresh"
               >
-                <RefreshCw size={20} className="text-gray-600" />
+                <RefreshCw size={20} className="text-gray-600 dark:text-gray-400" />
               </button>
               <button
                 onClick={onAdd}
@@ -140,14 +139,14 @@ export const DataTable: React.FC<DataTableProps> = ({
 
       <div className="flex-1 overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-500 transition-all">
+            <thead className="bg-gray-50 dark:bg-gray-700" >
               <tr>
                 {columns.map((column) => (
                   <th
                     key={column.key}
                     scope="col"
-                    className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50"
+                    className="px-6 py-5 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50 dark:bg-gray-700"
                     onClick={() => column.sortable && handleSort(column.key)}
                     style={{ cursor: column.sortable ? 'pointer' : 'default' }}
                   >
@@ -161,7 +160,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                               sortConfig?.key === column.key &&
                               sortConfig?.direction === 'asc'
                                 ? 'text-blue-600'
-                                : 'text-gray-400'
+                                : 'text-gray-400 dark:text-gray-300'
                             }
                           />
                           <ChevronDown
@@ -170,7 +169,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                               sortConfig?.key === column.key &&
                               sortConfig?.direction === 'desc'
                                 ? 'text-blue-600'
-                                : 'text-gray-400'
+                                : 'text-gray-400 dark:text-gray-300'
                             }
                           />
                         </div>
@@ -179,22 +178,24 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </th>
                 ))}
                 {(onView || onEdit || onDelete) && (
-                  <th scope="col" className="relative px-6 py-3 sticky top-0 bg-gray-50">
+                  <th scope="col" className="relative px-6 py-3 sticky top-0 bg-gray-50 dark:bg-gray-700">
                     <span className="sr-only">Действия</span>
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-600 divide-y divide-gray-200 dark:divide-gray-500">
               {Array.isArray(filteredData) && filteredData.map((item, index) => (
-                <tr key={item.id || index} className="hover:bg-gray-50">
+                <tr key={item.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-500">
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 cursor-pointer hover:bg-gray-100"
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-400"
                       onClick={() => handleCellClick(item, column)}
                     >
-                      {renderCell(item, column)}
+                      {
+                        renderCell(item, column)
+                      }
                     </td>
                   ))}
                   {(onView || onEdit || onDelete) && (

@@ -64,7 +64,7 @@ export const CountriesPage = () => {
               type="text"
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
               placeholder='Введите краткое название страны'
             />
@@ -79,7 +79,7 @@ export const CountriesPage = () => {
               value={formData.code || ''}
               placeholder='Введите код страны'
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>
@@ -93,9 +93,16 @@ export const CountriesPage = () => {
               placeholder='Введите полное наименование страны'
               value={formData.full_name || ''}
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            
           </div>
 
           <div>
@@ -109,13 +116,13 @@ export const CountriesPage = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
             >
               Закрыть
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
               disabled={createMutation.isLoading}
             >
               {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}

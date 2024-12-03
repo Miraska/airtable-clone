@@ -3,8 +3,8 @@ import { clsx } from 'clsx';
 
 interface FormFieldProps {
   label: string;
-  type?: string;
   placeholder?: string;
+  type?: string;
   selectText?: string;
   value: string | number;
   onChange: (value: string) => void;
@@ -27,16 +27,16 @@ export const FormField: React.FC<FormFieldProps> = ({
   error,
 }) => {
   const baseClassName = clsx(
-    "mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+    "mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500",
     {
       'border-red-300': error,
-      'border-gray-300': !error,
+      'border-gray-300 dark:border-gray-800': !error,
     }
   );
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>

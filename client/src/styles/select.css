@@ -1,0 +1,36 @@
+/* React Select customization */
+.react-select-container .react-select__control {
+    @apply border-gray-300 dark:border-transparent rounded-md shadow-sm;
+}
+
+.react-select__control {
+    @apply border border-gray-300 dark:bg-gray-700 py-2 px-3
+}
+
+.react-select-container .react-select__control:hover {
+    @apply border-gray-400;
+}
+
+.react-select-container .react-select__control--is-focused {
+    @apply border-blue-500 ring-1 ring-blue-500;
+}
+
+.react-select-container .react-select__menu {
+    @apply bg-white dark:bg-gray-700 border border-blue-500 py-2 px-1 rounded-md shadow-lg mt-1;
+}
+
+.react-select-container .react-select__option {
+    @apply text-gray-900 dark:text-gray-100 rounded hover:bg-blue-50 dark:hover:bg-gray-600 p-2 cursor-pointer;
+}
+
+.react-select__option--is-selected {
+    @apply bg-blue-500 text-white;
+}
+
+.react-select__multi-value {
+    @apply bg-blue-500 text-gray-100 mr-2 p-1 rounded
+}
+
+.react-select__multi-value__remove {
+    @apply ml-1 rounded p-1 hover:bg-blue-700 transition-all
+}

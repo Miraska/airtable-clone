@@ -29,6 +29,7 @@ const columns = [
   { key: "date_instruction", label: "Подписано поручение (для Совкомбанка)", sortable: true },
   { key: "currency", label: "Валюта", sortable: true },
   { key: "sum_order", label: "Сумма заявки", sortable: true },
+  { key: "vip_condition", label: "Условия VIP", sortable: true },
   { key: "vip_commission", label: "VIP Комиссия", sortable: true },
   { key: "hide_commision", label: "Скрытая комиссия", sortable: true },
   { key: "commision_plus_percent", label: "Комиссия +% банка", sortable: true },

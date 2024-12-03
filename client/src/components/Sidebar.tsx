@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   FileText, 
@@ -28,11 +28,12 @@ const navItems = [
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [dark, setDark] = useState(true)
 
   return (
     <div
       className={clsx(
-        'h-screen bg-gray-800 text-white fixed left-0 top-0 z-30 transition-all duration-300',
+        'h-screen bg-gray-800 text-white left-0 top-0 z-30 transition-all duration-300',
         isCollapsed ? 'w-20' : 'w-64'
       )}
     >
@@ -84,6 +85,14 @@ export const Sidebar = () => {
               'flex items-center gap-3 p-3 rounded-lg transition-colors w-full text-gray-300 hover:bg-gray-700',
               isCollapsed ? 'justify-center' : ''
             )}
+            onClick={() => {
+              if (dark) {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+              setDark(!dark)
+            }}
           >
             <SunMoon size={20} />
             {!isCollapsed && <span>Изменить тему</span>}

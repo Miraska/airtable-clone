@@ -15,6 +15,7 @@ export const ContractorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<IContragent>>({
     name: '',
+    order: []
   });
 
   const queryClient = useQueryClient();
@@ -49,7 +50,7 @@ export const ContractorsPage = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Добавление нового контрагента"
+        title="Добавить нового контрагента"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -61,9 +62,16 @@ export const ContractorsPage = () => {
               value={formData.name || ''}
               placeholder='Введите наименование контрагента'
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            
           </div>
 
           <div>
@@ -77,13 +85,13 @@ export const ContractorsPage = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
             >
               Закрыть
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
               disabled={createMutation.isLoading}
             >
               {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
