@@ -25,9 +25,9 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div>
       <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-        <div className="fixed inset-0 bg-black/10" aria-hidden="true" />
+        <div className="fixed inset-0 bg-black/60" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-14">
-          <Dialog.Panel className="mx-auto max-w-xl w-full text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-xl max-h-400">
+          <Dialog.Panel className="mx-auto max-w-xl w-full text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-100  rounded-lg shadow-xl max-h-400">
             <div className="flex justify-between items-center p-4 border-b">
               <Dialog.Title className="text-lg font-semibold">
                 {title}
@@ -42,7 +42,7 @@ export const Modal: React.FC<ModalProps> = ({
                 </button>)}
                 <button
                   onClick={onClose}
-                  className="p-1 hover:bg-gray-100 rounded-full"
+                  className="p-1 hover:bg-gray-100 hover:dark:bg-gray-600 rounded-full"
                 >
                   <X size={20} />
                 </button>
