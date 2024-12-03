@@ -33,7 +33,7 @@ export const Sidebar = () => {
   return (
     <div
       className={clsx(
-        'h-screen bg-gray-800 text-white fixed left-0 top-0 z-30 transition-all duration-300',
+        'h-screen bg-gray-800 text-white left-0 top-0 z-30 transition-all duration-300',
         isCollapsed ? 'w-20' : 'w-64'
       )}
     >

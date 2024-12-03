@@ -31,7 +31,7 @@ export const Modal: React.FC<ModalProps> = ({
                 <X size={20} />
               </button>
             </div>
-            <div className="p-4">{children}</div>
+            <div className="p-4 overflow-scroll max-h-[80vh]">{children}</div>
           </Dialog.Panel>
         </div>
       </div>
