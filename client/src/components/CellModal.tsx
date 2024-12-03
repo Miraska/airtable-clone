@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal } from './Modal';
 import { Button } from './Button';
+import { RelatedDataModal } from './RelatedData';
 
 interface CellModalProps {
   isOpen: boolean;
@@ -32,8 +33,11 @@ export const CellModal: React.FC<CellModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={column.label}
+      setIsEditing={setIsEditing}
+      isEditing={isEditing}
     >
       <div className="space-y-4">
+
         {isEditing ? (
           <div className="space-y-4">
             <input
@@ -45,7 +49,10 @@ export const CellModal: React.FC<CellModalProps> = ({
             <div className="flex justify-end gap-2">
               <Button
                 variant="secondary"
-                onClick={() => setIsEditing(false)}
+                onClick={() => {
+                  setIsEditing(false);
+                  console.log(data);
+                }}
               >
                 Закрыть
               </Button>
@@ -54,12 +61,8 @@ export const CellModal: React.FC<CellModalProps> = ({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">{column.label}</p>
-              <p className="mt-1 text-lg">{value || '-'}</p>
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={() => setIsEditing(true)}>Редактировать</Button>
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <RelatedDataModal isOpen={true} onClose={() => null} relatedName={column.key} relatedKey={value} cellItem={value}/>
             </div>
           </div>
         )}
