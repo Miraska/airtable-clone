@@ -62,16 +62,9 @@ export const ContractorsPage = () => {
               value={formData.name || ''}
               placeholder='Введите наименование контрагента'
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Заявки
-            </label>
-            
           </div>
 
           <div>

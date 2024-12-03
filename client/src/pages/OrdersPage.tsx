@@ -118,6 +118,7 @@ export const OrdersPage = () => {
   });
 
   const handleSubmit = (data: Partial<IOrder>) => {
+    console.log(data)
     if (selectedOrder?.id) {
       updateMutation.mutate({ id: selectedOrder.id, data });
     } else {

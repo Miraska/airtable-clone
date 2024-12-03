@@ -36,6 +36,13 @@ export const api = {
     update: (id: number, data: any) => axiosInstance.put(`/managers/${id}`, data),
     delete: (id: number) => axiosInstance.delete(`/managers/${id}`),
   },
+  reviewers: {
+    getAll: () => axiosInstance.get('/reviewers'),
+    getById: (id: number) => axiosInstance.get(`/reviewers/${id}`), // Добавлен метод getById
+    create: (data: any) => axiosInstance.post('/reviewers', data),
+    update: (id: number, data: any) => axiosInstance.put(`/reviewers/${id}`, data),
+    delete: (id: number) => axiosInstance.delete(`/reviewers/${id}`),
+  },
   contractors: {
     getAll: () => axiosInstance.get('/contractors'),
     getById: (id: number) => axiosInstance.get(`/contractors/${id}`), // Добавлен метод getById

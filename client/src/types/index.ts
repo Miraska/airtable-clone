@@ -2,7 +2,7 @@ export interface IOrder {
   id: number | null;
   autonumber: number | null;
   status: string;
-  order_number: number;
+  order_number: number ;
   manager: string[];
   reviewer: string[] | null;
   date: string;

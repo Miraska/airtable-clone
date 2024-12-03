@@ -4,6 +4,7 @@ import { api } from '../api';
 import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { ISubagentPayer } from '../types';
+import { useForm } from 'react-hook-form';
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -17,11 +18,13 @@ export const SubagentPayersPage = () => {
   const [formData, setFormData] = useState<Partial<ISubagentPayer>>({
     name: '',
     subagent: [],
+    order: []
   });
-
+  const { register, handleSubmit, control } = useForm<Partial<ISubagentPayer>>({ defaultValues: formData })
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('subagent-payers', () => api.subagentPayers.getAll());
   const { data: subagents } = useQuery('subagents', () => api.subagents.getAll());
+  const { data: orders } = useQuery('orders', () => api.orders.getAll());
 
   const createMutation = useMutation(
     (newPayer: Partial<ISubagentPayer>) => api.subagentPayers.create(newPayer),
@@ -34,10 +37,11 @@ export const SubagentPayersPage = () => {
     }
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createMutation.mutate(formData);
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   console.log()
+  //   e.preventDefault();
+  //   createMutation.mutate(formData);
+  // };
 
   return (
     <>
@@ -64,7 +68,7 @@ export const SubagentPayersPage = () => {
               placeholder='Введите наименование субагента'
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>
@@ -80,7 +84,7 @@ export const SubagentPayersPage = () => {
                 const values = Array.from(e.target.selectedOptions, option => option.value);
                 setFormData({ ...formData, subagent: values });
               }}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
             >
               {subagents?.data?.map((subagent: any) => (
                 <option key={subagent.id} value={subagent.id}>
@@ -88,13 +92,6 @@ export const SubagentPayersPage = () => {
                 </option>
               ))}
             </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Заявки
-            </label>
-            
           </div>
 
           <div>
