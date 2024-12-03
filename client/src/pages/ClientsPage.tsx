@@ -8,12 +8,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'inn', label: 'ИНН' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsClient';
 
 const defaultValue = {
   name: '',
@@ -31,7 +26,15 @@ export const ClientsPage = () => {
   }
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('clients', () => api.clients.getAll());
+  const { data, refetch } = useQuery('clients', () => api.clients.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
+
   const createMutation = useMutation(
     (newClient: IClient) => api.clients.create(newClient),
     {

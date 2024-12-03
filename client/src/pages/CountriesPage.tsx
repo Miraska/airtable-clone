@@ -8,13 +8,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Краткое название' },
-  { key: 'code', label: 'Код' },
-  { key: 'full_name', label: 'Полное наименование' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsCountry';
 
 const defaultValue = {
   name: '',
@@ -31,7 +25,15 @@ export const CountriesPage = () => {
   }
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('countries', () => api.countries.getAll());
+  const { data, refetch } = useQuery('countries', () => api.countries.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
+
   const createMutation = useMutation(
     (newCountry: ICountry) => api.countries.create(newCountry),
     {

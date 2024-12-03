@@ -8,11 +8,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsContractor';
 
 const defaultValue = {
   name: '',
@@ -27,7 +23,15 @@ export const ContractorsPage = () => {
   }
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('contractors', () => api.contractors.getAll());
+  const { data, refetch } = useQuery('contractors', () => api.contractors.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
+
   const createMutation = useMutation(
     (newContractor: IContragent) => api.contractors.create(newContractor),
     {

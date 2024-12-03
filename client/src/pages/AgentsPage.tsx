@@ -8,11 +8,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsAgent';
 
 const defaultValue = {
   name: '',
@@ -27,7 +23,15 @@ export const AgentsPage = () => {
   }
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('agents', () => api.agents.getAll());
+  const { data, refetch } = useQuery('agents', () => api.agents.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
+
   const createMutation = useMutation(
     (newAgent: IAgent) => api.agents.create(newAgent),
     {

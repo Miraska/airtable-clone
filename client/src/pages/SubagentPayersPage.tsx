@@ -9,12 +9,7 @@ import SubagentsSelect from '../components/SubagentSelect';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'subagents', label: 'Субагенты' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsSubagentPayer';
 
 const defaultValue = {
   name: '',
@@ -30,7 +25,15 @@ export const SubagentPayersPage = () => {
   }
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('subagent-payers', () => api.subagentPayers.getAll());
+  const { data, refetch } = useQuery('subagent-payers', () => api.subagentPayers.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
+  
   const createMutation = useMutation(
     (newPayer: ISubagentPayer) => api.subagentPayers.create(newPayer),
     {

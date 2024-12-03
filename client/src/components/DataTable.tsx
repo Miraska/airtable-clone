@@ -38,6 +38,13 @@ export const DataTable: React.FC<DataTableProps> = ({
 }) => {
   const { sortedData, sortConfig, handleSort } = useTableSort(data || []);
   const { filteredData, searchTerm, setSearchTerm } = useTableFilter(sortedData);
+  const [isRelationShip, setIsRelationShip] = useState(false);
+  const [selectedCellRelationShip, setSelectedCellRelationShip] = useState<{
+    data: any;
+    column: Column;
+    value?: any;
+  } | null>(null);
+
   const [selectedCell, setSelectedCell] = useState<{
     data: any;
     column: Column;
@@ -82,13 +89,16 @@ export const DataTable: React.FC<DataTableProps> = ({
   
   // Обработчик кликов на тег
   const handleTagClick = (item: any, column: Column, tag: string) => {
+    setIsRelationShip(true);
     setSelectedCell({ data: item, column, value: tag });
   };
   
   // Обработчик кликов на ячейку
   const handleCellClick = (item: any, column: Column) => {
     const value = item[column.key];
+    setIsRelationShip(false);
     if (Array.isArray(value) || column.key == "id") {
+      setSelectedCellRelationShip({ data: item, column });
       return; // Не открываем модальное окно при клике на элементы массива
     }
     setSelectedCell({ data: item, column });
@@ -223,6 +233,19 @@ export const DataTable: React.FC<DataTableProps> = ({
           column={selectedCell.column}
           value={selectedCell.value}
           onSave={handleCellUpdate}
+          isRelationShip={isRelationShip}
+        />
+      )}
+
+      {selectedCellRelationShip && (
+        <CellModal
+          isOpen={!!selectedCellRelationShip}
+          onClose={() => setSelectedCellRelationShip(null)}
+          data={selectedCellRelationShip.data}
+          column={selectedCellRelationShip.column}
+          value={selectedCellRelationShip.value}
+          onSave={handleCellUpdate}
+          isRelationShip={isRelationShip}
         />
       )}
     </div>
