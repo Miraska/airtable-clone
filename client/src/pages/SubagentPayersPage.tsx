@@ -5,12 +5,7 @@ import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { ISubagentPayer } from '../types';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'subagents', label: 'Субагенты' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsSubagentPayer';
 
 export const SubagentPayersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,8 +15,15 @@ export const SubagentPayersPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('subagent-payers', () => api.subagentPayers.getAll());
-  const { data: subagents } = useQuery('subagents', () => api.subagents.getAll());
+  const { data, refetch } = useQuery('subagent-payers', () => api.subagentPayers.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
+  
 
   const createMutation = useMutation(
     (newPayer: Partial<ISubagentPayer>) => api.subagentPayers.create(newPayer),
@@ -82,11 +84,6 @@ export const SubagentPayersPage = () => {
               }}
               className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
             >
-              {subagents?.data?.map((subagent: any) => (
-                <option key={subagent.id} value={subagent.id}>
-                  {subagent.name}
-                </option>
-              ))}
             </select>
           </div>
           

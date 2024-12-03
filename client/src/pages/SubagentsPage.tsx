@@ -5,12 +5,7 @@ import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { ISubagent } from '../types';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'payers', label: 'Плательщики Субагента' },
-  { key: 'orders', label: 'Заявки'},
-];
+import columns from '../lib/tableColumnsDara/columnsSubagent';
 
 export const SubagentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +14,14 @@ export const SubagentsPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('subagents', () => api.subagents.getAll());
+  const { data, refetch } = useQuery('subagents', () => api.subagents.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
 
   const createMutation = useMutation(
     (newSubagent: Partial<ISubagent>) => api.subagents.create(newSubagent),

@@ -5,11 +5,7 @@ import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { IAgent } from '../types';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsAgent';
 
 export const AgentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +14,14 @@ export const AgentsPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('agents', () => api.agents.getAll());
+  const { data, refetch } = useQuery('agents', () => api.agents.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
 
   const createMutation = useMutation(
     (newAgent: Partial<IAgent>) => api.agents.create(newAgent),

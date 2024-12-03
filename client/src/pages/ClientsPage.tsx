@@ -5,12 +5,7 @@ import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { IClient } from '../types';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'inn', label: 'ИНН' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsClient';
 
 export const ClientsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +15,14 @@ export const ClientsPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('clients', () => api.clients.getAll());
+  const { data, refetch } = useQuery('clients', () => api.clients.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
 
   const createMutation = useMutation(
     (newClient: Partial<IClient>) => api.clients.create(newClient),

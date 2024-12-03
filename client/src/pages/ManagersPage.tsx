@@ -8,14 +8,7 @@ import { RelationshipSelect } from '../components/RelationshipSelect';
 import { Controller } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Имя' },
-  { key: 'tel', label: 'Номер телефона' },
-  { key: 'date', label: 'День рождения' },
-  { key: 'orders', label: 'Заявки' },
-  { key: 'review', label: 'Проверяю' }
-];
+import columns from '../lib/tableColumnsDara/columnsManager';
 
 export const ManagersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,7 +22,14 @@ export const ManagersPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('managers', () => api.managers.getAll());
+  const { data, refetch } = useQuery('managers', () => api.managers.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
 
   const createMutation = useMutation(
     (newManager: Partial<IManager>) => api.managers.create(newManager),

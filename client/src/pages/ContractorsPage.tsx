@@ -5,11 +5,7 @@ import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { IContragent } from '../types';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Наименование' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsContractor';
 
 export const ContractorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +15,14 @@ export const ContractorsPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('contractors', () => api.contractors.getAll());
+  const { data, refetch } = useQuery('contractors', () => api.contractors.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
 
   const createMutation = useMutation(
     (newContractor: Partial<IContragent>) => api.contractors.create(newContractor),

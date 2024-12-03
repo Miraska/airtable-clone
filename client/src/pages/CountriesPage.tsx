@@ -5,13 +5,7 @@ import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { ICountry } from '../types';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Краткое название' },
-  { key: 'code', label: 'Код' },
-  { key: 'full_name', label: 'Полное наименование' },
-  { key: 'orders', label: 'Заявки' },
-];
+import columns from '../lib/tableColumnsDara/columnsCountry';
 
 export const CountriesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +16,14 @@ export const CountriesPage = () => {
   });
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('countries', () => api.countries.getAll());
+  const { data, refetch } = useQuery('countries', () => api.countries.getAll(),
+  {
+    staleTime: 0.1 * 60 * 1000, 
+    cacheTime: 10 * 60 * 1000, 
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    enabled: true
+  });
 
   const createMutation = useMutation(
     (newCountry: Partial<ICountry>) => api.countries.create(newCountry),
