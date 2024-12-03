@@ -11,7 +11,7 @@ import {
   CreditCard,
   ChevronLeft,
   ChevronRight,
-  Menu
+  SunMoon
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -85,8 +85,8 @@ export const Sidebar = () => {
               isCollapsed ? 'justify-center' : ''
             )}
           >
-            <Menu size={20} />
-            {!isCollapsed && <span>Меню</span>}
+            <SunMoon size={20} />
+            {!isCollapsed && <span>Изменить тему</span>}
           </button>
         </div>
       </div>

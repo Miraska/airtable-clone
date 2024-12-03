@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from './Modal';
 import { Button } from './Button';
 import { RelatedDataModal } from './RelatedData';
@@ -27,6 +27,13 @@ export const CellModal: React.FC<CellModalProps> = ({
     await onSave(value);
     setIsEditing(false);
   };
+
+  // useEffect(() => {
+  //   api.orders.getOne(value).then((res) => {
+  //     console.log(res.data)
+  //     setValue(res.data.status)
+  //   })
+  // })
 
   return (
     <Modal

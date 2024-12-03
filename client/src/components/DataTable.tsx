@@ -5,6 +5,7 @@ import { TableActions } from './TableActions';
 import { useTableSort } from '../hooks/useTableSort';
 import { useTableFilter } from '../hooks/useTableFilter';
 import { CellModal } from './CellModal';
+import { api } from '../api';
 
 interface Column {
   key: string;
@@ -146,7 +147,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   <th
                     key={column.key}
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50"
+                    className="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50"
                     onClick={() => column.sortable && handleSort(column.key)}
                     style={{ cursor: column.sortable ? 'pointer' : 'default' }}
                   >

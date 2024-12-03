@@ -4,6 +4,8 @@ import { api } from '../api';
 import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { IManager } from '../types';
+import { RelationshipSelect } from '../components/RelationshipSelect';
+import { Controller } from 'react-hook-form';
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -11,6 +13,7 @@ const columns = [
   { key: 'tel', label: 'Номер телефона' },
   { key: 'date', label: 'День рождения' },
   { key: 'orders', label: 'Заявки' },
+  { key: 'review', label: 'Проверяю' }
 ];
 
 export const ManagersPage = () => {
@@ -19,6 +22,8 @@ export const ManagersPage = () => {
     name: '',
     tel: '',
     date: '',
+    order: [],
+    review_table: []
   });
 
   const queryClient = useQueryClient();
@@ -30,7 +35,7 @@ export const ManagersPage = () => {
       onSuccess: () => {
         queryClient.invalidateQueries('managers');
         setIsModalOpen(false);
-        setFormData({ name: '', tel: '', date: '' });
+        setFormData({ name: '', tel: '', date: '', order: [], review_table: [] });
       },
     }
   );
@@ -62,6 +67,7 @@ export const ManagersPage = () => {
             </label>
             <input
               type="text"
+              placeholder='Введите имя менеджера'
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -75,6 +81,7 @@ export const ManagersPage = () => {
             </label>
             <input
               type="tel"
+              placeholder='Введите номер телефона менеджера'
               value={formData.tel || ''}
               onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -87,12 +94,31 @@ export const ManagersPage = () => {
               День рождения
             </label>
             <input
+              placeholder='Выберите день рождения'
               type="date"
               value={formData.date || ''}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Заявки
+            </label>
+            {/* <Controller
+              name='order'
+              control={control}
+              render={({field}) => (
+                <RelationshipSelect
+                  type='orders'
+                  value={field.value || []}
+                  onChange={field.onChange}
+                  placeholder='Выберите заявки'
+                />
+              )}
+            /> */}
           </div>
 
           <div className="flex justify-end gap-2 mt-6">

@@ -35,9 +35,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          label="Номер Заявки"
+      <FormField
+          label="№ Заявки"
           type="number"
+          placeholder='Введите номер заявки'
           {...register('order_number', { required: 'Введите номер заявки' })}
           error={errors.order_number?.message}
         />
@@ -49,40 +50,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           render={({ field }) => (
             <FormField
               label="Статус"
+              selectText='статус'
               options={statusOptions}
               {...field}
               error={errors.status?.message}
             />
           )}
-        />
-
-        <FormField
-          label="Имя агента"
-          {...register('name_agency', { required: 'Введите агента' })}
-          error={errors.name_agency?.message}
-        />
-
-        <Controller
-          name="currency"
-          control={control}
-          render={({ field }) => (
-            <FormField
-              label="Валюта"
-              options={currencyOptions}
-              {...field}
-            />
-          )}
-        />
-
-        <FormField
-          label="SWIFT Код"
-          {...register('swift_code')}
-        />
-
-        <FormField
-          label="Сумма заявки"
-          type="number"
-          {...register('sum_order')}
         />
 
         <div className="col-span-2">
@@ -102,10 +75,60 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             )}
           />
         </div>
-
+        
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Агенты
+            Проверяющий
+          </label>
+          <Controller
+            name="reviewers"
+            control={control}
+            render={({ field }) => (
+              <RelationshipSelect
+                type="reviewers"
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Выберите проверяющего"
+              />
+            )}
+          />
+        </div>
+        
+        <FormField
+          type='date'
+          label='Дата Размещения'
+          {...register('date')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Взята в работу'
+          {...register('date')}
+          error={ errors.date?.message }
+        />
+        
+        <div className="col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Контрагент
+          </label>
+          <Controller
+            name="contragent"
+            control={control}
+            render={({ field }) => (
+              <RelationshipSelect
+                type="agents"
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Выберите контрагента"
+              />
+            )}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Агент
           </label>
           <Controller
             name="agent"
@@ -123,7 +146,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Клиенты
+            Клиент
           </label>
           <Controller
             name="client"
@@ -138,10 +161,38 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             )}
           />
         </div>
-
+        
+        <div className='col-span-2'>
+          <FormField
+            type="text"
+            label="ИНН (from Клиент)"
+            placeholder='Введите инн'
+            {...register('client_inn')}
+            error={errors.name_agency?.message}
+          />
+        </div>
+        
+        <div className='col-span-2'>
+          <FormField
+            type='text'
+            label='Наименование экспортёра или импортёра'
+            placeholder='Введите экспортёра или импортёра'
+            {...register('name_agency')}
+            error={errors.name_agency?.message}
+          />
+        </div>
+        
+        <div className='col-span-2'>
+          <FormField
+            type='text'
+            label='SWIFT код банка получателя (при импорте) / отправителя (при экспорте)'
+            placeholder='Введите SWIFT код банка'
+          />
+        </div>
+        
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Страны
+            Страна
           </label>
           <Controller
             name="country"
@@ -157,6 +208,74 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             )}
           />
         </div>
+        
+        <Controller
+          name="calc_condition"
+          control={control}
+          rules={{ required: 'Ввыберите условие' }}
+          render={({ field }) => (
+            <FormField
+              label="Условия расчета"
+              selectText='условие расчета'
+              options={statusOptions}
+              {...field}
+              error={errors.status?.message}
+            />
+          )}
+        />
+        
+        <Controller
+          name="type_transaction"
+          control={control}
+          rules={{ required: 'Выберите вид сделки' }}
+          render={({ field }) => (
+            <FormField
+              label="Вид сделки"
+              selectText='вид сделки'
+              options={statusOptions}
+              {...field}
+              error={errors.status?.message}
+            />
+          )}
+        />
+        
+        <FormField
+          label="Номер поручения"
+          {...register('number_receiving')}
+          placeholder='Введите номер поручения'
+        />
+        
+        <FormField
+          label="Подписано поручение"
+          {...register('number_receiving')}
+          type='date'
+        />
+        
+        <Controller
+          name="currency"
+          control={control}
+          rules={{ required: 'currency' }}
+          render={({ field }) => (
+            <FormField
+              label="Валюта"
+              selectText='валюту'
+              options={currencyOptions}
+              {...field}
+              error={errors.status?.message}
+            />
+          )}
+        />
+        
+        <FormField
+          label="SWIFT Код"
+          {...register('swift_code')}
+        />
+
+        <FormField
+          label="Сумма заявки"
+          type="number"
+          {...register('sum_order')}
+        />
       </div>
 
       <div className="flex justify-end gap-2">
