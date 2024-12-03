@@ -20,7 +20,7 @@ function App() {
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="flex-1 transition-all duration-300 ml-20 lg:ml-56 p-8">
-            <div className="max-w-7xl mx-auto overflow-hidden rounded-lg">
+            <div className="lg:max-w-5xl 2xl:max-w-7xl mx-auto overflow-hidden rounded-lg">
               <Routes>
                 <Route path="/" element={<Navigate to="/orders" replace />} />
                 <Route path="/orders" element={<OrdersPage />} />

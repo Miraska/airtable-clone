@@ -26,7 +26,7 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 type='button'
                 onClick={onClose}
-                className="p-1 hover:bg-gray-100 rounded-full"
+                className="p-1 hover:bg-gray-100 hover:dark:bg-gray-600 rounded-full"
               >
                 <X size={20} />
               </button>

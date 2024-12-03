@@ -27,7 +27,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   error,
 }) => {
   const baseClassName = clsx(
-    "mt-1 block w-full dark:bg-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+    "mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500",
     {
       'border-red-300': error,
       'border-gray-300 dark:border-gray-800': !error,
