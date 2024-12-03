@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { api } from '../api';
 import { DataTable } from '../components/DataTable';
@@ -8,6 +8,7 @@ import { RelationshipSelect } from '../components/RelationshipSelect';
 import { Controller, FormProvider } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
+import { toast } from 'react-toastify';
 
 const columns = [
   { key: 'id', label: 'ID' },
@@ -18,45 +19,49 @@ const columns = [
   { key: 'review', label: 'Проверяю' }
 ];
 
+const defaultValue = {
+  name: '',
+  tel: '',
+  date: '',
+  orders: [],
+}
+
 export const ManagersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedManager, setSelectedManager] = useState<Partial<IManager> | null>(null);
-  const [formData, setFormData] = useState<Partial<IManager>>({
-    name: '',
-    tel: '',
-    date: '',
-    order: [],
-    review_table: []
-  });
+  const closeModal = () => {
+    setIsModalOpen(false)
+    reset()
+  }
 
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('managers', () => api.managers.getAll());
-
   const createMutation = useMutation(
-    (newManager: Partial<IManager>) => api.managers.create(newManager),
+    (newManager: IManager) => api.managers.create(newManager),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('managers');
-        setIsModalOpen(false);
-        setFormData({ name: '', tel: '', date: '', order: [], review_table: [] });
+        closeModal()
       },
     }
   );
+  const deleteMutation = useMutation((id: number) => api.managers.delete(id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("managers");
+      toast.success("Менеджер удален успешно!");
+    },
+  });
   
-  const handleEdit = (manager: IManager) => {
-    setSelectedManager(manager);
-    setIsModalOpen(true);
+  const deleteManager = async (manager: IManager) => {
+    if (window.confirm("Удалить менеджера из таблицы?")) {
+      deleteMutation.mutate(manager.id!)
+    }
+  };
+  const submit = (newManager: IManager) => {
+    createMutation.mutate(newManager)
   };
   
-  const methods = useForm<Partial<IManager>>({
-    defaultValues: formData
-  })
-  
-  const { register, handleSubmit, control } = methods
-  
-  const submit = (data?: IManager) => {
-    console.log(data);
-  }
+  const methods = useForm<IManager>({ defaultValues: defaultValue })
+  const { register, handleSubmit, control, reset } = methods
 
   return (
     <>
@@ -66,64 +71,54 @@ export const ManagersPage = () => {
         columns={columns}
         onRefresh={() => refetch()}
         onAdd={() => setIsModalOpen(true)}
-        onEdit={handleEdit}
+        onDelete={deleteManager}
       />
-
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         title="Добавить нового менеджера"
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Имя
               </label>
               <input
                 type="text"
                 placeholder='Введите имя менеджера'
-                value={formData.name || ''}
                 {...register("name")}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
-  
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Номер телефона
               </label>
               <input
                 type="tel"
                 {...register("tel")}
                 placeholder='Введите номер телефона менеджера'
-                value={formData.tel || ''}
-                onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
-  
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 День рождения
               </label>
               <input
                 placeholder='Выберите день рождения'
                 type="date"
-                value={formData.date || ''}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                {...register("date")}
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
-            
             <OrdersSelect/>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Проверяю
               </label>
               <Controller
@@ -143,7 +138,7 @@ export const ManagersPage = () => {
             <div className="flex justify-end gap-2 mt-6">
               <button
                 type="button"
-                onClick={() => setIsModalOpen(false)}
+                onClick={closeModal}
                 className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
               >
                 Закрыть

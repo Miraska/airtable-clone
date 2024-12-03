@@ -179,8 +179,8 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </th>
                 ))}
                 {(onView || onEdit || onDelete) && (
-                  <th scope="col" className="relative px-6 py-3 sticky top-0 bg-gray-50 dark:bg-gray-700">
-                    <span className="sr-only">Действия</span>
+                  <th scope="col" className="relative px-6 py-3 top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-100 dark:bg-gray-700">
+                    Действия
                   </th>
                 )}
               </tr>

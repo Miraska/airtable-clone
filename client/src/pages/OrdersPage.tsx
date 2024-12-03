@@ -132,7 +132,7 @@ export const OrdersPage = () => {
   };
 
   const handleDelete = async (order: IOrder) => {
-    if (window.confirm("Вы хотите удалить эту заявку?")) {
+    if (window.confirm("Удалить заявку?")) {
       deleteMutation.mutate(order.id!);
     }
   };

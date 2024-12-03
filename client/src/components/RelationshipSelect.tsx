@@ -29,8 +29,8 @@ export const RelationshipSelect: React.FC<RelationshipSelectProps> = ({
   const options: Option[] = React.useMemo(() => {
     if (!data?.data) return [];
     return data.data.map((item: any) => ({
-      value: item.id.toString(),
-      label: item.name,
+      value: item.id,
+      label: item.name ?? item.id,
     }));
   }, [data]);
 

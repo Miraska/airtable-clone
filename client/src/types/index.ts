@@ -25,20 +25,20 @@ export interface IOrder {
 export interface IAgent {
   id?: number;
   name: string | null;
-  order: number[] | null | string;
+  orders: number[] | null | string;
 }
 
 export interface IClient {
   id?: number;
-  name: string | null;
+  name: string;
   inn: number | null | string;
-  order: number[] | null | string;
+  orders: number[] | null | string;
 }
 
 export interface IContragent {
   id?: number;
   name: string | null;
-  order: number[] | null | string;
+  orders: number[] | null | string;
 }
 
 export interface ICountry {
@@ -46,7 +46,7 @@ export interface ICountry {
   name: string | null;
   code: number | null | string;
   full_name: string | null;
-  order: number[] | null | string;
+  orders: number[] | null | string;
 }
 
 export interface IManager {
@@ -54,20 +54,20 @@ export interface IManager {
   name: string | null;
   tel: string | null;
   date: string | null;
-  order: string[] | null;
+  orders: string[] | null;
   review_table: number[] | null | string;
 }
 
 export interface ISubagentPayer {
   id?: number;
   name: string | null;
-  subagent: string[] | null | string;
-  order: number[] | null | string;
+  subagents: string[] | null | string;
+  orders: number[] | null | string;
 }
 
 export interface ISubagent {
   id?: number;
   name: string | null;
-  subagent_payer: string[] | null | string;
-  order: number[] | null | string;
+  payers: string[] | null | string;
+  orders: number[] | null | string;
 }
