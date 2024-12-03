@@ -52,6 +52,7 @@ export const OrdersPage = () => {
   });
 
   const handleSubmit = (data: Partial<IOrder>) => {
+    console.log(data)
     if (selectedOrder?.id) {
       updateMutation.mutate({ id: selectedOrder.id, data });
     } else {
@@ -65,7 +66,7 @@ export const OrdersPage = () => {
   };
 
   const handleDelete = async (order: IOrder) => {
-    if (window.confirm("Вы хотите удалить эту заявку?")) {
+    if (window.confirm("Удалить заявку?")) {
       deleteMutation.mutate(order.id!);
     }
   };

@@ -122,6 +122,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 type="text"
                 placeholder="Поиск..."
                 value={searchTerm}
+                id='search'
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg dark:text-white border border-gray-300 dark:border-gray-500 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -188,8 +189,8 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </th>
                 ))}
                 {(onView || onEdit || onDelete) && (
-                  <th scope="col" className="relative px-6 py-3 sticky top-0 bg-gray-50 dark:bg-gray-700">
-                    <span className="sr-only">Действия</span>
+                  <th scope="col" className="relative px-6 py-3 top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-100 dark:bg-gray-700">
+                    Действия
                   </th>
                 )}
               </tr>

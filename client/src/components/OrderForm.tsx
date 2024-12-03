@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
 import type { IOrder } from '../types';
-import { Form } from 'react-router-dom';
+
 
 interface OrderFormProps {
   onSubmit: (data: Partial<IOrder>) => void;
@@ -24,6 +24,12 @@ const currencyOptions = [
   { value: 'RUB', label: 'RUB' },
 ];
 
+const swiftStatus = [
+  { value: 'close', label: 'Заявка закрыта' },
+  { value: 'return', label: 'Возврат' },
+  { value: 'sucess', label: 'Деньги у получателя' },
+];
+
 export const OrderForm: React.FC<OrderFormProps> = ({
   onSubmit,
   initialData = {},
@@ -40,14 +46,14 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           label="№ Заявки"
           type="number"
           placeholder='Введите номер заявки'
-          {...register('order_number', { required: 'Введите номер заявки' })}
+          {...register('order_number')}
           error={errors.order_number?.message}
         />
 
         <Controller
           name="status"
           control={control}
-          rules={{ required: 'Введите статус' }}
+          rules={{ required: 'Выберите статус' }}
           render={({ field }) => (
             <FormField
               label="Статус"
@@ -256,7 +262,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <Controller
           name="currency"
           control={control}
-          rules={{ required: 'currency' }}
+          rules={{ required: 'Выберите валюту' }}
           render={({ field }) => (
             <FormField
               label="Валюта"
@@ -352,10 +358,311 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           error={ errors.date?.message }
         />
         
+        <div className='flex flex-col gap-2'>
+          <div className='flex items-center justify-between'>
+            <label className='mr-6'>
+              С аккредитивом
+            </label>
+            <FormField
+              type='checkbox'
+              {...register('letter_of_credit')}
+              error={ errors.date?.message }
+            />
+          </div>
+          <div className='flex items-center justify-between'>
+            <label className='mr-6'>
+              Получили первич. док-ты
+            </label>
+            <FormField
+              type='checkbox'
+              {...register('take_first_doc')}
+              error={ errors.date?.message }
+            />
+          </div>
+        </div>
+        
         <FormField
-          label="SWIFT Код"
-          {...register('swift_code')}
+          type='date'
+          label='Выставлен инвойс на поставщика (импорт) / на отправителя (экспорт)'
+          {...register('invoice')}
+          error={ errors.date?.message }
         />
+        
+        
+        <FormField
+          type='date'
+          label='Подписан агент. / субагент. договор'
+          {...register('date_contract_signed')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Поставлен на учет в банке'
+          {...register('date_reg_bank')}
+          error={ errors.date?.message }
+        />
+        
+        
+        <FormField
+          type='date'
+          label='Открыт аккредитив'
+          {...register('date_open_letter_of_credit')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Оплачена валюта поставщику (импорт) / субагенту (экспорт)'
+          {...register('date_valet_agency')}
+          error={ errors.date?.message }
+        />
+        
+        
+        <FormField
+          type='date'
+          label='Получена валюта поставщиком (импорт) / субагентом (экспорт)'
+          {...register('date_taking_agency')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Оплачен рубль клиенту (экспорт)'
+          {...register('date_paid_rub')}
+          error={ errors.date?.message }
+        />
+        
+        
+        <FormField
+          type='date'
+          label='Аккредитив раскрыт'
+          {...register('date_unhide_letter_of_credit')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Подписан акт-отчет'
+          {...register('date_sign_act')}
+          error={ errors.date?.message }
+        />
+        
+        
+        <FormField
+          type='date'
+          label='Сделка закрыта'
+          {...register('date_close_deal')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          label="Назначение платежа"
+          type='text'
+          placeholder='Введите назначение платежа'
+          {...register('purpose_of_payment')}
+        />
+        
+        <div className="col-span-2">
+          <label className="block text-sm font-medium  mb-1">
+            Субагент
+          </label>
+          <Controller
+            name="subagent"
+            control={control}
+            render={({ field }) => (
+              <RelationshipSelect
+                type="subagents"
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Выберите субагентов"
+              />
+            )}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <label className="block text-sm font-medium  mb-1">
+            Плательщик Субагента
+          </label>
+          <Controller
+            name="subagent_payer"
+            control={control}
+            render={({ field }) => (
+              <RelationshipSelect
+                type="subagentPayers"
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Выберите плательщика субагентов"
+              />
+            )}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="Порядковый номер заявления для плательщика субагента (при импорте) / получателя (при экспорте)"
+            type='number'
+            placeholder='Введите поряд-ый номер заявления'
+            {...register('serial_num_for_payer')}
+          />
+        </div>
+        
+        <FormField
+          type='date'
+          label='Подготовлены документы между агентом и субагентом'
+          {...register('date_docs_agent_and_subagent')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Получен SWIFT'
+          {...register('date_taking_swift')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Запросили SWIFT 103'
+          {...register('date_get_swift103')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Получили SWIFT 103'
+          {...register('date_take_swift103')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Запросили SWIFT 199'
+          {...register('date_get_swift199')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Получили SWIFT 199'
+          {...register('date_take_swift199')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Возврат запрошен'
+          {...register('date_refund')}
+          error={ errors.date?.message }
+        />
+        
+        <FormField
+          type='date'
+          label='Деньги по возврату получены'
+          {...register('date_take_refund')}
+          error={ errors.date?.message }
+        />
+        
+        <Controller
+          name="status_swift"
+          control={control}
+          rules={{ required: 'status_swift' }}
+          render={({ field }) => (
+            <FormField
+              label="Статус SWIFT"
+              selectText='Выберите статус SWIFT'
+              options={swiftStatus}
+              {...field}
+              error={errors.status?.message}
+            />
+          )}
+        />
+        
+        <div className="col-span-2">
+          <FormField
+            label="Заявка"
+            type='text'
+            placeholder='Введите ссылку на файл заявки'
+            {...register('order_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="Инвойс"
+            type='text'
+            placeholder='Введите ссылку на файл инвойса'
+            {...register('order_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="Поручение"
+            type='text'
+            placeholder='Введите ссылку на файл порученик'
+            {...register('assignment_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="SWIFT"
+            type='text'
+            placeholder='Введите ссылку на файл SWIFT'
+            {...register('swift_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="SWIFT 103"
+            type='text'
+            placeholder='Введите ссылку на файл SWIFT 103'
+            {...register('swift103_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="SWIFT 199"
+            type='text'
+            placeholder='Введите ссылку на файл SWIFT 199'
+            {...register('swift199_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="Акт-отчет"
+            type='text'
+            placeholder='Введите ссылку на файл Акт-отчета'
+            {...register('act_link')}
+          />
+        </div>
+        
+        <div className="col-span-2">
+          <FormField
+            label="Акт-отчет"
+            type='text'
+            placeholder='Введите ссылку на файл Акт-отчета'
+            {...register('act_link')}
+          />
+        </div>
+        
+        <div className='flex flex-col gap-2'>
+          <div className='flex items-center justify-between'>
+            <label className='mr-6'>
+              Сели деньги
+            </label>
+            <FormField
+              type='checkbox'
+              {...register('money_gone')}
+              error={ errors.date?.message }
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end gap-2">

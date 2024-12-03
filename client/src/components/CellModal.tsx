@@ -90,14 +90,15 @@ export const CellModal: React.FC<CellModalProps> = ({
                     type="text"
                     value={value || ""}
                     onChange={(e) => setValue(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 dark:border-transparent focus:ring-blue-500 focus:border-blue-500"
                   />
                 )}
               </div>
             )}
             <div className="flex justify-end gap-2">
               <Button
-                variant="secondary"
+                variant="primary"
+                className='px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white'
                 onClick={() => {
                   setIsEditing(false);
                 }}
@@ -109,7 +110,7 @@ export const CellModal: React.FC<CellModalProps> = ({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="bg-gray-100 p-4 rounded-lg">
+            <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
               {isRelationShip ? (
                 <div>
                   <RelatedDataModal

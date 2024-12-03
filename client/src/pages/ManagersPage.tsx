@@ -1,25 +1,30 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { api } from '../api';
 import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { IManager } from '../types';
 import { RelationshipSelect } from '../components/RelationshipSelect';
-import { Controller } from 'react-hook-form';
+import { Controller, FormProvider } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
+import OrdersSelect from '../components/OrdersSelect';
+import { toast } from 'react-toastify';
 
 import columns from '../lib/tableColumnsDara/columnsManager';
 
+const defaultValue = {
+  name: '',
+  tel: '',
+  date: '',
+  orders: [],
+}
+
 export const ManagersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedManager, setSelectedManager] = useState<Partial<IManager> | null>(null);
-  const [formData, setFormData] = useState<Partial<IManager>>({
-    name: '',
-    tel: '',
-    date: '',
-    order: [],
-    review_table: []
-  });
+  const closeModal = () => {
+    setIsModalOpen(false)
+    reset()
+  }
 
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('managers', () => api.managers.getAll(),
@@ -32,26 +37,32 @@ export const ManagersPage = () => {
   });
 
   const createMutation = useMutation(
-    (newManager: Partial<IManager>) => api.managers.create(newManager),
+    (newManager: IManager) => api.managers.create(newManager),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('managers');
-        setIsModalOpen(false);
-        setFormData({ name: '', tel: '', date: '', order: [], review_table: [] });
+        closeModal()
       },
     }
   );
+  const deleteMutation = useMutation((id: number) => api.managers.delete(id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("managers");
+      toast.success("Менеджер удален успешно!");
+    },
+  });
   
-  const handleEdit = (manager: IManager) => {
-    setSelectedManager(manager);
-    setIsModalOpen(true);
+  const deleteManager = async (manager: IManager) => {
+    if (window.confirm("Удалить менеджера из таблицы?")) {
+      deleteMutation.mutate(manager.id!)
+    }
+  };
+  const submit = (newManager: IManager) => {
+    createMutation.mutate(newManager)
   };
   
-  const { register, handleSubmit, control } = useForm<Partial<IManager>>({
-    defaultValues: formData
-  })
-  
-  const submit = () => createMutation.mutate(formData);
+  const methods = useForm<IManager>({ defaultValues: defaultValue })
+  const { register, handleSubmit, control, reset } = methods
 
   return (
     <>
@@ -61,128 +72,88 @@ export const ManagersPage = () => {
         columns={columns}
         onRefresh={() => refetch()}
         onAdd={() => setIsModalOpen(true)}
-        onEdit={handleEdit}
+        onDelete={deleteManager}
       />
-
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         title="Добавить нового менеджера"
       >
-        <form onSubmit={handleSubmit(submit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Имя
-            </label>
-            <input
-              type="text"
-              placeholder='Введите имя менеджера'
-              value={formData.name || ''}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Номер телефона
-            </label>
-            <input
-              type="tel"
-              placeholder='Введите номер телефона менеджера'
-              value={formData.tel || ''}
-              onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              День рождения
-            </label>
-            <input
-              placeholder='Выберите день рождения'
-              type="date"
-              value={formData.date || ''}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Заявки
-            </label>
-            <Controller
-              name='order'
-              control={control}
-              render={({field}) => (
-                <RelationshipSelect
-                  type='orders'
-                  value={field.value || []}
-                  onChange={field.onChange}
-                  placeholder='Выберите заявки'
-                />
-              )}
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Проверяю
-            </label>
-            <Controller
-              name='order'
-              control={control}
-              render={({field}) => (
-                <RelationshipSelect
-                  type='orders'
-                  value={field.value || []}
-                  onChange={field.onChange}
-                  placeholder='Выберите заявки'
-                />
-              )}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Заявки
-            </label>
-            {/* <Controller
-              name='order'
-              control={control}
-              render={({field}) => (
-                <RelationshipSelect
-                  type='orders'
-                  value={field.value || []}
-                  onChange={field.onChange}
-                  placeholder='Выберите заявки'
-                />
-              )}
-            /> */}
-          </div>
-
-          <div className="flex justify-end gap-2 mt-6">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
-            >
-              Закрыть
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-              disabled={createMutation.isLoading}
-            >
-              {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
-            </button>
-          </div>
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(submit)} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Имя
+              </label>
+              <input
+                type="text"
+                placeholder='Введите имя менеджера'
+                {...register("name")}
+                className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Номер телефона
+              </label>
+              <input
+                type="tel"
+                {...register("tel")}
+                placeholder='Введите номер телефона менеджера'
+                className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                День рождения
+              </label>
+              <input
+                placeholder='Выберите день рождения'
+                type="date"
+                {...register("date")}
+                className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <OrdersSelect/>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Проверяю
+              </label>
+              <Controller
+                name='review_table'
+                control={control}
+                render={({field}) => (
+                  <RelationshipSelect
+                    type='reviewers'
+                    value={field.value || []}
+                    onChange={field.onChange}
+                    placeholder='Выберите заявки'
+                  />
+                )}
+              />
+            </div>
+  
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
+              >
+                Закрыть
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
+                disabled={createMutation.isLoading}
+              >
+                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </Modal>
     </>
   );

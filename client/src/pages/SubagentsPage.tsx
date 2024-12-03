@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { api } from '../api';
 import { DataTable } from '../components/DataTable';
 import { Modal } from '../components/Modal';
 import type { ISubagent } from '../types';
+import { FormProvider, useForm } from 'react-hook-form';
+import SubagentPayersSelect from '../components/SubagentPayersSelect';
+import OrdersSelect from '../components/OrdersSelect';
+import { toast } from 'react-toastify';
 
 import columns from '../lib/tableColumnsDara/columnsSubagent';
 
+const defaultValue = {
+  name: '',
+  payers: [],
+  orders: []
+}
+
 export const SubagentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<Partial<ISubagent>>({
-    name: '',
-  });
+  const closeModal = () => {
+    setIsModalOpen(false)
+    reset()
+  }
 
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('subagents', () => api.subagents.getAll(),
@@ -24,20 +35,32 @@ export const SubagentsPage = () => {
   });
 
   const createMutation = useMutation(
-    (newSubagent: Partial<ISubagent>) => api.subagents.create(newSubagent),
+    (newSubagent: ISubagent) => api.subagents.create(newSubagent),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('subagents');
-        setIsModalOpen(false);
-        setFormData({ name: '' });
+        closeModal()
       },
     }
   );
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createMutation.mutate(formData);
+  const deleteMutation = useMutation((id: number) => api.subagents.delete(id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("subagents");
+      toast.success("Субагент удален успешно!");
+    },
+  });
+  
+  const deleteSubagent = async (subagent: ISubagent) => {
+    if (window.confirm("Удалить субагента из таблицы?")) {
+      deleteMutation.mutate(subagent.id!)
+    }
   };
+  const submit = (newSubagent: ISubagent) => {
+    createMutation.mutate(newSubagent);
+  };
+  
+  const methods = useForm<ISubagent>({ defaultValues: defaultValue })
+  const { register, handleSubmit, reset } = methods
 
   return (
     <>
@@ -47,73 +70,47 @@ export const SubagentsPage = () => {
         columns={columns}
         onRefresh={() => refetch()}
         onAdd={() => setIsModalOpen(true)}
+        onDelete={deleteSubagent}
       />
-
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         title="Добавить субагента"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Наименование
-            </label>
-            <input
-              type="text"
-              value={formData.name || ''}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-              required
-              placeholder='Введите наименование субагента'
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Плательщик субагента
-            </label>
-            
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Заявки
-            </label>
-            
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Плательщик субагента
-            </label>
-            
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Заявки
-            </label>
-            
-          </div>
-
-          <div className="flex justify-end gap-2 mt-6">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
-            >
-              Закрыть
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-              disabled={createMutation.isLoading}
-            >
-              {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
-            </button>
-          </div>
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(submit)} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Наименование
+              </label>
+              <input
+                type="text"
+                {...register("name")}
+                className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+                required
+                placeholder='Введите наименование субагента'
+              />
+            </div>
+            <SubagentPayersSelect/>
+            <OrdersSelect/>
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
+              >
+                Закрыть
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
+                disabled={createMutation.isLoading}
+              >
+                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </Modal>
     </>
   );
