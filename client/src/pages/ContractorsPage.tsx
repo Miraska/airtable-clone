@@ -7,19 +7,20 @@ import type { IContragent } from '../types';
 import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-
 import columns from '../lib/tableColumnsDara/columnsContractor';
 
-const defaultValue = {
-  name: '',
-  orders: []
-}
-
 export const ContractorsPage = () => {
+  const defaultValue = {
+    name: '',
+    orders: []
+  };
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalHeader, setModalHeader] = useState("")
+  
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
+    reset(defaultValue)
   }
 
   const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ export const ContractorsPage = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('contractors');
+        toast.success("Контрагент добавлен успешно!");
         closeModal()
       },
     }
@@ -47,18 +49,34 @@ export const ContractorsPage = () => {
       toast.success("Контрагент удален успешно!");
     }
   });
-
-  const methods = useForm<IContragent>({ defaultValues: defaultValue })
-  const { register, handleSubmit, reset } = methods
+  const updateMutation = useMutation((data: IContragent) => api.contractors.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("contractors");
+      closeModal()
+      toast.success("Контрагент успешно обновлен!");
+    }
+  })
   
   const deleteContragent = async (contragent: IContragent) => {
     if (window.confirm("Удалить контрагента из таблицы")) {
       deleteMutation.mutate(contragent.id!)
     }
-  }
-  const submit = (newSubagentPayer: IContragent) => {
-    createMutation.mutate(newSubagentPayer)
-  }
+  };
+  const submit = (newContragent: IContragent) => {
+    if (typeof newContragent.id === "number") {
+      updateMutation.mutate(newContragent)
+    } else {
+      createMutation.mutate(newContragent)
+    }
+  };
+  const edit = (contragent: IContragent) => {
+    reset(contragent)
+    setIsModalOpen(true)
+    setModalHeader("Изменить контрагента")
+  };
+  
+  const methods = useForm<IContragent>({ defaultValues: defaultValue })
+  const { register, handleSubmit, reset } = methods
 
   return (
     <>
@@ -67,14 +85,18 @@ export const ContractorsPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить нового контрагента")
+        }}
         onDelete={deleteContragent}
+        onEdit={edit}
       />
 
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Добавить нового контрагента"
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -102,7 +124,7 @@ export const ContractorsPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
                 {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>

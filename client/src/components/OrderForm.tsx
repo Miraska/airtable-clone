@@ -1,13 +1,14 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
 import type { IOrder } from '../types';
-
+import { FormSelect } from './FormSelect';
+import CountriesSelect from './CountriesSelect';
 
 interface OrderFormProps {
-  onSubmit: (data: Partial<IOrder>) => void;
-  initialData?: Partial<IOrder>;
+  onSubmit: (data: IOrder) => void;
+  onClose: () => void;
   isLoading?: boolean;
 }
 
@@ -32,35 +33,37 @@ const swiftStatus = [
 
 export const OrderForm: React.FC<OrderFormProps> = ({
   onSubmit,
-  initialData = {},
+  onClose,
   isLoading,
 }) => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<Partial<IOrder>>({
-    defaultValues: initialData,
-  });
+  const { register, handleSubmit, control } = useFormContext<IOrder>()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <FormField
-          label="№ Заявки"
-          type="number"
-          placeholder='Введите номер заявки'
-          {...register('order_number')}
-          error={errors.order_number?.message}
+        <Controller
+          name='order_number'
+          control={control}
+          render={({field}) => (
+            <FormField
+              label="№ Заявки"
+              type="number"
+              placeholder='Введите номер заявки'
+              {...field}
+            />
+          )}
         />
 
         <Controller
           name="status"
           control={control}
-          rules={{ required: 'Выберите статус' }}
           render={({ field }) => (
-            <FormField
-              label="Статус"
-              selectText='статус'
+            <FormSelect
+              labelText="Статус"
+              text='статус'
+              value={field.value as string}
+              onChange={field.onChange}
               options={statusOptions}
-              {...field}
-              error={errors.status?.message}
             />
           )}
         />
@@ -88,7 +91,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Проверяющий
           </label>
           <Controller
-            name="reviewers"
+            name="reviewer"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -105,14 +108,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Дата Размещения'
           {...register('date')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Взята в работу'
           {...register('date')}
-          error={ errors.date?.message }
         />
         
         <div className="col-span-2">
@@ -175,7 +176,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             label="ИНН (from Клиент)"
             placeholder='Введите инн'
             {...register('client_inn')}
-            error={errors.name_agency?.message}
           />
         </div>
         
@@ -185,7 +185,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             label='Наименование экспортёра или импортёра'
             placeholder='Введите экспортёра или импортёра'
             {...register('name_agency')}
-            error={errors.name_agency?.message}
           />
         </div>
         
@@ -197,36 +196,18 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           />
         </div>
         
-        <div className="col-span-2">
-          <label className="block text-sm font-medium  mb-1">
-            Страна
-          </label>
-          <Controller
-            name="country"
-            control={control}
-            render={({ field }) => (
-              <RelationshipSelect
-                type="countries"
-                value={[field.value || '']}
-                onChange={(values) => field.onChange(values[0])}
-                isMulti={false}
-                placeholder="Выберите страну"
-              />
-            )}
-          />
-        </div>
+        <CountriesSelect/>
         
         <Controller
           name="calc_condition"
           control={control}
-          rules={{ required: 'Ввыберите условие' }}
           render={({ field }) => (
-            <FormField
-              label="Условия расчета"
-              selectText='условие расчета'
+            <FormSelect
+              labelText="Условия расчета"
+              text='условие расчета'
+              value={field.value as string}
+              onChange={field.onChange}
               options={statusOptions}
-              {...field}
-              error={errors.status?.message}
             />
           )}
         />
@@ -234,21 +215,20 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <Controller
           name="type_transaction"
           control={control}
-          rules={{ required: 'Выберите вид сделки' }}
           render={({ field }) => (
-            <FormField
-              label="Вид сделки"
-              selectText='вид сделки'
+            <FormSelect
+              labelText="Вид сделки"
+              text='вид сделки'
               options={statusOptions}
-              {...field}
-              error={errors.status?.message}
+              value={field.value as string}
+              onChange={field.onChange}
             />
           )}
         />
         
         <FormField
           label="Номер поручения"
-          type='number'
+          type='text'
           {...register('number_receiving')}
           placeholder='Введите номер поручения'
         />
@@ -262,14 +242,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <Controller
           name="currency"
           control={control}
-          rules={{ required: 'Выберите валюту' }}
           render={({ field }) => (
-            <FormField
-              label="Валюта"
-              selectText='валюту'
+            <FormSelect
+              labelText="Валюта"
+              text='валюту'
               options={currencyOptions}
-              {...field}
-              error={errors.status?.message}
+              value={field.value as string}
+              onChange={field.onChange}
             />
           )}
         />
@@ -291,63 +270,63 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <FormField
           label='VIP комиссия'
           {...register('vip_commission')}
-          type='number'
+          type='text'
           placeholder='Введите VIP комиссию'
         />
         
         <FormField
           label='Скрытая комиссия'
-          {...register('hide_commission')}
-          type='number'
+          {...register('hide_commision')}
+          type='text'
           placeholder='Введите скрытую комиссию'
         />
         
         <FormField
           label='Комиссия +% банка'
           {...register('commision_plus_percent')}
-          type='number'
+          type='text'
           placeholder='Введите комиссию +% банка'
         />
         
         <FormField
           label='Комиссия + аккред'
           {...register('commision_plus_accredit')}
-          type='number'
+          type='text'
           placeholder='Введите комиссию + аккред'
         />
         
         <FormField
           label='Комиссия + эксроу'
           {...register('commision_plus_escrow')}
-          type='number'
+          type='text'
           placeholder='Введите комиссию + эксроу'
         />
         
         <FormField
           label='Комиссия + эксроу'
           {...register('commision_plus_escrow')}
-          type='number'
+          type='text'
           placeholder='Введите комиссию + эксроу'
         />
         
         <FormField
           label='Курс'
           {...register('money_rate')}
-          type='number'
+          type='text'
           placeholder='Введите курс рубля (₽)'
         />
         
         <FormField
           label='Скрытый курс'
           {...register('hide_money_rate')}
-          type='number'
+          type='text'
           placeholder='Введите скрытый курс рубля (₽)'
         />
         
         <FormField
           label='Скрытый курс'
           {...register('hide_money_rate')}
-          type='number'
+          type='text'
           placeholder='Введите скрытый курс рубля (₽)'
         />
         
@@ -355,7 +334,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Дата фиксации курса'
           {...register('date_fixation_rate')}
-          error={ errors.date?.message }
         />
         
         <div className='flex flex-col gap-2'>
@@ -366,7 +344,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormField
               type='checkbox'
               {...register('letter_of_credit')}
-              error={ errors.date?.message }
             />
           </div>
           <div className='flex items-center justify-between'>
@@ -376,7 +353,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormField
               type='checkbox'
               {...register('take_first_doc')}
-              error={ errors.date?.message }
             />
           </div>
         </div>
@@ -385,7 +361,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Выставлен инвойс на поставщика (импорт) / на отправителя (экспорт)'
           {...register('invoice')}
-          error={ errors.date?.message }
         />
         
         
@@ -393,14 +368,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Подписан агент. / субагент. договор'
           {...register('date_contract_signed')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Поставлен на учет в банке'
           {...register('date_reg_bank')}
-          error={ errors.date?.message }
         />
         
         
@@ -408,14 +381,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Открыт аккредитив'
           {...register('date_open_letter_of_credit')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Оплачена валюта поставщику (импорт) / субагенту (экспорт)'
           {...register('date_valet_agency')}
-          error={ errors.date?.message }
         />
         
         
@@ -423,14 +394,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Получена валюта поставщиком (импорт) / субагентом (экспорт)'
           {...register('date_taking_agency')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Оплачен рубль клиенту (экспорт)'
           {...register('date_paid_rub')}
-          error={ errors.date?.message }
         />
         
         
@@ -438,14 +407,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Аккредитив раскрыт'
           {...register('date_unhide_letter_of_credit')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Подписан акт-отчет'
           {...register('date_sign_act')}
-          error={ errors.date?.message }
         />
         
         
@@ -453,7 +420,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Сделка закрыта'
           {...register('date_close_deal')}
-          error={ errors.date?.message }
         />
         
         <FormField
@@ -486,7 +452,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Плательщик Субагента
           </label>
           <Controller
-            name="subagent_payer"
+            name="subagents_payer"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -502,7 +468,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <div className="col-span-2">
           <FormField
             label="Порядковый номер заявления для плательщика субагента (при импорте) / получателя (при экспорте)"
-            type='number'
+            type='text'
             placeholder='Введите поряд-ый номер заявления'
             {...register('serial_num_for_payer')}
           />
@@ -512,69 +478,60 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           type='date'
           label='Подготовлены документы между агентом и субагентом'
           {...register('date_docs_agent_and_subagent')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Получен SWIFT'
           {...register('date_taking_swift')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Запросили SWIFT 103'
           {...register('date_get_swift103')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Получили SWIFT 103'
           {...register('date_take_swift103')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Запросили SWIFT 199'
           {...register('date_get_swift199')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Получили SWIFT 199'
           {...register('date_take_swift199')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Возврат запрошен'
           {...register('date_refund')}
-          error={ errors.date?.message }
         />
         
         <FormField
           type='date'
           label='Деньги по возврату получены'
           {...register('date_take_refund')}
-          error={ errors.date?.message }
         />
         
         <Controller
           name="status_swift"
           control={control}
-          rules={{ required: 'status_swift' }}
           render={({ field }) => (
-            <FormField
-              label="Статус SWIFT"
-              selectText='Выберите статус SWIFT'
+            <FormSelect
+              labelText="Статус SWIFT"
+              text='Выберите статус SWIFT'
               options={swiftStatus}
-              {...field}
-              error={errors.status?.message}
+              value={field.value as string}
+              onChange={field.onChange}
             />
           )}
         />
@@ -659,7 +616,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormField
               type='checkbox'
               {...register('money_gone')}
-              error={ errors.date?.message }
             />
           </div>
         </div>
@@ -668,7 +624,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       <div className="flex justify-end gap-2">
         <button
           type="button"
-          onClick={() => window.history.back()}
+          onClick={onClose}
           className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
         >
           Закрыть

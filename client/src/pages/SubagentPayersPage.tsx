@@ -8,20 +8,21 @@ import { useForm, FormProvider } from 'react-hook-form';
 import SubagentsSelect from '../components/SubagentSelect';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-
 import columns from '../lib/tableColumnsDara/columnsSubagentPayer';
 
-const defaultValue = {
-  name: '',
-  subagents: [],
-  orders: []
-}
-
 export const SubagentPayersPage = () => {
+  const defaultValue = {
+    name: '',
+    subagents: [],
+    orders: []
+  }
+  
+  const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
+    reset(defaultValue)
   }
 
   const queryClient = useQueryClient();
@@ -39,6 +40,7 @@ export const SubagentPayersPage = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('subagent-payers');
+        toast.success("Плательщик Субагента добавлен успешно!");
         closeModal()
       },
     }
@@ -49,6 +51,13 @@ export const SubagentPayersPage = () => {
       toast.success("Плательщик субагента удален успешно!");
     },
   });
+  const updateMutation = useMutation((data: ISubagentPayer) => api.subagentPayers.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("subagent-payers");
+      closeModal()
+      toast.success("Плательщик Субагента обновлен успешно!");
+    }
+  });
   
   const deleteSubagentPayer = async (subagentPayer: ISubagentPayer) => {
     if (window.confirm("Удалить плательщика субагента из таблицы?")) {
@@ -56,7 +65,16 @@ export const SubagentPayersPage = () => {
     }
   };
   const submit = (newSubagentPayer: ISubagentPayer) => {
-    createMutation.mutate(newSubagentPayer)
+    if (typeof newSubagentPayer.id === "number") {
+      updateMutation.mutate(newSubagentPayer)
+    } else {
+      createMutation.mutate(newSubagentPayer)
+    }
+  };
+  const edit = (subagentPayer: ISubagentPayer) => {
+    reset(subagentPayer)
+    setIsModalOpen(true)
+    setModalHeader("Изменить плательщика субагента")
   };
   
   const methods = useForm<ISubagentPayer>({ defaultValues: defaultValue })
@@ -69,14 +87,18 @@ export const SubagentPayersPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить нового плательщика субагента")
+        }}
         onDelete={deleteSubagentPayer}
+        onEdit={edit}
       />
 
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Добавить плательщика субагента"
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -105,9 +127,9 @@ export const SubagentPayersPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
-                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+                {createMutation.isLoading || updateMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
           </form>

@@ -9,22 +9,23 @@ import { Controller, FormProvider } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-
 import columns from '../lib/tableColumnsDara/columnsManager';
 
-const defaultValue = {
-  name: '',
-  tel: '',
-  date: '',
-  orders: [],
-}
-
 export const ManagersPage = () => {
+  const defaultValue = {
+    name: '',
+    tel: '',
+    date: '',
+    orders: [],
+  }
+  
+  const [modalHeader, setModalHeader] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
-  }
+    reset(defaultValue)
+  };
 
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('managers', () => api.managers.getAll(),
@@ -41,6 +42,7 @@ export const ManagersPage = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('managers');
+        toast.success("Менеджер добавлен успешно!");
         closeModal()
       },
     }
@@ -51,6 +53,13 @@ export const ManagersPage = () => {
       toast.success("Менеджер удален успешно!");
     },
   });
+  const updateMutation = useMutation((data: IManager) => api.managers.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("managers");
+      closeModal()
+      toast.success("Менеджер обновлен успешно!");
+    }
+  });
   
   const deleteManager = async (manager: IManager) => {
     if (window.confirm("Удалить менеджера из таблицы?")) {
@@ -58,7 +67,16 @@ export const ManagersPage = () => {
     }
   };
   const submit = (newManager: IManager) => {
-    createMutation.mutate(newManager)
+    if (typeof newManager.id === "number") {
+      updateMutation.mutate(newManager)
+    } else {
+      createMutation.mutate(newManager)
+    }
+  };
+  const edit = (manager: IManager) => {
+    reset(manager)
+    setIsModalOpen(true)
+    setModalHeader("Изменить менеджера")
   };
   
   const methods = useForm<IManager>({ defaultValues: defaultValue })
@@ -71,13 +89,17 @@ export const ManagersPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить нового клиента")
+        }}
         onDelete={deleteManager}
+        onEdit={edit}
       />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Добавить нового менеджера"
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -147,9 +169,9 @@ export const ManagersPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
-                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+                {createMutation.isLoading || updateMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
           </form>

@@ -48,7 +48,7 @@ export const Modal: React.FC<ModalProps> = ({
                 </button>
               </div>
             </div>
-            <div className="max-h-[80vh] overflow-scroll p-4">{children}</div>
+            <div className="max-h-[80vh] resize-y overflow-scroll p-4">{children}</div>
           </Dialog.Panel>
         </div>
       </Dialog>

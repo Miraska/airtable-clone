@@ -8,20 +8,21 @@ import { FormProvider, useForm } from 'react-hook-form';
 import SubagentPayersSelect from '../components/SubagentPayersSelect';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-
 import columns from '../lib/tableColumnsDara/columnsSubagent';
 
-const defaultValue = {
-  name: '',
-  payers: [],
-  orders: []
-}
-
 export const SubagentsPage = () => {
+  const defaultValue = {
+    name: '',
+    payers: [],
+    orders: []
+  }
+  
+  const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
+    reset(defaultValue)
   }
 
   const queryClient = useQueryClient();
@@ -39,6 +40,7 @@ export const SubagentsPage = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('subagents');
+        toast.success("Субагент добавлен успешно!");
         closeModal()
       },
     }
@@ -49,6 +51,13 @@ export const SubagentsPage = () => {
       toast.success("Субагент удален успешно!");
     },
   });
+  const updateMutation = useMutation((data: ISubagent) => api.subagents.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("subagents");
+      closeModal()
+      toast.success("Субагент обновлен успешно!");
+    }
+  });
   
   const deleteSubagent = async (subagent: ISubagent) => {
     if (window.confirm("Удалить субагента из таблицы?")) {
@@ -56,7 +65,16 @@ export const SubagentsPage = () => {
     }
   };
   const submit = (newSubagent: ISubagent) => {
-    createMutation.mutate(newSubagent);
+    if (typeof newSubagent.id === "number") {
+      updateMutation.mutate(newSubagent)
+    } else {
+      createMutation.mutate(newSubagent);
+    }
+  };
+  const edit = (subagent: ISubagent) => {
+    reset(subagent)
+    setIsModalOpen(true)
+    setModalHeader("Изменить субагента")
   };
   
   const methods = useForm<ISubagent>({ defaultValues: defaultValue })
@@ -69,13 +87,17 @@ export const SubagentsPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить нового субагента")
+        }}
         onDelete={deleteSubagent}
+        onEdit={edit}
       />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Добавить субагента"
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -104,9 +126,9 @@ export const SubagentsPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
-                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+                {createMutation.isLoading || updateMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
           </form>
