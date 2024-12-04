@@ -11,9 +11,8 @@ import { FormProvider, useForm } from "react-hook-form";
 
 export const OrdersPage = () => {
   const defaultValue = { // ЗАЯВКИ
-    autonumber: null, // Автономер (по порядку)
     status: "", // Статус (закрыта, открыта, в работе и т. д.)
-    order_number: null, // Номер (№) заявки
+    order_number: 0, // Номер (№) заявки
     manager: [], // Менеджеры (может хранится много менеджеров которые в другой таблице)
     reviewer: [], // Проверяющие (может хранится много менеджеров которые в другой таблице)
     date: "", // Дата размещения (дата)
@@ -137,8 +136,8 @@ export const OrdersPage = () => {
   };
   const submit = (data: IOrder) => {
     console.log(data)
-    // if (selectedOrder?.id) {
-    //   updateMutation.mutate({ id: selectedOrder.id, data });
+    // if (typeof data.id === "number") {
+    //   updateMutation.mutate(data);
     // } else {
     //   createMutation.mutate(data);
     // }
@@ -161,7 +160,7 @@ export const OrdersPage = () => {
   // };
   
   const methods = useForm<IOrder>({ defaultValues: defaultValue})
-  const { handleSubmit, reset } = methods
+  const { reset } = methods
 
   return (
     <div className="h-full flex flex-col">
