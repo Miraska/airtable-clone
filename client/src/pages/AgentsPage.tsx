@@ -7,19 +7,20 @@ import type { IAgent } from '../types';
 import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-
 import columns from '../lib/tableColumnsDara/columnsAgent';
 
-const defaultValue = {
-  name: '',
-  orders: []
-}
-
 export const AgentsPage = () => {
+  const defaultValue = {
+    name: '',
+    orders: []
+  }
+  
+  const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
+    reset(defaultValue)
   }
 
   const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ export const AgentsPage = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('agents');
+        toast.success("Агент добавлен успешно!");
         closeModal()
       },
     }
@@ -47,17 +49,33 @@ export const AgentsPage = () => {
       toast.success("Агент удален успешно!");
     }
   })
+  const updateMutation = useMutation((data: IAgent) => api.agents.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("agents");
+      closeModal()
+      toast.success("Агент обновлен успешно!");
+    }
+  })
   
   const deleteAgents = async (agent: IAgent) => {
     if (window.confirm("Удалить агента из таблицы?")) {
       deleteMutation.mutate(agent.id!)
     }
-  }
-  const submit = (newSubagentPayer: IAgent) => {
-    createMutation.mutate(newSubagentPayer)
+  };
+  const submit = (newAgent: IAgent) => {
+    if (typeof newAgent.id === "number") {
+      updateMutation.mutate(newAgent)
+    } else {
+      createMutation.mutate(newAgent)
+    }
+  };
+  const edit = (agent: IAgent) => {
+    reset(agent)
+    setIsModalOpen(true)
+    setModalHeader("Изменить агента")
   }
 
-  const methods = useForm<Partial<IAgent>>({ defaultValues: defaultValue })
+  const methods = useForm<IAgent>({ defaultValues: defaultValue })
   const { register, handleSubmit, reset } = methods
   
   return (
@@ -67,14 +85,17 @@ export const AgentsPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить нового агента")
+        }}
         onDelete={deleteAgents}
+        onEdit={edit}
       />
-
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Добавить нового агента"
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -102,9 +123,9 @@ export const AgentsPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
-                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+                {createMutation.isLoading || updateMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
           </form>

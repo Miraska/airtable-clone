@@ -6,12 +6,12 @@ interface FormFieldProps {
   placeholder?: string;
   type?: string;
   selectText?: string;
-  value: string | number;
-  onChange: (value: string) => void;
+  value?: string | number;
+  onChange?: (value: string) => void;
   required?: boolean;
   options?: { value: string; label: string }[];
   multiple?: boolean;
-  error?: string;
+  error?: string | undefined;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -63,8 +63,6 @@ export const FormField: React.FC<FormFieldProps> = ({
         <input
           placeholder={placeholder}
           type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
           className={baseClassName}
           required={required}
         />

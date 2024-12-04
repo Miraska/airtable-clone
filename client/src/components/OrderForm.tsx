@@ -1,13 +1,13 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
 import type { IOrder } from '../types';
 
 
 interface OrderFormProps {
-  onSubmit: (data: Partial<IOrder>) => void;
-  initialData?: Partial<IOrder>;
+  onSubmit: (data: IOrder) => void;
+  onClose: () => void;
   isLoading?: boolean;
 }
 
@@ -32,12 +32,10 @@ const swiftStatus = [
 
 export const OrderForm: React.FC<OrderFormProps> = ({
   onSubmit,
-  initialData = {},
+  onClose,
   isLoading,
 }) => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<Partial<IOrder>>({
-    defaultValues: initialData,
-  });
+  const { register, handleSubmit, control, formState: { errors } } = useFormContext<IOrder>()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -49,6 +47,16 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           {...register('order_number')}
           error={errors.order_number?.message}
         />
+      
+        <div className='flex flex-col justify-end'>
+          <label className="block text-sm font-medium">№ Заявки</label>
+          <input
+            className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+            type='number'
+            {...register("order_number")}
+            placeholder='Введите номер заявки'
+          />
+        </div>
 
         <Controller
           name="status"
@@ -88,7 +96,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Проверяющий
           </label>
           <Controller
-            name="reviewers"
+            name="reviewer"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -486,7 +494,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Плательщик Субагента
           </label>
           <Controller
-            name="subagent_payer"
+            name="subagents_payer"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -668,7 +676,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       <div className="flex justify-end gap-2">
         <button
           type="button"
-          onClick={() => window.history.back()}
+          onClick={onClose}
           className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
         >
           Закрыть

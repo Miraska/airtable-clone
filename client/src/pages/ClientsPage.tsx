@@ -7,23 +7,22 @@ import type { IClient } from '../types';
 import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-
 import columns from '../lib/tableColumnsDara/columnsClient';
 
-const defaultValue = {
-  name: '',
-  inn: '',
-  orders: []
-}
-
 export const ClientsPage = () => {
+  const defaultValue = {
+    name: '',
+    inn: '',
+    orders: []
+  };
+  
+  const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<IClient | null>(null)
   
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
-  }
+    reset(defaultValue)
+  };
 
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('clients', () => api.clients.getAll(),
@@ -40,6 +39,7 @@ export const ClientsPage = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('clients');
+        toast.success("Клиент добавлен успешно!");
         closeModal()
       },
     }
@@ -50,27 +50,31 @@ export const ClientsPage = () => {
       toast.success("Клиент удален успешно!");
     },
   });
-  // const updateMutation = useMutation(({ id, data }: { id: number; data: IClient }) => api.clients.update(id, data), {
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries("clients");
-  //     closeModal()
-  //     toast.success("Клиент успешно обновлен!");
-  //   }
-  // })
+  const updateMutation = useMutation((data: IClient) => api.clients.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("clients");
+      closeModal()
+      toast.success("Клиент обновлен успешно!");
+    }
+  });
   
   const deleteClient = async (client: IClient) => {
     if (window.confirm("Удалить клиента из таблицы?")) {
       deleteMutation.mutate(client.id!)
     }
   };
-  const submit = (newSubagentPayer: IClient) => {
-    createMutation.mutate(newSubagentPayer)
+  const submit = (newClient: IClient) => {
+    if (typeof newClient.id === "number") {
+      updateMutation.mutate(newClient)
+    } else {
+      createMutation.mutate(newClient)
+    }
   };
   const edit = (client: IClient) => {
-    setSelectedClient(client)
-    console.log(client)
+    reset(client)
     setIsModalOpen(true)
-  }
+    setModalHeader("Изменить клиента")
+  };
 
   const methods = useForm<IClient>({ defaultValues: defaultValue })
   const { register, handleSubmit, reset } = methods
@@ -82,15 +86,17 @@ export const ClientsPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить нового клиента")
+        }}
         onDelete={deleteClient}
         onEdit={edit}
       />
-
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={selectedClient ? "Изменить данные клиента" : "Добавить нового клиента"}
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -100,7 +106,7 @@ export const ClientsPage = () => {
               </label>
               <input
                 type="text"
-                placeholder='Введите наименование клиента'
+                placeholder='Введите наименование'
                 {...register('name')}
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
                 required
@@ -130,9 +136,9 @@ export const ClientsPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
-                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+                {createMutation.isLoading || updateMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
           </form>
