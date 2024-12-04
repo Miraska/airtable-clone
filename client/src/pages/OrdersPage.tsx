@@ -7,7 +7,7 @@ import { OrderForm } from "../components/OrderForm";
 import { toast } from "react-toastify";
 import type { IOrder } from "../types";
 
-import columns from "../lib/tableColumnsDara/columnsOrder";
+import columns from "../lib/tableColumnsData/columnsOrder";
 
 export const OrdersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

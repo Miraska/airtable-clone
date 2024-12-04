@@ -8,7 +8,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-import columns from '../lib/tableColumnsDara/columnsAgent';
+import columns from '../lib/tableColumnsData/columnsAgent';
 
 const defaultValue = {
   name: '',

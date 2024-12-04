@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-import columns from '../lib/tableColumnsDara/columnsManager';
+import columns from '../lib/tableColumnsData/columnsManager';
 
 const defaultValue = {
   name: '',

@@ -9,7 +9,7 @@ import SubagentPayersSelect from '../components/SubagentPayersSelect';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
-import columns from '../lib/tableColumnsDara/columnsSubagent';
+import columns from '../lib/tableColumnsData/columnsSubagent';
 
 const defaultValue = {
   name: '',

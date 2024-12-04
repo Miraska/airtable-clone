@@ -31,6 +31,7 @@ export const CellModal: React.FC<CellModalProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
+  const [title, setTitle] = useState(column.label);
 
   useEffect(() => {
     // Обновляем значение, если initialValue изменилось
@@ -70,7 +71,7 @@ export const CellModal: React.FC<CellModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={column.label}
+      title={title}
       setIsEditing={setIsEditing}
       isEditing={isEditing}
     >
@@ -101,6 +102,7 @@ export const CellModal: React.FC<CellModalProps> = ({
                 className='px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white'
                 onClick={() => {
                   setIsEditing(false);
+                  console.log(column.label)
                 }}
               >
                 Закрыть
@@ -118,6 +120,7 @@ export const CellModal: React.FC<CellModalProps> = ({
                     relatedName={column.key}
                     relatedKey={value}
                     cellItem={value}
+                    setTitle={setTitle} 
                   />
                 </div>
               ) : (
@@ -130,4 +133,3 @@ export const CellModal: React.FC<CellModalProps> = ({
     </Modal>
   );
 };
- 
