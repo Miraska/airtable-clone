@@ -428,21 +428,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          {/* <label className="block text-sm font-medium  mb-1">
-            Плательщик Субагента
-          </label>
-          <Controller
-            name="subagents_payer"
-            control={control}
-            render={({ field }) => (
-              <RelationshipSelect
-                type="subagentPayers"
-                value={field.value || []}
-                onChange={field.onChange}
-                placeholder="Выберите плательщика субагентов"
-              />
-            )}
-          /> */}
           <SubagentPayersSelect/>
         </div>
         
