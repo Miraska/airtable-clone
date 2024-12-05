@@ -33,7 +33,7 @@ export const OrdersPage = () => {
     sum_order: null, // Сумма заявки
     vip_condition: null, // Условия VIP
     vip_commission: null, // VIP комиссия
-    hide_commision: null,  // Скрытая комиссия
+    hide_commission: null,  // Скрытая комиссия
     commision_plus_percent: null, // Комиссия +% банка
     commision_plus_accredit: null, // Комиссия + аккредитив
     commision_plus_escrow: null, // Комиссия + эскроу
@@ -77,13 +77,6 @@ export const OrdersPage = () => {
     stuck_money_name: null, // Какая валюта зависла?
     stuck_money_sum: null, // Сумма зависла
     mistake_is_it_name: null, // Чья ошибка?
-    order_link: null, // Заявка ссылка
-    invoice_link: null, // Инвойс ссылка
-    assignment_link: null, // Поручение ссылка
-    swift_link: null, // SWIFT ссылка
-    swift103_link: null, 
-    swift199_link: null,
-    act_link: null,
     money_gone: false
   }
   
@@ -136,6 +129,7 @@ export const OrdersPage = () => {
     }
   };
   const submit = (data: IOrder) => {
+    console.log(data)
     const parseData = {
       ...data,
       order_number: +data.order_number

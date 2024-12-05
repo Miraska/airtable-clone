@@ -104,7 +104,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             control={control}
             render={({ field }) => (
               <RelationshipSelect
-                type="agents"
+                type="contractors"
                 value={field.value || []}
                 onChange={field.onChange}
                 placeholder="Выберите контрагента"
@@ -154,6 +154,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             type="text"
             label="ИНН (from Клиент)"
             placeholder='Введите инн'
+            value=''
+            readonly
             {...register('client_inn')}
           />
         </div>
@@ -256,8 +258,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         
         <FormField
           label='Скрытая комиссия'
-          {...register('hide_commision')}
-          type='text'
+          {...register('hide_commission')}
+          type='number'
           placeholder='Введите скрытую комиссию'
         />
         

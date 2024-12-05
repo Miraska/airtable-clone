@@ -22,7 +22,7 @@ export interface IOrder { // ЗАЯВКИ
   sum_order: number | null, // Сумма заявки
   vip_condition: string | null, // Условия VIP
   vip_commission: number | null, // VIP комиссия
-  hide_commision: number | null,  // Скрытая комиссия
+  hide_commission: number | null,  // Скрытая комиссия
   commision_plus_percent: number | null, // Комиссия +% банка
   commision_plus_accredit: number | null, // Комиссия + аккредитив
   commision_plus_escrow: number | null, // Комиссия + эскроу

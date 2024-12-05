@@ -110,8 +110,8 @@ export const SubagentPayersPage = () => {
               </label>
               <input
                 type="text"
-                placeholder='Введите наименование субагента'
                 {...register("name")}
+                placeholder='Введите наименование субагента'
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
                 required
               />
