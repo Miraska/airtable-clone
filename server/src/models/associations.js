@@ -18,7 +18,7 @@ const associateModels = () => {
   Subagent.belongsToMany(Order, { through: 'OrderSubagents', as: 'orders', onDelete: 'CASCADE' });
 
   // Связь "Субагенты" и "Плательщики субагентов"
-  Subagent.belongsToMany(SubagentPayer, { through: 'SubagentPayerLinks', as: 'payers', onDelete: 'CASCADE' });
+  Subagent.belongsToMany(SubagentPayer, { through: 'SubagentPayerLinks', as: 'subagentPayers', onDelete: 'CASCADE' });
   SubagentPayer.belongsToMany(Subagent, { through: 'SubagentPayerLinks', as: 'subagents', onDelete: 'CASCADE' });
   
 

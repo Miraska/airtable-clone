@@ -7,7 +7,8 @@ import type { IAgent } from '../types';
 import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-import columns from '../lib/tableColumnsDara/columnsAgent';
+
+import columns from '../lib/tableColumnsData/columnsAgent';
 
 export const AgentsPage = () => {
   const defaultValue = {
@@ -26,7 +27,7 @@ export const AgentsPage = () => {
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('agents', () => api.agents.getAll(),
   {
-    staleTime: 0.1 * 60 * 1000, 
+    staleTime: 0.3 * 60 * 1000, 
     cacheTime: 10 * 60 * 1000, 
     refetchOnWindowFocus: true,
     refetchOnMount: true,

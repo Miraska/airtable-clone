@@ -7,7 +7,8 @@ import type { IClient } from '../types';
 import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-import columns from '../lib/tableColumnsDara/columnsClient';
+
+import columns from '../lib/tableColumnsData/columnsClient';
 
 export const ClientsPage = () => {
   const defaultValue = {
@@ -27,7 +28,7 @@ export const ClientsPage = () => {
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('clients', () => api.clients.getAll(),
   {
-    staleTime: 0.1 * 60 * 1000, 
+    staleTime: 0.3 * 60 * 1000, 
     cacheTime: 10 * 60 * 1000, 
     refetchOnWindowFocus: true,
     refetchOnMount: true,

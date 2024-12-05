@@ -7,7 +7,8 @@ import type { IContragent } from '../types';
 import { FormProvider, useForm } from 'react-hook-form';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-import columns from '../lib/tableColumnsDara/columnsContractor';
+
+import columns from '../lib/tableColumnsData/columnsContractor';
 
 export const ContractorsPage = () => {
   const defaultValue = {
@@ -26,7 +27,7 @@ export const ContractorsPage = () => {
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('contractors', () => api.contractors.getAll(),
   {
-    staleTime: 0.1 * 60 * 1000, 
+    staleTime: 0.3 * 60 * 1000, 
     cacheTime: 10 * 60 * 1000, 
     refetchOnWindowFocus: true,
     refetchOnMount: true,

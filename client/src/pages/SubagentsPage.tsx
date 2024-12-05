@@ -8,7 +8,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import SubagentPayersSelect from '../components/SubagentPayersSelect';
 import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
-import columns from '../lib/tableColumnsDara/columnsSubagent';
+
+import columns from '../lib/tableColumnsData/columnsSubagent';
 
 export const SubagentsPage = () => {
   const defaultValue = {
@@ -28,7 +29,7 @@ export const SubagentsPage = () => {
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('subagents', () => api.subagents.getAll(),
   {
-    staleTime: 0.1 * 60 * 1000, 
+    staleTime: 0.3 * 60 * 1000, 
     cacheTime: 10 * 60 * 1000, 
     refetchOnWindowFocus: true,
     refetchOnMount: true,

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "./Modal";
-import { Button } from "./Button";
 import { RelatedDataModal } from "./RelatedData";
 import { useForm } from "react-hook-form";
+import { Button } from "./Button";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ interface CellModalProps {
   value?: any;
   onSave: (value: any) => void;
   isRelationShip?: boolean;
+  setSelectedCell: React.Dispatch<any>;
 }
 
 export const CellModal: React.FC<CellModalProps> = ({
@@ -22,15 +23,16 @@ export const CellModal: React.FC<CellModalProps> = ({
   value: initialValue,
   onSave,
   isRelationShip,
+  setSelectedCell,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
   
   const methods = useForm({defaultValues: value})
   const { register, handleSubmit } = methods
+  const [title, setTitle] = useState(column.label);
 
   useEffect(() => {
-    // Обновляем значение, если initialValue изменилось
     setValue(initialValue || data[column.key]);
   }, [initialValue, data, column.key]);
 
@@ -39,35 +41,11 @@ export const CellModal: React.FC<CellModalProps> = ({
     setIsEditing(false);
   };
 
-  const renderCell = () => {
-    if (Array.isArray(value)) {
-      if (value.length === 0) return "-";
-
-      return (
-        <div className="flex flex-wrap gap-2">
-          {value.map((tag, index) => (
-            <span
-              key={index}
-              onClick={(e) => {
-                e.stopPropagation();
-                alert(`column: ${column.key}, tag: ${tag}`);
-              }}
-              className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-600 hover:bg-gray-300"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      );
-    }
-    return value;
-  };
-
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={column.label}
+      title={title}
       setIsEditing={setIsEditing}
       isEditing={isEditing}
     >
@@ -114,14 +92,33 @@ export const CellModal: React.FC<CellModalProps> = ({
               {isRelationShip ? (
                 <div>
                   <RelatedDataModal
-                    isOpen={true}
+                    isOpen={isOpen}
                     relatedName={column.key}
                     relatedKey={value}
                     cellItem={value}
+                    setTitle={setTitle}
+                    setSelectedCell={setSelectedCell}
                   />
                 </div>
+              ) : Array.isArray(value) ? (
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    {value.map((tag, index) => (
+                      <span
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log(tag);
+                        }}
+                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-600 hover:bg-gray-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ) : (
-                <div>{renderCell()}</div>
+                <div>{value}</div>
               )}
             </div>
           </div>
@@ -130,4 +127,3 @@ export const CellModal: React.FC<CellModalProps> = ({
     </Modal>
   );
 };
- 

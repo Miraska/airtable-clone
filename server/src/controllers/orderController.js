@@ -32,6 +32,7 @@ const createOrder = async (req, res) => {
     //   agents: [{ id: 1 }, { id: 2 }],
     //   managers: [{ id: 1 }]
     // }
+    // console.log(req.body);
     const newOrder = await orderService.create(req.body);
     res.status(201).json(newOrder);
   } catch (error) {

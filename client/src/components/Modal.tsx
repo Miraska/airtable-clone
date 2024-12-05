@@ -3,6 +3,7 @@ import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import { Edit, Trash2, Eye } from 'lucide-react';
 
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -48,7 +49,7 @@ export const Modal: React.FC<ModalProps> = ({
                 </button>
               </div>
             </div>
-            <div className="max-h-[80vh] resize-y overflow-scroll p-4">{children}</div>
+            <div className="max-h-[80vh] overflow-scroll p-4 resize-y">{children}</div>
           </Dialog.Panel>
         </div>
       </Dialog>
