@@ -27,7 +27,7 @@ export const OrdersPage = () => {
     country: [], // Страна (может хранится 1 страна из таблицы стран)
     calc_condition: null, // Условия расчета
     type_transaction: null, // Вид сделки
-    number_receiving: 0, // Номер поручения
+    number_receiving: null, // Номер поручения
     date_instruction: null, // Подписано поручение (дата)
     currency: null, // Валюта
     sum_order: null, // Сумма заявки

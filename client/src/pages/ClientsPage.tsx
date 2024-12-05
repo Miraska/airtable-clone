@@ -104,7 +104,7 @@ export const ClientsPage = () => {
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Наименование
+                Наименование<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 type="text"
@@ -123,7 +123,6 @@ export const ClientsPage = () => {
                 {...register("inn")}
                 placeholder='Введите ИНН клиента'
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-                required
               />
             </div>
             <OrdersSelect/>
