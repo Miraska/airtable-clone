@@ -49,7 +49,9 @@ export const CellModal: React.FC<CellModalProps> = ({
         {isEditing ? (
           <div className="space-y-4">
             {isRelationShip ? (
-              <div>Редактирование связанных данных будет здесь.</div>
+              <div>Редактирование связанных данных будет здесь. {value}</div>
+            ) : Array.isArray(value) ? (
+              <div>Редактирование связей {value}</div>
             ) : (
               <div>
                 <input
@@ -81,14 +83,33 @@ export const CellModal: React.FC<CellModalProps> = ({
           <div className="space-y-4">
             <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
               {isRelationShip ? (
-                <RelatedDataModal
-                  isOpen={isOpen}
-                  relatedName={column.key}
-                  relatedKey={value}
-                  cellItem={value}
-                  setTitle={setTitle}
-                  setSelectedCell={setSelectedCell}
-                />
+                <div>
+                  <RelatedDataModal
+                    isOpen={isOpen}
+                    relatedName={column.key}
+                    relatedKey={value}
+                    cellItem={value}
+                    setTitle={setTitle}
+                    setSelectedCell={setSelectedCell}
+                  />
+                </div>
+              ) : Array.isArray(value) ? (
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    {value.map((tag, index) => (
+                      <span
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log(tag);
+                        }}
+                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-600 hover:bg-gray-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ) : (
                 <div>{value}</div>
               )}

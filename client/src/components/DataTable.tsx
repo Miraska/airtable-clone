@@ -92,9 +92,6 @@ export const DataTable: React.FC<DataTableProps> = ({
   const handleTagClick = (item: any, column: Column, tag: string) => {
     setIsRelationShip(true);
     setSelectedCell({ data: item, column, value: tag });
-    console.log(item);
-    console.log(column);
-    console.log(tag);
   };
   
   // Обработчик кликов на ячейку
@@ -256,8 +253,6 @@ export const DataTable: React.FC<DataTableProps> = ({
           setSelectedCell={setSelectedCell}
         />
       )}
-
-      <Button onClick={() => console.log(selectedCell)}>Проверить</Button>
     </div>
   );
 };

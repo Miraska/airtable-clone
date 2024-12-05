@@ -19,7 +19,7 @@ const Order = sequelize.define('Order', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   autonumber: { type: DataTypes.INTEGER, unique: true },
   status: { type: DataTypes.STRING, allowNull: false },
-  order_number: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+  order_number: { type: DataTypes.BIGINT, allowNull: false, unique: true }, // Change to BIGINT
   client_inn: { type: DataTypes.STRING, allowNull: true },
   date: { type: DataTypes.DATEONLY, allowNull: false },
   date_hired: { type: DataTypes.DATEONLY, allowNull: true },
@@ -83,6 +83,7 @@ const Order = sequelize.define('Order', {
   act_link: { type: DataTypes.STRING, allowNull: true },
   money_gone: { type: DataTypes.BOOLEAN, allowNull: true }
 }, { timestamps: false });
+
 
 // Менеджер
 const Manager = sequelize.define('Manager', {
