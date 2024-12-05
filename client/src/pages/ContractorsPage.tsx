@@ -92,6 +92,7 @@ export const ContractorsPage = () => {
         }}
         onDelete={deleteContragent}
         onEdit={edit}
+        onCellUpdate={submit}
       />
 
       <Modal

@@ -22,7 +22,7 @@ interface DataTableProps {
   onEdit?: (item: any) => void;
   onDelete?: (item: any) => void;
   onView?: (item: any) => void;
-  onCellUpdate?: (id: number, key: string, value: any) => Promise<void>;
+  onCellUpdate?: (data: any) => void;
   title: string;
 }
 
@@ -105,9 +105,9 @@ export const DataTable: React.FC<DataTableProps> = ({
     setSelectedCell({ data: item, column });
   };
 
-  const handleCellUpdate = async (value: any) => {
+  const handleCellUpdate = (value: any) => {
     if (selectedCell && onCellUpdate) {
-      await onCellUpdate(selectedCell.data.id, selectedCell.column.key, value);
+      onCellUpdate(selectedCell.data);
       setSelectedCell(null);
     }
   };
@@ -214,7 +214,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <TableActions
                         onView={() => onView?.(item)}
-                        onEdit={() => onEdit?.(item)}
+                        onEdit={() => { onEdit?.(item) }}
                         onDelete={() => onDelete?.(item)}
                       />
                     </td>

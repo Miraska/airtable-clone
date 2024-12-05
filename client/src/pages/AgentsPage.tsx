@@ -90,6 +90,7 @@ export const AgentsPage = () => {
           setIsModalOpen(true)
           setModalHeader("Добавить нового агента")
         }}
+        onCellUpdate={submit}
         onDelete={deleteAgents}
         onEdit={edit}
       />
@@ -101,7 +102,7 @@ export const AgentsPage = () => {
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Наименование
               </label>
               <input

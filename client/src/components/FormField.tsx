@@ -6,9 +6,11 @@ interface FormFieldProps {
   placeholder?: string;
   type?: React.HTMLInputTypeAttribute;
   required?: boolean;
+  value?: string;
+  
 }
 
-export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({label = "", type = 'text', placeholder, required = false }, ref) => {
+export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({label = "", type = 'text', placeholder, required = false, ...props }, ref) => {
   const baseClassName = clsx(
     "mt-1 block dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:border-gray-800",
     {
@@ -26,6 +28,7 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({la
         type={type}
         className={baseClassName}
         required={required}
+        {...props}
       />
     </div>
   );

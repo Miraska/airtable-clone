@@ -7,7 +7,7 @@ export default function SubagentPayersSelect() {
   
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
         Плательщик Субагентов
       </label>
       <Controller

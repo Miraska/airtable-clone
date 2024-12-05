@@ -96,6 +96,7 @@ export const ManagersPage = () => {
         }}
         onDelete={deleteManager}
         onEdit={edit}
+        onCellUpdate={submit}
       />
       <Modal
         isOpen={isModalOpen}

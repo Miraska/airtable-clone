@@ -93,6 +93,7 @@ export const ClientsPage = () => {
         }}
         onDelete={deleteClient}
         onEdit={edit}
+        onCellUpdate={submit}
       />
       <Modal
         isOpen={isModalOpen}

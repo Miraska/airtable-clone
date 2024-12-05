@@ -5,7 +5,7 @@ interface FormSelectProps {
   labelText?: string;
   text: string;
   required?: boolean;
-  value: string;
+  value: string | null;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
 }
@@ -18,7 +18,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>((
   return (
     <div className='flex flex-col justify-end'>
       <label className="block text-sm font-medium">{labelText}</label>
-      <select ref={ref} value={value} onChange={(e) => onChange(e.target.value)} className={baseClassName} required={required}>
+      <select ref={ref} value={value as string} onChange={(e) => onChange(e.target.value)} className={baseClassName} required={required}>
         <option value="">Выберите {text}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>

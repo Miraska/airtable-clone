@@ -12,26 +12,26 @@ import { FormProvider, useForm } from "react-hook-form";
 
 export const OrdersPage = () => {
   const defaultValue = { // ЗАЯВКИ
-    status: "", // Статус (закрыта, открыта, в работе и т. д.)
-    order_number: 0, // Номер (№) заявки
+    status: null, // Статус (закрыта, открыта, в работе и т. д.)
+    order_number: null, // Номер (№) заявки
     manager: [], // Менеджеры (может хранится много менеджеров которые в другой таблице)
     reviewer: [], // Проверяющие (может хранится много менеджеров которые в другой таблице)
-    date: "", // Дата размещения (дата)
-    date_hired: "", // Взята в работу (дата)
-    contragent: "", // Контрагент (может хранится много контрагентов из таблицы контрагенты)
+    date: null, // Дата размещения (дата)
+    date_hired: null, // Взята в работу (дата)
+    contragent: null, // Контрагент (может хранится много контрагентов из таблицы контрагенты)
     agent: [], // Агент (может хранится много агентов из таблицы агенты)
     client: [], // Клиент (может хранится много клиентов из таблицы клиенты)
-    client_inn: "", // ИНН (от клиента из таблицы клиентов)
-    name_agency: "", // Наименование экспортёра или импортёра
-    swift_code: "", // SWIFT Код банка получателя или отправителя
+    client_inn: null, // ИНН (от клиента из таблицы клиентов)
+    name_agency: null, // Наименование экспортёра или импортёра
+    swift_code: null, // SWIFT Код банка получателя или отправителя
     country: [], // Страна (может хранится 1 страна из таблицы стран)
-    calc_condition: "", // Условия расчета
-    type_transaction: "", // Вид сделки
-    number_receiving: null, // Номер поручения
-    date_instruction: "", // Подписано поручение (дата)
-    currency: "", // Валюта
+    calc_condition: null, // Условия расчета
+    type_transaction: null, // Вид сделки
+    number_receiving: 0, // Номер поручения
+    date_instruction: null, // Подписано поручение (дата)
+    currency: null, // Валюта
     sum_order: null, // Сумма заявки
-    vip_condition: "", // Условия VIP
+    vip_condition: null, // Условия VIP
     vip_commission: null, // VIP комиссия
     hide_commision: null,  // Скрытая комиссия
     commision_plus_percent: null, // Комиссия +% банка
@@ -39,7 +39,7 @@ export const OrdersPage = () => {
     commision_plus_escrow: null, // Комиссия + эскроу
     money_rate: null, // Курс
     hide_money_rate: null, // Скрытый курс
-    date_fixation_rate: "", // Дата фиксации курса
+    date_fixation_rate: null, // Дата фиксации курса
     order_rate_rub: null, // Заявка по курсу в рублях
     agency_award: null, // Агентское вознаграждение
     real_award: null, // Фактическое вознаграждение
@@ -47,43 +47,43 @@ export const OrdersPage = () => {
     sum: null, // ИТОГО
     letter_of_credit: false, // С аккредитивом
     take_first_doc: false, // Получили первичные документы
-    invoice: "", // Инвойс
-    date_contract_signed: "", // Подписан агент. / субагент. договор
-    date_reg_bank: "", // Поставлен на учет в банке
-    date_open_letter_of_credit: "", // Открыт аккредитив
-    date_valet_agency: "", // Оплачена валюта поставщику (импорт) / субагенту (экспорт)
-    date_taking_agency: "", // Получена валюта поставщиком (импорт) / субагентом (экспорт)
-    date_paid_rub: "", // Оплачен рубль клиенту (экспорт)
-    date_unhide_letter_of_credit: "", // Аккредитив раскрыт
-    date_sign_act: "", // Подписан акт-отчет
-    date_close_deal: "", // Сделка закрыта
+    invoice: null, // Инвойс
+    date_contract_signed: null, // Подписан агент. / субагент. договор
+    date_reg_bank: null, // Поставлен на учет в банке
+    date_open_letter_of_credit: null, // Открыт аккредитив
+    date_valet_agency: null, // Оплачена валюта поставщику (импорт) / субагенту (экспорт)
+    date_taking_agency: null, // Получена валюта поставщиком (импорт) / субагентом (экспорт)
+    date_paid_rub: null, // Оплачен рубль клиенту (экспорт)
+    date_unhide_letter_of_credit: null, // Аккредитив раскрыт
+    date_sign_act: null, // Подписан акт-отчет
+    date_close_deal: null, // Сделка закрыта
     cycle_deal: null, // Цикл сделки, дн
-    purpose_of_payment: "", // Назначение платежа
+    purpose_of_payment: null, // Назначение платежа
     subagent: [], // Субагент (может хранится субагент из таблицы субагентов)
     subagents_payer: [], // Плательщик Субагента (может хранится плательщик субагента из таблицы плательщик субагентов)
     serial_num_for_payer: null, // Порядковый номер заявления для плательщика субагента (при импорте) / получателя (при экспорте)
-    date_docs_agent_and_subagent: "", // Подготовлены документы между агентом и субагентом (дата)
-    date_taking_swift: "", // Получен SWIFT
-    date_get_swift103: "", // Запросили SWIFT 103
-    date_take_swift103: "", // Получили SWIFT 103
-    date_get_swift199: "", // Запросили SWIFT 199
-    date_take_swift199: "", // Получили SWIFT 199
-    date_refund: "", // Возврат запрошен
-    date_take_refund: "", // Деньги по возврату получены
-    status_swift: "", // Статус SWIFT
+    date_docs_agent_and_subagent: null, // Подготовлены документы между агентом и субагентом (дата)
+    date_taking_swift: null, // Получен SWIFT
+    date_get_swift103: null, // Запросили SWIFT 103
+    date_take_swift103: null, // Получили SWIFT 103
+    date_get_swift199: null, // Запросили SWIFT 199
+    date_take_swift199: null, // Получили SWIFT 199
+    date_refund: null, // Возврат запрошен
+    date_take_refund: null, // Деньги по возврату получены
+    status_swift: null, // Статус SWIFT
     stuck_money: false, // Зависли деньги
-    stage_problem: "", // Стадии проблемы
-    comment_problem: "", // Комментарии к заявкам по которым зависли деньги
-    stuck_money_name: "", // Какая валюта зависла?
+    stage_problem: null, // Стадии проблемы
+    comment_problem: null, // Комментарии к заявкам по которым зависли деньги
+    stuck_money_name: null, // Какая валюта зависла?
     stuck_money_sum: null, // Сумма зависла
-    mistake_is_it_name: "", // Чья ошибка?
-    order_link: "", // Заявка ссылка
-    invoice_link: "", // Инвойс ссылка
-    assignment_link: "", // Поручение ссылка
-    swift_link: "", // SWIFT ссылка
-    swift103_link: "", 
-    swift199_link: "",
-    act_link: "",
+    mistake_is_it_name: null, // Чья ошибка?
+    order_link: null, // Заявка ссылка
+    invoice_link: null, // Инвойс ссылка
+    assignment_link: null, // Поручение ссылка
+    swift_link: null, // SWIFT ссылка
+    swift103_link: null, 
+    swift199_link: null,
+    act_link: null,
     money_gone: false
   }
   
@@ -136,29 +136,21 @@ export const OrdersPage = () => {
     }
   };
   const submit = (data: IOrder) => {
-    console.log(data)
-    // if (typeof data.id === "number") {
-    //   updateMutation.mutate(data);
-    // } else {
-    //   createMutation.mutate(data);
-    // }
+    const parseData = {
+      ...data,
+      order_number: +data.order_number
+    }
+    if (typeof data.id === "number") {
+      updateMutation.mutate(parseData);
+    } else {
+      createMutation.mutate(parseData);
+    }
   };
   const handleEdit = (order: IOrder) => {
     reset(order)
     setIsModalOpen(true);
     setModalHeader("Изменить заявку")
   };
-
-  // const handleCellUpdate = async (id: number, key: string, value: any) => {
-  //   try {
-  //     await updateMutation.mutateAsync({
-  //       id,
-  //       data: { [key]: value },
-  //     });
-  //   } catch {
-  //     toast.error("Ошибка обновления ячейки");
-  //   }
-  // };
   
   const methods = useForm<IOrder>({ defaultValues: defaultValue})
   const { reset } = methods
@@ -177,7 +169,7 @@ export const OrdersPage = () => {
           }}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          // onCellUpdate={handleCellUpdate}
+          onCellUpdate={submit}
         />
       </div>
 
