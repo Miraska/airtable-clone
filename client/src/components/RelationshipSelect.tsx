@@ -10,7 +10,7 @@ interface Option {
 }
 
 interface RelationshipSelectProps {
-  type: 'orders' | 'managers' | 'agents' | 'reviewers' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
+  type: 'orders' | 'managers' | 'agents' | 'contractors' | 'reviewers' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
   value: never[] | string[] | string | number[];
   onChange: (value: string[]) => void;
   isMulti?: boolean;
@@ -28,16 +28,15 @@ export const RelationshipSelect: React.FC<RelationshipSelectProps> = ({
 
   const options: Option[] = React.useMemo(() => {
     if (!data?.data) return [];
-    return data.data.map((item: any) => (
-      {
-      value: item.id,
-      label: item.name ?? item.id,
-    }));
+    return data.data.map((item: any) => {
+      const obj = { value: item.id, label: item.name ?? item.id }
+      return obj
+    });
   }, [data]);
 
-  const selectedOptions = options.filter((option) => 
-    value.includes(option.value)
-  );
+  const selectedOptions = options.filter((option) => {
+    return value.includes(option.value)
+  });
 
   return (
     <Select
