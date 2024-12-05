@@ -104,7 +104,7 @@ export const CountriesPage = () => {
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Краткое название
+                Краткое название<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 type="text"
@@ -123,7 +123,6 @@ export const CountriesPage = () => {
                 type="text"
                 placeholder='Введите код страны'
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-                required
               />
             </div>
             <div>
@@ -135,7 +134,6 @@ export const CountriesPage = () => {
                 type="text"
                 placeholder='Введите полное наименование страны'
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
-                required
               />
             </div>
             <OrdersSelect/>

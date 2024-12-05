@@ -5,7 +5,6 @@ import { TableActions } from './TableActions';
 import { useTableSort } from '../hooks/useTableSort';
 import { useTableFilter } from '../hooks/useTableFilter';
 import { CellModal } from './CellModal';
-import { Button } from './Button';
 
 interface Column {
   key: string;
