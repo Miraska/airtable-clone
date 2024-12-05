@@ -10,19 +10,21 @@ import { toast } from 'react-toastify';
 
 import columns from '../lib/tableColumnsData/columnsCountry';
 
-const defaultValue = {
-  name: '',
-  code: '',
-  full_name: '',
-  orders: []
-}
-
 export const CountriesPage = () => {
+  const defaultValue = {
+    name: '',
+    code: '',
+    full_name: '',
+    orders: []
+  }
+  
+  const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const closeModal = () => {
     setIsModalOpen(false)
-    reset()
-  }
+    reset(defaultValue)
+  };
 
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('countries', () => api.countries.getAll(),
@@ -34,20 +36,26 @@ export const CountriesPage = () => {
     enabled: true
   });
 
-  const createMutation = useMutation(
-    (newCountry: ICountry) => api.countries.create(newCountry),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('countries');
-        closeModal()
-      },
-    }
-  );
+  const createMutation = useMutation((newCountry: ICountry) => api.countries.create(newCountry),
+  {
+    onSuccess: () => {
+      queryClient.invalidateQueries("countries");
+      toast.success("Страна добавлена успешно!");
+      closeModal()
+    },
+  });
   const deleteMutation = useMutation((id: number) => api.countries.delete(id), {
     onSuccess: () => {
       queryClient.invalidateQueries("countries");
       toast.success("Страна удалена успешно!");
     },
+  });
+  const updateMutation = useMutation((data: ICountry) => api.countries.update(data.id as number, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("countries");
+      closeModal()
+      toast.success("Страна обновлена успешно!");
+    }
   });
   
   const deleteCountry = async (country: ICountry) => {
@@ -56,7 +64,16 @@ export const CountriesPage = () => {
     }
   };
   const submit = (newCountry: ICountry) => {
-    createMutation.mutate(newCountry);
+    if (typeof newCountry.id === "number") {
+      updateMutation.mutate(newCountry)
+    } else {
+      createMutation.mutate(newCountry);
+    }
+  };
+  const edit = (country: ICountry) => {
+    reset(country)
+    setIsModalOpen(true)
+    setModalHeader("Изменить страну")
   };
   
   const methods = useForm<ICountry>({ defaultValues: defaultValue })
@@ -69,14 +86,18 @@ export const CountriesPage = () => {
         data={data?.data || []}
         columns={columns}
         onRefresh={() => refetch()}
-        onAdd={() => setIsModalOpen(true)}
+        onAdd={() => { 
+          setIsModalOpen(true)
+          setModalHeader("Добавить новую страну")
+        }}
         onDelete={deleteCountry}
+        onEdit={edit}
       />
 
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Добавить новую страну"
+        title={modalHeader}
       >
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
@@ -128,9 +149,9 @@ export const CountriesPage = () => {
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md transition-all duration-300 hover:bg-blue-700"
-                disabled={createMutation.isLoading}
+                disabled={createMutation.isLoading || updateMutation.isLoading}
               >
-                {createMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
+                {createMutation.isLoading || updateMutation.isLoading ? 'Сохранение...' : 'Сохранить'}
               </button>
             </div>
           </form>

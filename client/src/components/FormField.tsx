@@ -2,36 +2,15 @@ import React from 'react';
 import { clsx } from 'clsx';
 
 interface FormFieldProps {
-  label: string;
+  label?: string;
   placeholder?: string;
-  type?: string;
-  selectText?: string;
-  value: string | number;
-  onChange: (value: string) => void;
+  type?: React.HTMLInputTypeAttribute;
   required?: boolean;
-  options?: { value: string; label: string }[];
-  multiple?: boolean;
-  error?: string;
 }
 
-export const FormField: React.FC<FormFieldProps> = ({
-  label,
-  type = 'text',
-  value,
-  placeholder,
-  selectText,
-  onChange,
-  required = false,
-  options,
-  multiple = false,
-  error,
-}) => {
+export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({label = "", type = 'text', placeholder, required = false }, ref) => {
   const baseClassName = clsx(
-    "mt-1 block dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500",
-    {
-      'border-red-300': error,
-      'border-gray-300 dark:border-gray-800': !error,
-    },
+    "mt-1 block dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:border-gray-800",
     {
       'w-full': type != 'checkbox',
       'p-3': type == 'checkbox'
@@ -40,38 +19,14 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   return (
     <div className='flex flex-col justify-end'>
-      <label className="block text-sm font-medium">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-      {options ? (
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={baseClassName}
-          required={required}
-          multiple={multiple}
-        >
-          {!multiple && <option value="">Выберите {selectText}</option>}
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          placeholder={placeholder}
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={baseClassName}
-          required={required}
-        />
-      )}
-      {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
-      )}
+      <label className="block text-sm font-medium"> {label} </label>
+      <input
+        ref={ref}
+        placeholder={placeholder}
+        type={type}
+        className={baseClassName}
+        required={required}
+      />
     </div>
   );
-};
+});
