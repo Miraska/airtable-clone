@@ -5,31 +5,14 @@ import { FormField } from './FormField';
 import type { IOrder } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
+import SubagentPayersSelect from './SubagentPayersSelect';
+import { statusOptions, swiftStatus, currencyOptions } from '../lib/options';
 
 interface OrderFormProps {
   onSubmit: (data: IOrder) => void;
   onClose: () => void;
   isLoading?: boolean;
 }
-
-const statusOptions = [
-  { value: 'Новый', label: 'Новый' },
-  { value: 'В процессе', label: 'В процессе' },
-  { value: 'Завершен', label: 'Завершен' },
-  { value: 'Закрыт', label: 'Закрыт' },
-];
-
-const currencyOptions = [
-  { value: 'USD', label: 'USD' },
-  { value: 'EUR', label: 'EUR' },
-  { value: 'RUB', label: 'RUB' },
-];
-
-const swiftStatus = [
-  { value: 'close', label: 'Заявка закрыта' },
-  { value: 'return', label: 'Возврат' },
-  { value: 'sucess', label: 'Деньги у получателя' },
-];
 
 export const OrderForm: React.FC<OrderFormProps> = ({
   onSubmit,
@@ -41,19 +24,14 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Controller
-          name='order_number'
-          control={control}
-          render={({field}) => (
-            <FormField
-              label="№ Заявки"
-              type="number"
-              placeholder='Введите номер заявки'
-              {...field}
-            />
-          )}
+        <FormField
+          type='number'
+          label='№ Заявки'
+          placeholder='Введите номер заявки'
+          required  
+          {...register('order_number')}
         />
-
+        
         <Controller
           name="status"
           control={control}
@@ -61,13 +39,14 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormSelect
               labelText="Статус"
               text='статус'
+              required
               value={field.value as string}
               onChange={field.onChange}
               options={statusOptions}
             />
           )}
         />
-
+        
         <div className="col-span-2">
           <label className="block text-sm font-medium mb-1">
             Менеджеры
@@ -102,18 +81,18 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               />
             )}
           />
-        </div>
+        </div> 
         
         <FormField
           type='date'
           label='Дата Размещения'
-          {...register('date')}
+          {...register("date")}
         />
         
         <FormField
           type='date'
           label='Взята в работу'
-          {...register('date')}
+          {...register('date_hired')}
         />
         
         <div className="col-span-2">
@@ -151,7 +130,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             )}
           />
         </div>
-
+        
         <div className="col-span-2">
           <label className="block text-sm font-medium  mb-1">
             Клиент
@@ -184,6 +163,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             type='text'
             label='Наименование экспортёра или импортёра'
             placeholder='Введите экспортёра или импортёра'
+            required
             {...register('name_agency')}
           />
         </div>
@@ -448,7 +428,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <label className="block text-sm font-medium  mb-1">
+          {/* <label className="block text-sm font-medium  mb-1">
             Плательщик Субагента
           </label>
           <Controller
@@ -462,7 +442,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
                 placeholder="Выберите плательщика субагентов"
               />
             )}
-          />
+          /> */}
+          <SubagentPayersSelect/>
         </div>
         
         <div className="col-span-2">

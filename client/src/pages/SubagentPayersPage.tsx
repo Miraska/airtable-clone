@@ -93,6 +93,7 @@ export const SubagentPayersPage = () => {
         }}
         onDelete={deleteSubagentPayer}
         onEdit={edit}
+        onCellUpdate={submit}
       />
 
       <Modal

@@ -93,6 +93,7 @@ export const SubagentsPage = () => {
         }}
         onDelete={deleteSubagent}
         onEdit={edit}
+        onCellUpdate={submit}
       />
       <Modal
         isOpen={isModalOpen}

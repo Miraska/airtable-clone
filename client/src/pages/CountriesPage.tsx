@@ -91,6 +91,7 @@ export const CountriesPage = () => {
         }}
         onDelete={deleteCountry}
         onEdit={edit}
+        onCellUpdate={submit}
       />
 
       <Modal
