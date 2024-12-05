@@ -5,6 +5,7 @@ import { TableActions } from './TableActions';
 import { useTableSort } from '../hooks/useTableSort';
 import { useTableFilter } from '../hooks/useTableFilter';
 import { CellModal } from './CellModal';
+import { Button } from './Button';
 
 interface Column {
   key: string;
@@ -91,6 +92,9 @@ export const DataTable: React.FC<DataTableProps> = ({
   const handleTagClick = (item: any, column: Column, tag: string) => {
     setIsRelationShip(true);
     setSelectedCell({ data: item, column, value: tag });
+    console.log(item);
+    console.log(column);
+    console.log(tag);
   };
   
   // Обработчик кликов на ячейку
@@ -225,6 +229,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         </div>
       </div>
 
+      {/* Обычное модальное окно со значением в ячейке либо со связью на другое модальное окно */}
       {selectedCell && (
         <CellModal
           isOpen={!!selectedCell}
@@ -234,9 +239,11 @@ export const DataTable: React.FC<DataTableProps> = ({
           value={selectedCell.value}
           onSave={handleCellUpdate}
           isRelationShip={isRelationShip}
+          setSelectedCell={setSelectedCell}
         />
       )}
 
+      {/* Связи в модальном окне */}
       {selectedCellRelationShip && (
         <CellModal
           isOpen={!!selectedCellRelationShip}
@@ -246,8 +253,11 @@ export const DataTable: React.FC<DataTableProps> = ({
           value={selectedCellRelationShip.value}
           onSave={handleCellUpdate}
           isRelationShip={isRelationShip}
+          setSelectedCell={setSelectedCell}
         />
       )}
+
+      <Button onClick={() => console.log(selectedCell)}>Проверить</Button>
     </div>
   );
 };

@@ -6,6 +6,6 @@ export default {
     clients: { key: "clients", label: "Клиент" },
     countries: { key: "countries", label: "Страна" },
     subagents: { key: "subagents", label: "Субагент" },
-    payers: { key: "payers", label: "Плательщик Субагентов" },
+    subagentPayers: { key: "subagentPayers", label: "Плательщик Субагентов" },
   };
   

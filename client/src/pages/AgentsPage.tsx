@@ -27,7 +27,7 @@ export const AgentsPage = () => {
   const queryClient = useQueryClient();
   const { data, refetch } = useQuery('agents', () => api.agents.getAll(),
   {
-    staleTime: 0.1 * 60 * 1000, 
+    staleTime: 0.3 * 60 * 1000, 
     cacheTime: 10 * 60 * 1000, 
     refetchOnWindowFocus: true,
     refetchOnMount: true,

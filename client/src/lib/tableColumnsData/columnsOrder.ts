@@ -13,7 +13,7 @@ const columns = [
   { key: "client_inn", label: "ИНН клиента", sortable: true },
   { key: "name_agency", label: "Наименование экспортёра/импортёра", sortable: true },
   { key: "swift_code", label: "SWIFT код банка получателя (при импорте) / отправителя (при экспорте)", sortable: true },
-  { key: "country", label: "Страна", sortable: true },
+  { key: "countries", label: "Страна", sortable: true },
   { key: "calc_condition", label: "Условия расчета", sortable: true },
   { key: "type_transaction", label: "Вид сделки", sortable: true },
   { key: "number_receiving", label: "Номер поручения", sortable: true },

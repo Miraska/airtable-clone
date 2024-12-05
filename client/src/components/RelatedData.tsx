@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import RenderData from "./RenderData";
 
 import columnsConfig from "../lib/tableColumnsData/index";
 import titleMappings from "../lib/tableTitles";
-
 
 interface RelatedDataModalProps {
   isOpen: boolean;
@@ -12,11 +11,12 @@ interface RelatedDataModalProps {
   relatedKey: any;
   cellItem: any;
   setTitle: (value: string) => void;
+  setSelectedCell: React.Dispatch<any>;
 }
 
 const setNewTitle = (relatedName: string) => {
   const mapping = titleMappings[relatedName as keyof typeof titleMappings];
-  return mapping ? mapping.label : 'Нет Заголовка';
+  return mapping ? mapping.label : "Нет Заголовка";
 };
 
 export const RelatedDataModal: React.FC<RelatedDataModalProps> = ({
@@ -25,6 +25,7 @@ export const RelatedDataModal: React.FC<RelatedDataModalProps> = ({
   relatedKey,
   cellItem,
   setTitle,
+  setSelectedCell,
 }) => {
   useEffect(() => {
     setTitle(setNewTitle(relatedName) + " " + relatedKey);
@@ -50,7 +51,7 @@ export const RelatedDataModal: React.FC<RelatedDataModalProps> = ({
     ["relatedData", relatedKey],
     () => apiMethod(relatedKey),
     {
-      staleTime: 0.05 * 60 * 1000,
+      staleTime: 0.3 * 60 * 1000,
       cacheTime: 5 * 60 * 1000,
       refetchOnWindowFocus: true,
       refetchOnMount: true,
@@ -71,6 +72,7 @@ export const RelatedDataModal: React.FC<RelatedDataModalProps> = ({
           relatedName={newPath}
           cellItem={newData}
           setTitle={setTitle}
+          setSelectedCell={setSelectedCell} // Pass down the function
         />
       ) : (
         <div>
@@ -89,6 +91,7 @@ export const RelatedDataModal: React.FC<RelatedDataModalProps> = ({
                     setNewPath={setNewPath}
                     setNewData={setNewData}
                     setNewKey={setNewKey}
+                    setSelectedCell={setSelectedCell} // Pass down the function
                   />
                 </div>
               ) : (

@@ -5,7 +5,7 @@ class SubagentService extends BaseService {
   constructor() {
     super(Subagent, [
       { model: Order, as: 'orders' },
-      { model: SubagentPayer, as: 'payers' }
+      { model: SubagentPayer, as: 'subagentPayers' }
     ]);
   }
 }
