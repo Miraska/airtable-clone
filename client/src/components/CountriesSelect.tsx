@@ -8,10 +8,10 @@ export default function CountriesSelect() {
   return (
     <div className="col-span-2">
       <label className="block text-sm font-medium mb-1">
-        Страна
+        Старна
       </label>
       <Controller
-        name='countries'
+        name='country'
         control={control}
         render={({field}) => (
           <RelationshipSelect
