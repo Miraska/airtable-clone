@@ -103,7 +103,7 @@ export const AgentsPage = () => {
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Наименование<sup className='text-red-600'> обязательное</sup>
+                Наименование
               </label>
               <input
                 type="text"

@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
-import type { IClient, IOrder, ISubagent } from '../types';
+import type { IOrder } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
 import SubagentPayersSelect from './SubagentPayersSelect';
 import { statusOptions, swiftStatus, currencyOptions } from '../lib/options';
-import { queryClient } from '../lib/queryClient';
 
 interface OrderFormProps {
   onSubmit: (data: IOrder) => void;
@@ -20,25 +19,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   onClose,
   isLoading,
 }) => {
-  const { register, handleSubmit, control, watch, setValue } = useFormContext<IOrder>()
-  
-  const selectedClientsID = watch("clients")
-  const selectedSubagentsID = watch("subagents")
-  const cashedClient = queryClient.getQueryData(['clients'])
-  const cashedSubagents = queryClient.getQueryData(['subagents'])
-  
-  useEffect(() => {
-    if (cashedClient != undefined) {
-      const selectedClient = cashedClient.data.filter(client => selectedClientsID?.includes(client.id))
-      const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
-      setValue('client_inn', selectedINN)
-    }
-    if (cashedSubagents != undefined) {
-      console.log(selectedSubagentsID, cashedSubagents.data)
-      const selectedSubagents = cashedSubagents.data.filter(subagent => selectedSubagentsID?.includes(subagent.payers))
-      console.log(selectedSubagents)
-    }
-  })
+  const { register, handleSubmit, control } = useFormContext<IOrder>()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -71,7 +52,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Менеджеры
           </label>
           <Controller
-            name="managers"
+            name="manager"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -89,7 +70,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Проверяющий
           </label>
           <Controller
-            name="reviewers"
+            name="reviewer"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -105,7 +86,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <FormField
           type='date'
           label='Дата Размещения'
-          required
           {...register("date")}
         />
         
@@ -120,7 +100,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Контрагент
           </label>
           <Controller
-            name="contractors"
+            name="contragent"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -138,7 +118,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Агент
           </label>
           <Controller
-            name="agents"
+            name="agent"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -156,7 +136,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Клиент
           </label>
           <Controller
-            name="clients"
+            name="client"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -195,7 +175,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             type='text'
             label='SWIFT код банка получателя (при импорте) / отправителя (при экспорте)'
             placeholder='Введите SWIFT код банка'
-            {...register("swift_code")}
           />
         </div>
         
@@ -231,14 +210,14 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         
         <FormField
           label="Номер поручения"
-          type='number'
+          type='text'
           {...register('number_receiving')}
           placeholder='Введите номер поручения'
         />
         
         <FormField
           label="Подписано поручение"
-          {...register('date_instruction')}
+          {...register('number_receiving')}
           type='date'
         />
         
@@ -258,7 +237,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         
         <FormField
           label="Сумма заявки"
-          step={0.000001}
           type="number"
           {...register('sum_order')}
           placeholder='Введите сумму заявки'
@@ -274,15 +252,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <FormField
           label='VIP комиссия'
           {...register('vip_commission')}
-          step={0.000001}
-          type='number'
+          type='text'
           placeholder='Введите VIP комиссию'
         />
         
         <FormField
           label='Скрытая комиссия'
           {...register('hide_commission')}
-          step={0.000001}
           type='number'
           placeholder='Введите скрытую комиссию'
         />
@@ -290,40 +266,49 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         <FormField
           label='Комиссия +% банка'
           {...register('commision_plus_percent')}
-          step={0.000001}
-          type='number'
+          type='text'
           placeholder='Введите комиссию +% банка'
         />
         
         <FormField
           label='Комиссия + аккред'
           {...register('commision_plus_accredit')}
-          step={0.000001}
-          type='number'
+          type='text'
           placeholder='Введите комиссию + аккред'
         />
         
         <FormField
           label='Комиссия + эксроу'
           {...register('commision_plus_escrow')}
-          step={0.000001}
-          type='number'
+          type='text'
+          placeholder='Введите комиссию + эксроу'
+        />
+        
+        <FormField
+          label='Комиссия + эксроу'
+          {...register('commision_plus_escrow')}
+          type='text'
           placeholder='Введите комиссию + эксроу'
         />
         
         <FormField
           label='Курс'
           {...register('money_rate')}
-          step={0.000001}
-          type='number'
+          type='text'
           placeholder='Введите курс рубля (₽)'
         />
         
         <FormField
           label='Скрытый курс'
           {...register('hide_money_rate')}
-          step={0.000001}
-          type='number'
+          type='text'
+          placeholder='Введите скрытый курс рубля (₽)'
+        />
+        
+        <FormField
+          label='Скрытый курс'
+          {...register('hide_money_rate')}
+          type='text'
           placeholder='Введите скрытый курс рубля (₽)'
         />
         
@@ -431,7 +416,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             Субагент
           </label>
           <Controller
-            name="subagents"
+            name="subagent"
             control={control}
             render={({ field }) => (
               <RelationshipSelect
@@ -533,7 +518,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             label="Инвойс"
             type='text'
             placeholder='Введите ссылку на файл инвойса'
-            {...register('invoice_link')}
+            {...register('order_link')}
           />
         </div>
         
