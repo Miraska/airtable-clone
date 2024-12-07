@@ -106,7 +106,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   const handleCellUpdate = (value: any) => {
     if (selectedCell && onCellUpdate) {
-      onCellUpdate(selectedCell.data);
+      onCellUpdate(value);
       setSelectedCell(null);
     }
   };

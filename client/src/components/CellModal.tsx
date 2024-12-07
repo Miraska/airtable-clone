@@ -53,8 +53,6 @@ export const CellModal: React.FC<CellModalProps> = ({
     const updatedData = { ...data, [column.key]: updatedValue };
 
     try {
-      // нужно доделать обновление данных в ячейке, данные не изменяются на сервере и в запросе
-
       onSave(updatedData);
     } catch (error) {
       console.error("Ошибка при обновлении данных:", error);
