@@ -1,8 +1,8 @@
 const columns = [
-  { key: "id", label: "ID" },
-  { key: "name", label: "Наименование" },
-  { key: "subagents", label: "Субагенты" },
-  { key: "orders", label: "Заявки" },
+  { key: "id", label: "ID", sortable: true},
+  { key: "name", label: "Наименование", sortable: true },
+  { key: "subagents", label: "Субагенты", sortable: true },
+  { key: "orders", label: "Заявки", sortable: true },
 ];
 
 export default columns;
