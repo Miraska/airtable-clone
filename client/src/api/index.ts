@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AxiosError } from 'axios';
 
-const API_URL = 'https://8dba-178-204-213-229.ngrok-free.app/api';
+const API_URL = 'https://5884-178-204-213-229.ngrok-free.app/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
