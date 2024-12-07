@@ -1,9 +1,9 @@
 const columns = [
-  { key: "id", label: "ID" },
-  { key: "name", label: "Краткое название", type: "text" },
-  { key: "code", label: "Код", type: "text" },
-  { key: "full_name", label: "Полное наименование", type: "text" },
-  { key: "orders", label: "Заявки", type: "orders" },
+  { key: "id", label: "ID", sortable: true },
+  { key: "name", label: "Краткое название", type: "text", sortable: true },
+  { key: "code", label: "Код", type: "text", sortable: true },
+  { key: "full_name", label: "Полное наименование", type: "text", sortable: true },
+  { key: "orders", label: "Заявки", type: "orders", sortable: true },
 ];
 
 export default columns;

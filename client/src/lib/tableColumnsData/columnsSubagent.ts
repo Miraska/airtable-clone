@@ -1,8 +1,8 @@
 const columns = [
-    { key: 'id', label: 'ID' },
-    { key: 'name', label: 'Наименование', type: "text" },
-    { key: 'subagentPayers', label: 'Плательщики Субагента', type: "subagentPayers" },
-    { key: 'orders', label: 'Заявки', type: "orders"},
+    { key: 'id', label: 'ID', sortable: true },
+    { key: 'name', label: 'Наименование', type: "text", sortable: true },
+    { key: 'subagentPayers', label: 'Плательщики Субагента', type: "subagentPayers", sortable: true },
+    { key: 'orders', label: 'Заявки', type: "orders", sortable: true },
   ];
 
 export default columns;
