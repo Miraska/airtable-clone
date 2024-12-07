@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
-import type { IOrder } from '../types';
+import type { IClient, IOrder, ISubagent } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
 import SubagentPayersSelect from './SubagentPayersSelect';
 import { statusOptions, swiftStatus, currencyOptions } from '../lib/options';
+import { queryClient } from '../lib/queryClient';
 
 interface OrderFormProps {
   onSubmit: (data: IOrder) => void;
@@ -19,7 +20,25 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   onClose,
   isLoading,
 }) => {
-  const { register, handleSubmit, control } = useFormContext<IOrder>()
+  const { register, handleSubmit, control, watch, setValue } = useFormContext<IOrder>()
+  
+  const selectedClientsID = watch("clients")
+  const selectedSubagentsID = watch("subagents")
+  const cashedClient = queryClient.getQueryData(['clients'])
+  const cashedSubagents = queryClient.getQueryData(['subagents'])
+  
+  useEffect(() => {
+    if (cashedClient != undefined) {
+      const selectedClient = cashedClient.data.filter(client => selectedClientsID?.includes(client.id))
+      const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
+      setValue('client_inn', selectedINN)
+    }
+    if (cashedSubagents != undefined) {
+      console.log(selectedSubagentsID, cashedSubagents.data)
+      const selectedSubagents = cashedSubagents.data.filter(subagent => selectedSubagentsID?.includes(subagent.payers))
+      console.log(selectedSubagents)
+    }
+  })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
