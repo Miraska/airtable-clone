@@ -27,7 +27,7 @@ export const SubagentPayersPage = () => {
   }
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery('payers', () => api.subagentPayers.getAll(),
+  const { data, refetch } = useQuery('subagent-payers', () => api.subagentPayers.getAll(),
   {
     staleTime: 0.3 * 60 * 1000, 
     cacheTime: 10 * 60 * 1000, 
@@ -40,7 +40,7 @@ export const SubagentPayersPage = () => {
     (newPayer: ISubagentPayer) => api.subagentPayers.create(newPayer),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('payers');
+        queryClient.invalidateQueries('subagent-payers');
         toast.success("Плательщик Субагента добавлен успешно!");
         closeModal()
       },
@@ -48,13 +48,13 @@ export const SubagentPayersPage = () => {
   );
   const deleteMutation = useMutation((id: number) => api.subagentPayers.delete(id), {
     onSuccess: () => {
-      queryClient.invalidateQueries("payers");
+      queryClient.invalidateQueries("subagent-payers");
       toast.success("Плательщик субагента удален успешно!");
     },
   });
   const updateMutation = useMutation((data: ISubagentPayer) => api.subagentPayers.update(data.id as number, data), {
     onSuccess: () => {
-      queryClient.invalidateQueries("payers");
+      queryClient.invalidateQueries("subagent-payers");
       closeModal()
       toast.success("Плательщик Субагента обновлен успешно!");
     }

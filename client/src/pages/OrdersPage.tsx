@@ -14,17 +14,17 @@ export const OrdersPage = () => {
   const defaultValue = { // ЗАЯВКИ
     status: null, // Статус (закрыта, открыта, в работе и т. д.)
     order_number: null, // Номер (№) заявки
-    manager: [], // Менеджеры (может хранится много менеджеров которые в другой таблице)
-    reviewer: [], // Проверяющие (может хранится много менеджеров которые в другой таблице)
+    managers: [], // Менеджеры (может хранится много менеджеров которые в другой таблице)
+    reviewers: [], // Проверяющие (может хранится много менеджеров которые в другой таблице)
     date: null, // Дата размещения (дата)
     date_hired: null, // Взята в работу (дата)
-    contragent: null, // Контрагент (может хранится много контрагентов из таблицы контрагенты)
-    agent: [], // Агент (может хранится много агентов из таблицы агенты)
-    client: [], // Клиент (может хранится много клиентов из таблицы клиенты)
+    contragents: [], // Контрагент (может хранится много контрагентов из таблицы контрагенты)
+    agents: [], // Агент (может хранится много агентов из таблицы агенты)
+    clients: [], // Клиент (может хранится много клиентов из таблицы клиенты)
     client_inn: null, // ИНН (от клиента из таблицы клиентов)
     name_agency: null, // Наименование экспортёра или импортёра
     swift_code: null, // SWIFT Код банка получателя или отправителя
-    country: [], // Страна (может хранится 1 страна из таблицы стран)
+    countries: [], // Страна (может хранится 1 страна из таблицы стран)
     calc_condition: null, // Условия расчета
     type_transaction: null, // Вид сделки
     number_receiving: null, // Номер поручения
@@ -59,8 +59,8 @@ export const OrdersPage = () => {
     date_close_deal: null, // Сделка закрыта
     cycle_deal: null, // Цикл сделки, дн
     purpose_of_payment: null, // Назначение платежа
-    subagent: [], // Субагент (может хранится субагент из таблицы субагентов)
-    subagents_payer: [], // Плательщик Субагента (может хранится плательщик субагента из таблицы плательщик субагентов)
+    subagents: [], // Субагент (может хранится субагент из таблицы субагентов)
+    subagents_payers: [], // Плательщик Субагента (может хранится плательщик субагента из таблицы плательщик субагентов)
     serial_num_for_payer: null, // Порядковый номер заявления для плательщика субагента (при импорте) / получателя (при экспорте)
     date_docs_agent_and_subagent: null, // Подготовлены документы между агентом и субагентом (дата)
     date_taking_swift: null, // Получен SWIFT
@@ -130,14 +130,10 @@ export const OrdersPage = () => {
   };
   const submit = (data: IOrder) => {
     console.log(data)
-    const parseData = {
-      ...data,
-      order_number: +data.order_number
-    }
     if (typeof data.id === "number") {
-      updateMutation.mutate(parseData);
+      updateMutation.mutate(data);
     } else {
-      createMutation.mutate(parseData);
+      createMutation.mutate(data);
     }
   };
   const handleEdit = (order: IOrder) => {

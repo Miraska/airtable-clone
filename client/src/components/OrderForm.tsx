@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { queryClient } from '../lib/queryClient';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
-import type { IClient, IOrder, ISubagent } from '../types';
+import type { IOrder } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
 import SubagentPayersSelect from './SubagentPayersSelect';
-import { statusOptions, swiftStatus, currencyOptions } from '../lib/options';
-import { queryClient } from '../lib/queryClient';
+import { statusOptions, swiftStatus, currencyOptions, transactionOptions, conditionOptions } from '../lib/options';
+import { IClient } from '../types';
 
 interface OrderFormProps {
   onSubmit: (data: IOrder) => void;
@@ -23,20 +24,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   const { register, handleSubmit, control, watch, setValue } = useFormContext<IOrder>()
   
   const selectedClientsID = watch("clients")
-  const selectedSubagentsID = watch("subagents")
   const cashedClient = queryClient.getQueryData(['clients'])
-  const cashedSubagents = queryClient.getQueryData(['subagents'])
   
   useEffect(() => {
     if (cashedClient != undefined) {
       const selectedClient = cashedClient.data.filter(client => selectedClientsID?.includes(client.id))
       const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
       setValue('client_inn', selectedINN)
-    }
-    if (cashedSubagents != undefined) {
-      console.log(selectedSubagentsID, cashedSubagents.data)
-      const selectedSubagents = cashedSubagents.data.filter(subagent => selectedSubagentsID?.includes(subagent.payers))
-      console.log(selectedSubagents)
     }
   })
 
@@ -174,7 +168,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             type="text"
             label="ИНН (from Клиент)"
             placeholder='Введите инн'
-            value=''
             readonly
             {...register('client_inn')}
           />
@@ -210,7 +203,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               text='условие расчета'
               value={field.value as string}
               onChange={field.onChange}
-              options={statusOptions}
+              options={conditionOptions}
             />
           )}
         />
@@ -222,7 +215,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormSelect
               labelText="Вид сделки"
               text='вид сделки'
-              options={statusOptions}
+              options={transactionOptions}
               value={field.value as string}
               onChange={field.onChange}
             />

@@ -10,6 +10,7 @@ interface Column {
   key: string;
   label: string;
   sortable?: boolean;
+  type?: string;
   render?: (value: any) => React.ReactNode;
 }
 
@@ -106,7 +107,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   const handleCellUpdate = (value: any) => {
     if (selectedCell && onCellUpdate) {
-      onCellUpdate(selectedCell.data);
+      onCellUpdate(value);
       setSelectedCell(null);
     }
   };
@@ -115,8 +116,23 @@ export const DataTable: React.FC<DataTableProps> = ({
     <div className="flex flex-col h-full transition-all duration-300">
       <div className="sticky mx-a top-0 z-20 bg-white p-6 border-b border-gray-200 dark:bg-gray-800 dark:border-gray-600 transition-all">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</h2>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onAdd}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                <Plus size={20} />
+                <span>Добавить</span>
+              </button>
+              <button
+                onClick={onRefresh}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-600"
+                title="Refresh"
+              >
+                <RefreshCw size={20} className="text-gray-600 dark:text-gray-400" />
+              </button>
+            </div>
             <div className="relative">
               <input
                 type="text"
@@ -128,23 +144,8 @@ export const DataTable: React.FC<DataTableProps> = ({
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onRefresh}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-600"
-                title="Refresh"
-              >
-                <RefreshCw size={20} className="text-gray-600 dark:text-gray-400" />
-              </button>
-              <button
-                onClick={onAdd}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                <Plus size={20} />
-                <span>Добавить</span>
-              </button>
-            </div>
           </div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</h2>
         </div>
       </div>
 
@@ -153,6 +154,11 @@ export const DataTable: React.FC<DataTableProps> = ({
           <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-500 transition-all">
             <thead className="bg-gray-50 dark:bg-gray-700" >
               <tr>
+                {(onView || onEdit || onDelete) && (
+                  <th scope="col" className="relative px-6 py-3 top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-100 dark:bg-gray-700">
+                    Действия
+                  </th>
+                )}
                 {columns.map((column) => (
                   <th
                     key={column.key}
@@ -188,16 +194,20 @@ export const DataTable: React.FC<DataTableProps> = ({
                     </div>
                   </th>
                 ))}
-                {(onView || onEdit || onDelete) && (
-                  <th scope="col" className="relative px-6 py-3 top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-100 dark:bg-gray-700">
-                    Действия
-                  </th>
-                )}
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-600 divide-y divide-gray-200 dark:divide-gray-500">
               {Array.isArray(filteredData) && filteredData.map((item, index) => (
                 <tr key={item.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-500">
+                  {(onView || onEdit || onDelete) && (
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <TableActions
+                        onView={() => onView?.(item)}
+                        onEdit={() => { onEdit?.(item) }}
+                        onDelete={() => onDelete?.(item)}
+                      />
+                    </td>
+                  )}
                   {columns.map((column) => (
                     <td
                       key={column.key}
@@ -209,15 +219,6 @@ export const DataTable: React.FC<DataTableProps> = ({
                       }
                     </td>
                   ))}
-                  {(onView || onEdit || onDelete) && (
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <TableActions
-                        onView={() => onView?.(item)}
-                        onEdit={() => { onEdit?.(item) }}
-                        onDelete={() => onDelete?.(item)}
-                      />
-                    </td>
-                  )}
                 </tr>
               ))}
             </tbody>

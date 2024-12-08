@@ -32,6 +32,7 @@ const Order = sequelize.define('Order', {
   currency: { type: DataTypes.STRING, allowNull: true },
   sum_order: { type: DataTypes.FLOAT, allowNull: true },
   vip_commission: { type: DataTypes.FLOAT, allowNull: true },
+  vip_condition: { type: DataTypes.STRING, allowNull: true },
   hide_commission: { type: DataTypes.FLOAT, allowNull: true },
   commision_plus_percent: { type: DataTypes.FLOAT, allowNull: true },
   commision_plus_accredit: { type: DataTypes.FLOAT, allowNull: true },

@@ -55,6 +55,8 @@ const RenderData: React.FC<RenderDataProps> = ({
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchNames = async () => {
       if (!Array.isArray(data)) return;
 
@@ -63,14 +65,22 @@ const RenderData: React.FC<RenderDataProps> = ({
 
       await Promise.all(
         uniqueIds.map(async (id) => {
-          namesMap[id] = await getNamesOfId(parentKey, id);
+          if (isMounted) {
+            namesMap[id] = await getNamesOfId(parentKey, id);
+          }
         })
       );
 
-      setNamesCache((prev) => ({ ...prev, ...namesMap }));
+      if (isMounted) {
+        setNamesCache((prev) => ({ ...prev, ...namesMap }));
+      }
     };
 
     fetchNames();
+
+    return () => {
+      isMounted = false;
+    };
   }, [data, parentKey]);
 
   const renderValue = (value: any, key: string) => {
@@ -136,19 +146,12 @@ const RenderData: React.FC<RenderDataProps> = ({
                   setNewData(result.data);
                   setNewKey(result.data.id);
 
-                  // Update the selected cell
                   if (setSelectedCell) {
                     setSelectedCell({
                       data: result.data,
                       column: { key: parentKey, label: relatedConfig.label },
                       value: result.data.id,
                     });
-
-                    // console.log('RenderData: Result.data, parentKey, relatedConfig.columns, result.data.id');
-                    // console.log(result.data);
-                    // console.log(parentKey);
-                    // console.log(relatedConfig.label);
-                    // console.log(result.data.id);
                   }
                 } catch (error) {
                   console.error("Error fetching data:", error);

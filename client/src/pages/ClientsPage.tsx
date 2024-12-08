@@ -116,13 +116,14 @@ export const ClientsPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                ИНН
+                ИНН<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 type="text"
                 {...register("inn")}
                 placeholder='Введите ИНН клиента'
                 className="mt-1 block w-full dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 rounded-md shadow-sm hover:border-gray-400 transition-all focus:ring-blue-500 focus:border-blue-500"
+                required
               />
             </div>
             <OrdersSelect/>

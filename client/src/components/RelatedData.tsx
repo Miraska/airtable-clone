@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import RenderData from "./RenderData";
-
 import columnsConfig from "../lib/tableColumnsData/index";
 import titleMappings from "../lib/tableTitles";
 
@@ -27,77 +26,84 @@ export const RelatedDataModal: React.FC<RelatedDataModalProps> = ({
   setTitle,
   setSelectedCell,
 }) => {
-  useEffect(() => {
-    setTitle(setNewTitle(relatedName) + " " + relatedKey);
-  }, [relatedName, setTitle]);
-
-  const relatedConfig = columnsConfig[relatedName as keyof typeof columnsConfig];
-
-  if (!relatedConfig) {
-    console.error(
-      `Не найдена конфигурация для таблицы с именем: ${relatedName}`
-    );
-    return null;
-  }
-
-  const { columns, apiMethod } = relatedConfig;
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [modalData, setModalData] = useState<any>(null);
   const [newModalIsOpen, setNewModalIsOpen] = useState(false);
   const [newPath, setNewPath] = useState("");
   const [newData, setNewData] = useState<any>(null);
   const [newKey, setNewKey] = useState("");
 
-  const { data, isLoading, isError, refetch } = useQuery(
+  // Устанавливаем заголовок модального окна
+  useEffect(() => {
+    if (isOpen && relatedName && relatedKey) {
+      setTitle(setNewTitle(relatedName) + " " + relatedKey);
+    }
+  }, [relatedName, relatedKey, isOpen, setTitle]);
+
+  // Получаем конфигурацию таблицы
+  const relatedConfig = columnsConfig[relatedName as keyof typeof columnsConfig];
+  if (!relatedConfig) {
+    console.error(`Не найдена конфигурация для таблицы с именем: ${relatedName}`);
+    return null;
+  }
+  const { columns, apiMethod } = relatedConfig;
+
+  // Загружаем данные для модального окна
+  const { refetch } = useQuery(
     ["relatedData", relatedKey],
-    () => apiMethod(relatedKey),
+    async () => {
+      setIsLoading(true);
+      const result = await apiMethod(relatedKey);
+      setModalData(result.data);
+      setIsLoading(false);
+    },
     {
-      staleTime: 0.3 * 60 * 1000,
-      cacheTime: 5 * 60 * 1000,
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
       enabled: isOpen && !!relatedKey,
+      onError: (error) => {
+        console.error("Ошибка загрузки данных:", error);
+        setIsLoading(false);
+      },
     }
   );
 
-  if (!isOpen) {
-    return null;
-  }
+  useEffect(() => {
+    if (isOpen && relatedKey) {
+      refetch();
+    }
+  }, [isOpen, relatedKey, refetch]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="modal-container">
       {newModalIsOpen ? (
         <RelatedDataModal
+          key={`${newPath}-${newKey}`}
           isOpen={true}
           relatedKey={newKey}
           relatedName={newPath}
           cellItem={newData}
           setTitle={setTitle}
-          setSelectedCell={setSelectedCell} // Pass down the function
+          setSelectedCell={setSelectedCell}
         />
       ) : (
         <div>
           {isLoading ? (
             <div>Загрузка...</div>
-          ) : isError ? (
-            <div>Произошла ошибка при загрузке данных</div>
-          ) : (
-            <div className="space-y-4">
-              {data && data.data ? (
-                <div className="p-4 rounded-md">
-                  <RenderData
-                    data={data.data}
-                    columns={columns}
-                    setNewModalIsOpen={setNewModalIsOpen}
-                    setNewPath={setNewPath}
-                    setNewData={setNewData}
-                    setNewKey={setNewKey}
-                    setSelectedCell={setSelectedCell} // Pass down the function
-                  />
-                </div>
-              ) : (
-                <div>{cellItem}</div>
-              )}
+          ) : modalData ? (
+            <div className="p-4 rounded-md">
+              <RenderData
+                data={modalData}
+                columns={columns}
+                setNewModalIsOpen={setNewModalIsOpen}
+                setNewPath={setNewPath}
+                setNewData={setNewData}
+                setNewKey={setNewKey}
+                setSelectedCell={setSelectedCell}
+              />
             </div>
+          ) : (
+            <div>{cellItem || "Нет данных для отображения"}</div>
           )}
         </div>
       )}

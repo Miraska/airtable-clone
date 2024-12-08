@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import Select from 'react-select';
 import { useQuery } from 'react-query';
 import { api } from '../api';
@@ -11,7 +11,7 @@ interface Option {
 
 interface RelationshipSelectProps {
   type: 'orders' | 'managers' | 'agents' | 'contractors' | 'reviewers' | 'clients' | 'countries' | 'subagents' | 'subagentPayers';
-  value: never[] | string[] | string | number[] | number;
+  value: never[] | string[] | string | number[];
   onChange: (value: string[]) => void;
   isMulti?: boolean;
   placeholder?: string;
