@@ -13,15 +13,6 @@ export const TableActions: React.FC<TableActionsProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-2">
-      {onEdit && (
-        <button
-          onClick={onEdit}
-          className="p-1 text-gray-500 dark:text-gray-300 hover:text-yellow-600 transition-colors"
-          title="Edit"
-        >
-          <Edit size={18} />
-        </button>
-      )}
       {onDelete && (
         <button
           onClick={onDelete}
@@ -29,6 +20,15 @@ export const TableActions: React.FC<TableActionsProps> = ({
           title="Удалить"
         >
           <Trash2 size={18} />
+        </button>
+      )}
+      {onEdit && (
+        <button
+          onClick={onEdit}
+          className="p-1 text-gray-500 dark:text-gray-300 hover:text-yellow-600 transition-colors"
+          title="Edit"
+        >
+          <Edit size={18} />
         </button>
       )}
     </div>
