@@ -3,17 +3,17 @@ export interface IOrder { // ЗАЯВКИ
   autonumber: number | null, // Автономер (по порядку)
   status: string | null, // Статус (закрыта, открыта, в работе и т. д.)
   order_number: number | null, // Номер (№) заявки
-  manager: number[] | null, // Менеджеры (может хранится много менеджеров которые в другой таблице)
-  reviewer: number[] | null, // Проверяющие (может хранится много менеджеров которые в другой таблице)
+  managers: number[] | null, // Менеджеры (может хранится много менеджеров которые в другой таблице)
+  reviewers: number[] | null, // Проверяющие (может хранится много менеджеров которые в другой таблице)
   date: string | null, // Дата размещения (дата)
   date_hired: string | null, // Взята в работу (дата)
-  contragent: string | null, // Контрагент (может хранится много контрагентов из таблицы контрагенты)
-  agent: number[] | null, // Агент (может хранится много агентов из таблицы агенты)
-  client: number[] | null, // Клиент (может хранится много клиентов из таблицы клиенты)
+  contractors: number[] | null, // Контрагент (может хранится много контрагентов из таблицы контрагенты)
+  agents: number[] | null, // Агент (может хранится много агентов из таблицы агенты)
+  clients: number[] | null, // Клиент (может хранится много клиентов из таблицы клиенты)
   client_inn: string | null, // ИНН (от клиента из таблицы клиентов)
   name_agency: string | null, // Наименование экспортёра или импортёра
   swift_code: string | null, // SWIFT Код банка получателя или отправителя
-  country: number[] | null, // Страна (может хранится 1 страна из таблицы стран)
+  countries: number[] | null, // Страна (может хранится 1 страна из таблицы стран)
   calc_condition: string | null, // Условия расчета
   type_transaction: string | null, // Вид сделки
   number_receiving: number | null, // Номер поручения
@@ -48,8 +48,8 @@ export interface IOrder { // ЗАЯВКИ
   date_close_deal: string | null, // Сделка закрыта
   cycle_deal: number | null, // Цикл сделки, дн
   purpose_of_payment: string | null, // Назначение платежа
-  subagent: number[] | null, // Субагент (может хранится субагент из таблицы субагентов)
-  subagents_payer: number[] | null, // Плательщик Субагента (может хранится плательщик субагента из таблицы плательщик субагентов)
+  subagents: number[] | null, // Субагент (может хранится субагент из таблицы субагентов)
+  subagentsPayers: number[] | null, // Плательщик Субагента (может хранится плательщик субагента из таблицы плательщик субагентов)
   serial_num_for_payer: number | null, // Порядковый номер заявления для плательщика субагента (при импорте) / получателя (при экспорте)
   date_docs_agent_and_subagent: string | null, // Подготовлены документы между агентом и субагентом (дата)
   date_taking_swift: string | null, // Получен SWIFT

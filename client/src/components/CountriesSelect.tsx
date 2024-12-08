@@ -11,7 +11,7 @@ export default function CountriesSelect() {
         Старна
       </label>
       <Controller
-        name='country'
+        name='countries'
         control={control}
         render={({field}) => (
           <RelationshipSelect

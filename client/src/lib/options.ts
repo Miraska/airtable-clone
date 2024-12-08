@@ -1,23 +1,65 @@
-export const statusOptions = [
-  { value: "Новый", label: "Новый" },
-  { value: "В процессе", label: "В процессе" },
-  { value: "Завершен", label: "Завершен" },
-  { value: "Закрыт", label: "Закрыт" },
+export const swiftStatus = [
+  { value: "Заявка закрыта", label: "Заявка закрыта" },
+  { value: "Возврат", label: "Возврат" },
+  { value: "Деньги у получателя", label: "Деньги у получателя" },
+  { value: "SWIFT получен", label: "SWIFT получен" },
+  { value: "SWIFT 103 запрошен", label: "SWIFT 103 запрошен" },
+  { value: "Заявление отправлено", label: "Заявление отправлено" },
+];
+
+export const transactionOptions = [
+  { value: "Импорт", label: "Импорт" },
+  { value: "Экспорт", label: "Экспорт" },
+];
+
+export const conditionOptions = [
+  { value: "Аккредитив", label: "Аккредитив" },
+  { value: "Предоплата", label: "Предоплата" },
+  { value: "Постоплата", label: "Постоплата" },
+  { value: "Эскроу", label: "Эскроу" },
 ];
 
 export const currencyOptions = [
-  { value: "USD", label: "USD" },
-  { value: "EUR", label: "EUR" },
-  { value: "RUB", label: "RUB" },
+  { value: "Юань", label: "Юань" },
+  { value: "Доллар", label: "Доллар" },
+  { value: "Евро", label: "Евро" },
+  { value: "Дирхам", label: "Дирхам" },
 ];
 
-export const swiftStatus = [
-  { value: "close", label: "Заявка закрыта" },
-  { value: "return", label: "Возврат" },
-  { value: "sucess", label: "Деньги у получателя" },
+export const statusOptions = [
+  { value: "Заявка закрыта", label: "Заявка закрыта" },
+  { value: "15. Возврат", label: "15. Возврат" },
+  { value: "17. Деньги у получателя", label: "17. Деньги у получателя" },
+  { value: "Отменено клиентом", label: "Отменено клиентом" },
+  { value: "1. Не создан чат", label: "1. Не создан чат" },
+  { value: "Cогласован получатель (только для Экспорта)", label: "Cогласован получатель (только для Экспорта)" },
+  { value: "1'. Cоздан чат", label: "1'. Cоздан чат" },
+  { value: "4. Подписан агент. договор", label: "4. Подписан агент. договор" },
+  { value: "Ждем рубли", label: "Ждем рубли" },
+  { value: "5. Выставлен инвойс на плательщика", label: "5. Выставлен инвойс на плательщика" },
+  { value: "3. Согласование плательщика", label: "3. Согласование плательщика" },
+  { value: "Ждём валюту (только для Экспорта)", label: "Ждём валюту (только для Экспорта)" },
+  { value: "9. Передано на оплату", label: "9. Передано на оплату" },
+  { value: "7. Подписано поручение", label: "7. Подписано поручение" },
+  { value: "10. Получен свифт", label: "10. Получен свифт" },
+  { value: "17`. Ждём поступление валюты получателю", label: "17`. Ждём поступление валюты получателю" },
+  { value: "Получили рубли", label: "Получили рубли" },
+  { value: "11. Запрошен свифт 103", label: "11. Запрошен свифт 103" },
+  { value: "6. Зафиксирован курс", label: "6. Зафиксирован курс" },
 ];
 
 export const booleanStatus = [
   { value: "true", label: "Да" },
   { value: "false", label: "Нет" },
+];
+
+export const stageProblemOptions = [
+  { value: "Деньги не сели поставщику", label: "Деньги не сели поставщику" },
+  { value: "Возврат с повторной оплатой", label: "Возврат с повторной оплатой" },
+  { value: "Возврат с последующей отменой", label: "Возврат с последующей отменой" },
+];
+
+export const nameMistakeOptions = [
+  { value: "Менеджер", label: "Менеджер" },
+  { value: "Клиент", label: "Клиент" },
 ];

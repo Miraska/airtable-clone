@@ -11,7 +11,7 @@ export default function SubagentPayersSelect() {
         Плательщик Субагентов
       </label>
       <Controller
-        name='payers'
+        name='subagentPayers'
         control={control}
         render={({field}) => (
           <RelationshipSelect

@@ -107,7 +107,7 @@ export const ManagersPage = () => {
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Имя
+                Имя<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 type="text"
@@ -119,7 +119,7 @@ export const ManagersPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Номер телефона
+                Номер телефона<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 type="tel"
@@ -131,7 +131,7 @@ export const ManagersPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                День рождения
+                День рождения<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 placeholder='Выберите день рождения'

@@ -10,13 +10,22 @@ import {
   currencyOptions,
   swiftStatus,
   booleanStatus,
+  conditionOptions,
+  transactionOptions,
+  stageProblemOptions,
+  nameMistakeOptions,
 } from "../lib/options";
 
 interface CellModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: any;
-  column: { key: string; label: string; type: string };
+  column: { 
+    key: string; 
+    label: string; 
+    type: string;
+    readonly?: boolean;
+  };
   value?: any;
   onSave: (value: any) => void;
   isRelationShip?: boolean;
@@ -72,6 +81,7 @@ export const CellModal: React.FC<CellModalProps> = ({
             type={column.type}
             defaultValue={value || ""}
             onChange={(e) => setValue(e.target.value)}
+            readOnly={column.readonly}
             className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 dark:border-transparent focus:ring-blue-500 focus:border-blue-500"
           />
         );
@@ -82,6 +92,7 @@ export const CellModal: React.FC<CellModalProps> = ({
             type="date"
             defaultValue={value || ""}
             onChange={(e) => setValue(e.target.value)}
+            readOnly={column.readonly}
             className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 placeholder:text-gray-100 dark:border-transparent focus:ring-blue-500 focus:border-blue-500"
           />
         );
@@ -130,6 +141,50 @@ export const CellModal: React.FC<CellModalProps> = ({
             }}
           />
         );
+      case "problem-stage":
+        return (
+          <Select
+            options={stageProblemOptions}
+            value={stageProblemOptions.find((opt) => opt.value === value)}
+            onChange={(selectedOption) => {
+              setValue(selectedOption?.value || "");
+              setFormValue(column.key, selectedOption?.value || "");
+            }}
+          />
+        );
+      case "condition":
+        return (
+          <Select
+            options={conditionOptions}
+            value={conditionOptions.find((opt) => opt.value === value)}
+            onChange={(selectedOption) => {
+              setValue(selectedOption?.value || "");
+              setFormValue(column.key, selectedOption?.value || "");
+            }}
+          />
+        )
+      case "name-mistake":
+        return (
+          <Select
+            options={nameMistakeOptions}
+            value={nameMistakeOptions.find((opt) => opt.value === value)}
+            onChange={(selectedOption) => {
+              setValue(selectedOption?.value || "");
+              setFormValue(column.key, selectedOption?.value || "");
+            }}
+          />
+        )
+      case "transaction":
+      return (
+        <Select
+          options={transactionOptions}
+          value={transactionOptions.find((opt) => opt.value === value)}
+          onChange={(selectedOption) => {
+            setValue(selectedOption?.value || "");
+            setFormValue(column.key, selectedOption?.value || "");
+          }}
+        />
+      )
       case "related":
         return (
           <RelatedDataModal

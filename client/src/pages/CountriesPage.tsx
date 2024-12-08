@@ -104,7 +104,7 @@ export const CountriesPage = () => {
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Краткое название
+                Краткое название<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 type="text"
@@ -116,7 +116,7 @@ export const CountriesPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Код
+                Код<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 {...register('code')}
@@ -128,7 +128,7 @@ export const CountriesPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Полное наименование
+                Полное наименование<sup className='text-red-600'> обязательное</sup>
               </label>
               <input
                 {...register('full_name')}
