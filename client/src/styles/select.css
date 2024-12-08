@@ -34,3 +34,7 @@
 .react-select__multi-value__remove {
     @apply ml-1 rounded p-1 hover:bg-blue-700 transition-all
 }
+
+.react-select__value-container {
+    @apply gap-y-2
+}
