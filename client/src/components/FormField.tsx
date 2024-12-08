@@ -22,7 +22,7 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(({la
 
   return (
     <div className='flex flex-col justify-end'>
-        <label className="block text-sm font-medium">{label}{required ? <sup className='text-red-600'> обязательное</sup> : ""}</label>
+        <label className="block text-sm font-medium">{label}{required ? <sup className='text-red-600'>*</sup> : ""}</label>
       <input
         ref={ref}
         placeholder={placeholder}
