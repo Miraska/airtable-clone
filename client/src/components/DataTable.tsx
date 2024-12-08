@@ -96,12 +96,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   
   // Обработчик кликов на ячейку
   const handleCellClick = (item: any, column: Column) => {
-    const value = item[column.key];
     setIsRelationShip(false);
-    if (Array.isArray(value) || column.key == "id") {
-      setSelectedCellRelationShip({ data: item, column });
-      return; // Не открываем модальное окно при клике на элементы массива
-    }
     setSelectedCell({ data: item, column });
   };
 
