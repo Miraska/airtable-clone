@@ -17,7 +17,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>((
   
   return (
     <div className='flex flex-col justify-end'>
-      <label className="block text-sm font-medium">{labelText} {required ? <sup className='text-red-600'> обязательное</sup> : ""}</label>
+      <label className="block text-sm font-medium">{labelText} {required ? <sup className='text-red-600'>*</sup> : ""}</label>
       <select ref={ref} value={value as string} onChange={(e) => onChange(e.target.value)} className={baseClassName} required={required}>
         <option value="">Выберите {text}</option>
         {options.map((option) => (

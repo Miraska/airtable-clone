@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import { RelatedDataModal } from "./RelatedData";
-import { useForm } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { Button } from "./Button";
 import Select from "react-select";
 
@@ -15,14 +20,15 @@ import {
   stageProblemOptions,
   nameMistakeOptions,
 } from "../lib/options";
+import { RelationshipSelect } from "./RelationshipSelect";
 
 interface CellModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: any;
-  column: { 
-    key: string; 
-    label: string; 
+  column: {
+    key: string;
+    label: string;
     type: string;
     readonly?: boolean;
   };
@@ -162,7 +168,7 @@ export const CellModal: React.FC<CellModalProps> = ({
               setFormValue(column.key, selectedOption?.value || "");
             }}
           />
-        )
+        );
       case "name-mistake":
         return (
           <Select
@@ -173,29 +179,41 @@ export const CellModal: React.FC<CellModalProps> = ({
               setFormValue(column.key, selectedOption?.value || "");
             }}
           />
-        )
+        );
       case "transaction":
-      return (
-        <Select
-          options={transactionOptions}
-          value={transactionOptions.find((opt) => opt.value === value)}
-          onChange={(selectedOption) => {
-            setValue(selectedOption?.value || "");
-            setFormValue(column.key, selectedOption?.value || "");
-          }}
-        />
-      )
-      case "related":
         return (
-          <RelatedDataModal
-            isOpen={isOpen}
-            relatedName={column.key}
-            relatedKey={value}
-            cellItem={value}
-            setTitle={setTitle}
-            setSelectedCell={setSelectedCell}
+          <Select
+            options={transactionOptions}
+            value={transactionOptions.find((opt) => opt.value === value)}
+            onChange={(selectedOption) => {
+              setValue(selectedOption?.value || "");
+              setFormValue(column.key, selectedOption?.value || "");
+            }}
           />
         );
+      case "related":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+                <Controller
+                  name={column.key}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <RelationshipSelect
+                      type={column.key}
+                      value={field.value || []}
+                      onChange={(newValue) => {
+                        setValue(newValue);
+                        setFormValue(column.key, newValue);
+                      }}
+                      placeholder="Выберите связь"
+                    />
+                  )}
+                />
+            </FormProvider>
+          </div>
+        );
+
       default:
         return (
           <input
@@ -219,20 +237,47 @@ export const CellModal: React.FC<CellModalProps> = ({
     >
       <div className="space-y-4">
         {isEditing ? (
-          <form onSubmit={handleSubmit(handleSave)}>
-            <div className="space-y-4">
-              {isRelationShip ? (
-                <div>Здесь будет изменение столбца или значений</div>
-              ) : (
-                <div>
-                  {Array.isArray(value) ? (
-                    <div>
-                      Здесь будет редактирование ссылочных значений на другие
-                      таблицы
-                    </div>
-                  ) : (
-                    renderInputByType()
-                  )}
+          column.type == "file" ? (
+            <form>
+              <div className="space-y-4">
+                <input
+                  type="file"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 dark:border-transparent focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="primary"
+                    className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
+                    onClick={() => {
+                      setIsEditing(false);
+                    }}
+                  >
+                    Закрыть
+                  </Button>
+                  <Button type="submit">Сохранить</Button>
+                </div>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit(handleSave)}>
+              <div className="space-y-4">
+                {isRelationShip ? (
+                  <div>Здесь будет изменение столбца или значений</div>
+                ) : (
+                  renderInputByType()
+                )}
+
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="primary"
+                    className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
+                    onClick={() => {
+                      setIsEditing(false);
+                    }}
+                  >
+                    Закрыть
+                  </Button>
+                  <Button type="submit">Сохранить</Button>
                 </div>
               )}
               <div className="flex justify-end gap-2">
