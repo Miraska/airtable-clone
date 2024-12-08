@@ -10,7 +10,7 @@ interface Column {
   key: string;
   label: string;
   sortable?: boolean;
-  type?: string;
+  type: string;
   render?: (value: any) => React.ReactNode;
 }
 
