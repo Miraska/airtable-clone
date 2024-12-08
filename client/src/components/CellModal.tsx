@@ -277,7 +277,10 @@ export const CellModal: React.FC<CellModalProps> = ({
                   >
                     Закрыть
                   </Button>
-                  <Button type="submit">Сохранить</Button>
+                  <Button type="submit" onClick={() => {
+                    console.log(value);
+                    console.log();
+                  }}>Сохранить</Button>
                 </div>
               </div>
             </form>
