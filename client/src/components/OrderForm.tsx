@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { queryClient } from '../lib/queryClient';
 import { RelationshipSelect } from './RelationshipSelect';
 import { FormField } from './FormField';
-import type { IOrder } from '../types';
+import type { IOrder, ISubagent } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
 import SubagentPayersSelect from './SubagentPayersSelect';
 import { statusOptions, swiftStatus, currencyOptions, transactionOptions, conditionOptions } from '../lib/options';
 import { IClient } from '../types';
+import PayersSelect from './PayersSelect';
 
 interface OrderFormProps {
   onSubmit: (data: IOrder) => void;
@@ -25,6 +26,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   
   const selectedClientsID = watch("clients")
   const cashedClient = queryClient.getQueryData(['clients'])
+  const selectedSubagentsID = watch("subagents")
+  const cashedSubagent = queryClient.getQueryData(['subagents'])
+  
+  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
   
   useEffect(() => {
     if (cashedClient != undefined) {
@@ -32,7 +37,13 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
       setValue('client_inn', selectedINN)
     }
-  })
+    if (cashedSubagent != undefined) {
+      const selectedSubagent = cashedSubagent.data.filter(subagent => selectedSubagentsID?.includes(subagent.id))
+      const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
+      const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
+      setSelectedPayersID(uniquePayersID)
+    }
+  }, [cashedClient, cashedSubagent, selectedClientsID, selectedSubagentsID])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -438,7 +449,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <SubagentPayersSelect/>
+          <PayersSelect canSelect={selectedPayersID}/>
         </div>
         
         <div className="col-span-2">
