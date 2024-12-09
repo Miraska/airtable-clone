@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+ximport React, { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import { RelatedDataModal } from "./RelatedData";
 import {
@@ -20,6 +20,9 @@ import {
   nameMistakeOptions,
 } from "../lib/options";
 import { RelationshipSelect } from "./RelationshipSelect";
+import { queryClient } from "../lib/queryClient";
+import { IClient, ISubagent } from "../types";
+import PayersSelect from "./PayersSelect";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -49,14 +52,23 @@ export const CellModal: React.FC<CellModalProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
+  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
 
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
-  const { register, handleSubmit, setValue: setFormValue, getValues } = methods;
+  const { register, handleSubmit, setValue: setFormValue, getValues, watch } = methods;
   const [title, setTitle] = useState(column.label);
 
   useEffect(() => {
+    if (column.key == "subagentPayers") {
+      const cashedSubagent = queryClient.getQueryData(['subagents'])
+      const selectedSubagent = cashedSubagent.data.filter(subagent => data.subagents?.includes(subagent.id))
+      const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
+      const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
+      setSelectedPayersID(uniquePayersID)
+      console.log(uniquePayersID, data.subagents)
+    }
     setValue(initialValue || data[column.key]);
     setFormValue(column.key, initialValue || data[column.key]);
   }, [initialValue, data, column.key, setFormValue]);
@@ -64,8 +76,18 @@ export const CellModal: React.FC<CellModalProps> = ({
   const handleSave = async () => {
     const formData = getValues();
     const updatedValue = formData[column.key];
-    const updatedData = { ...data, [column.key]: updatedValue };
-
+    let updatedData;
+    
+    if (column.key == "clients") {
+      const cashedClient = queryClient.getQueryData(['clients']);
+      const selectedClient = cashedClient.data.filter(client => updatedValue?.includes(client.id))
+      const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
+      updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
+    } else if (column.key == "subagentPayers") {
+      updatedData = { ...data, [column.key]: selectedPayersID }
+    } else {
+      updatedData = { ...data, [column.key]: updatedValue }
+    }
     try {
       onSave(updatedData);
     } catch (error) {
@@ -212,6 +234,14 @@ export const CellModal: React.FC<CellModalProps> = ({
             </FormProvider>
           </div>
         );
+        case "payers":
+          return (
+            <div className="space-y-4">
+              <FormProvider {...methods}>
+                <PayersSelect canSelect={selectedPayersID}/>
+              </FormProvider>
+            </div>
+          );
 
       default:
         return (

@@ -6,7 +6,6 @@ import { FormField } from './FormField';
 import type { IOrder, ISubagent } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
-import SubagentPayersSelect from './SubagentPayersSelect';
 import { statusOptions, swiftStatus, currencyOptions, transactionOptions, conditionOptions } from '../lib/options';
 import { IClient } from '../types';
 import PayersSelect from './PayersSelect';
