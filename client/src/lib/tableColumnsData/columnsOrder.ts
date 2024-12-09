@@ -49,7 +49,7 @@ const columns = [
   { key: "cycle_deal", label: "Цикл сделки (дни)", sortable: true, type: "number" },
   { key: "purpose_of_payment", label: "Назначение платежа", sortable: true, type: "text" },
   { key: "subagents", label: "Субагент", sortable: false, type: "related" },
-  { key: "subagentPayers", label: "Плательщик субагента", sortable: false, type: "related" },
+  { key: "subagentPayers", label: "Плательщик субагента", sortable: false, type: "payers" },
   { key: "serial_num_for_payer", label: "Порядковый номер заявления для плательщика субагента (при импорте) / получателя (при экспорте)", sortable: true, type: "text" },
   { key: "date_docs_agent_and_subagent", label: "Подготовлены документы между агентом и субагентом (дата)", sortable: true, type: "date" },
   { key: "date_taking_swift", label: "Получен SWIFT", sortable: true, type: "date" },
