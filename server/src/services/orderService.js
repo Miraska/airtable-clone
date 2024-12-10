@@ -9,6 +9,7 @@ const {
   Subagent,
   Country,
   SubagentPayer,
+  File
 } = require('../models/entities');
 
 class OrderService extends BaseService {
@@ -22,6 +23,7 @@ class OrderService extends BaseService {
       { model: Country, as: 'countries' },
       { model: Subagent, as: 'subagents' },
       { model: SubagentPayer, as: 'subagentPayers' },
+      { model: File, as: 'files' },
     ]);
   }
 

@@ -18,14 +18,36 @@ class BaseService {
 
   filterSingleRecord(record) {
     const filteredRecord = { ...record.toJSON() };
+    
+    // Преобразуем каждую связанную модель в массив объектов
     this.includes.forEach((include) => {
-      const alias = include.as;
+      const alias = include.as; // Алиас связи
+      
       if (filteredRecord[alias]) {
-        filteredRecord[alias] = this.extractIds(filteredRecord[alias]);
+        // Если это массив, преобразуем каждый объект
+        if (Array.isArray(filteredRecord[alias])) {
+          filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => ({
+            id: relatedRecord.id,
+            name: relatedRecord.name || relatedRecord.fileName, // Используем поле name или fileName
+            link: relatedRecord.fileUrl || null, // Если есть ссылка, добавляем её
+            type: alias, // Тип для обозначения
+          }));
+        } else {
+          // Если это один объект
+          const relatedRecord = filteredRecord[alias];
+          filteredRecord[alias] = {
+            id: relatedRecord.id,
+            name: relatedRecord.name || relatedRecord.fileName,
+            link: relatedRecord.fileUrl || null,
+            type: alias,
+          };
+        }
       }
     });
+  
     return filteredRecord;
   }
+  
 
   filterResponse(data) {
     if (Array.isArray(data)) {
@@ -34,6 +56,7 @@ class BaseService {
       return this.filterSingleRecord(data);
     }
   }
+  
 
   async getAll() {
     try {
