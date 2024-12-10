@@ -4,8 +4,7 @@ import { RelatedDataModal } from "./RelatedData";
 import {
   Controller,
   FormProvider,
-  useForm,
-  useFormContext,
+  useForm
 } from "react-hook-form";
 import { Button } from "./Button";
 import Select from "react-select";
@@ -22,6 +21,12 @@ import {
 } from "../lib/options";
 import { RelationshipSelect } from "./RelationshipSelect";
 import UploadFiles from "./UploadFiles";
+import { queryClient } from "../lib/queryClient";
+import { IClient, ISubagent } from "../types";
+import PayersSelect from "./PayersSelect";
+import ReviewOrdersSelect from "./ReviewOrdersSelect";
+import ReviewManagersSelect from "./ReviewManagersSelect";
+import { api } from "../api";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -51,23 +56,58 @@ export const CellModal: React.FC<CellModalProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
+  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
+  const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([])
+  const [selectedManagersID, setSelectedManagersID] = useState<number[]>([])
 
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
-  const { register, handleSubmit, setValue: setFormValue, getValues } = methods;
+  const { register, handleSubmit, setValue: setFormValue, getValues, watch } = methods;
   const [title, setTitle] = useState(column.label);
-
+  
   useEffect(() => {
-    setValue(initialValue || data[column.key]);
-    setFormValue(column.key, initialValue || data[column.key]);
+    async function fetchData() {
+      try {
+        if (column.key == "subagentPayers" || column.key == "subagents") {
+          const cashedSubagent = await queryClient.fetchQuery(['subagents'], api.subagents.getAll)
+          const selectedSubagent = cashedSubagent.data.filter(subagent => data.subagents?.includes(subagent.id))
+          const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
+          const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
+          setSelectedPayersID(uniquePayersID)
+          console.log(selectedSubagent)
+        } else if (column.key == "reviews") {
+          const selectedOrders = data.orders
+          setSelectedOrdersID(selectedOrders)
+        } else if (column.key == "reviewers") {
+          const selectedManagers = data.managers
+          setSelectedManagersID(selectedManagers)
+        } else {
+          setValue(initialValue || data[column.key]);
+          setFormValue(column.key, initialValue || data[column.key]);
+        }
+      } catch {
+        console.error("Ошибка загрузки данных:", error);
+      }
+    }
+    fetchData()
   }, [initialValue, data, column.key, setFormValue]);
 
   const handleSave = async () => {
     const formData = getValues();
     const updatedValue = formData[column.key];
-    const updatedData = { ...data, [column.key]: updatedValue };
-
+    let updatedData;
+    
+    if (column.key == "clients") {
+      const cashedClient = await queryClient.fetchQuery(['clients'], api.clients.getAll);
+      const selectedClient = cashedClient.data.filter(client => updatedValue?.includes(client.id))
+      const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
+      updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
+    } else if (column.key == "subagentPayers") {
+      updatedData = { ...data, [column.key]: selectedPayersID }
+    } else {
+      updatedData = { ...data, [column.key]: updatedValue, subagentPayers: selectedPayersID }
+    }
     try {
       onSave(updatedData);
     } catch (error) {
@@ -214,7 +254,30 @@ export const CellModal: React.FC<CellModalProps> = ({
             </FormProvider>
           </div>
         );
-
+      case "review":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+              <ReviewOrdersSelect cantSelect={selectedOrdersID}/>
+            </FormProvider>
+          </div>
+        );
+      case "payers":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+              <PayersSelect canSelect={selectedPayersID}/>
+            </FormProvider>
+          </div>
+        );
+      case "reviewers":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+              <ReviewManagersSelect cantSelect={selectedManagersID}/>
+            </FormProvider>
+          </div>
+        );
       default:
         return (
           <input
@@ -229,16 +292,11 @@ export const CellModal: React.FC<CellModalProps> = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      setIsEditing={setIsEditing}
-      isEditing={isEditing}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={title} setIsEditing={setIsEditing}isEditing={isEditing}>
       <div className="space-y-4">
-        {isEditing ? (
-          column.type == "file" ? (
+        {isEditing ? 
+        ( column.type == "file" ? 
+          (
             <form>
               <div className="space-y-4">
                 <UploadFiles />
