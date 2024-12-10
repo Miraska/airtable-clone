@@ -53,7 +53,7 @@ export default function ReviewManagersSelect({cantSelect}: Props) {
                 field.onChange(selected.map((option) => option.value));
               }}
               isLoading={isLoading}
-              placeholder="Выберите проверяемые заявки"
+              placeholder="Выберите проверяющих"
               className="react-select-container"
               classNamePrefix="react-select"
             />
