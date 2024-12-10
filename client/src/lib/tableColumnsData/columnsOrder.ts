@@ -66,6 +66,7 @@ const columns = [
   { key: "stuck_money_name", label: "Какая валюта зависла?", sortable: true, type: "currency" },
   { key: "stuck_money_sum", label: "Сумма зависла", sortable: true, type: "number" },
   { key: "mistake_is_it_name", label: "Чья ошибка?", sortable: true, type: "name-mistake" },
+  { key: "order", label: "Заявка", sortable: false, type: "file" },
   { key: "order_link", label: "Ссылка на заявку", sortable: false, type: "text" },
   { key: "invoice_link", label: "Ссылка на инвойс", sortable: false, type: "text" },
   { key: "assignment_link", label: "Ссылка на поручение", sortable: false, type: "text" },
