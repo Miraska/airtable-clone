@@ -145,7 +145,7 @@ export const OrdersPage = () => {
   const methods = useForm<IOrder>({ defaultValues: defaultValue})
   const { reset } = methods
 
-  return (
+  return ( 
     <div className="h-full flex flex-col">
       <div className="flex-1 overflow-hidden">
         <DataTable
