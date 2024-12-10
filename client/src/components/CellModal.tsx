@@ -63,7 +63,7 @@ export const CellModal: React.FC<CellModalProps> = ({
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
-  const { register, handleSubmit, setValue: setFormValue, getValues, watch } = methods;
+  const { register, handleSubmit, setValue: setFormValue, getValues } = methods;
   const [title, setTitle] = useState(column.label);
   
   useEffect(() => {
@@ -297,23 +297,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         {isEditing ? 
         ( column.type == "file" ? 
           (
-            <form>
-              <div className="space-y-4">
-                <UploadFiles />
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="primary"
-                    className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
-                    onClick={() => {
-                      setIsEditing(false);
-                    }}
-                  >
-                    Закрыть
-                  </Button>
-                  <Button type="submit">Сохранить</Button>
-                </div>
-              </div>
-            </form>
+              <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} />
           ) : (
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="space-y-4">

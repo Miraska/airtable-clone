@@ -42,7 +42,7 @@ export const Sidebar = () => {
           'flex items-center p-4 border-b border-gray-700',
           isCollapsed ? 'justify-center' : 'justify-between'
         )}>
-          {!isCollapsed && <h1 className="text-xl font-bold">Таблица</h1>}
+          {!isCollapsed && <h1 className="text-xl font-bold">Таблицы</h1>}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
