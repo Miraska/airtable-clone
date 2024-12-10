@@ -33,7 +33,7 @@ const FileUpload: React.FC = () => {
   const handleUpload = () => {
     if (files.length > 0) {
       alert(`Файлы загружены: ${files.map((file) => file.name).join(", ")}`);
-      // Добавьте логику для отправки файлов на сервер
+      
     }
   };
 
