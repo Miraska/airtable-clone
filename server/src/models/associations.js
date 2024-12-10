@@ -25,10 +25,10 @@ const associateModels = () => {
   // Связь "Заявка" и "Менеджеры"
   Order.belongsToMany(Manager, { through: 'OrderManagers', as: 'managers', onDelete: 'CASCADE' });
   Manager.belongsToMany(Order, { through: 'OrderManagers', as: 'orders', onDelete: 'CASCADE' });
-  
+
   // Связь "Заявка" и "Проверяющие"
-  Order.belongsToMany(Reviewer, { through: 'OrderReviewers', as: 'reviewers', onDelete: 'CASCADE' });
-  Reviewer.belongsToMany(Order, { through: 'OrderReviewers', as: 'orders', onDelete: 'CASCADE' });
+  Order.belongsToMany(Manager, { through: 'OrderReviewers', as: 'reviewers', onDelete: 'CASCADE' });
+  Manager.belongsToMany(Order, { through: 'OrderReviewers', as: 'reviews', onDelete: 'CASCADE' });
 
   // Связь "Заявка" и "Страны"
   Order.belongsToMany(Country, { through: 'OrderCountries', as: 'countries', onDelete: 'CASCADE' });

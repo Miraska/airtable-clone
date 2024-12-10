@@ -2,7 +2,7 @@
 import axios from 'axios';
 import type { AxiosError } from 'axios';
 
-const API_URL = 'https://cc80-89-110-76-58.ngrok-free.app/api';
+const API_URL = 'http://localhost:5000/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -38,11 +38,11 @@ export const api = {
     delete: (id: number) => axiosInstance.delete(`/managers/${id}`),
   },
   reviewers: {
-    getAll: () => axiosInstance.get('/reviewers'),
-    getById: (id: number) => axiosInstance.get(`/reviewers/${id}`), // Добавлен метод getById
-    create: (data: any) => axiosInstance.post('/reviewers', data),
-    update: (id: number, data: any) => axiosInstance.put(`/reviewers/${id}`, data),
-    delete: (id: number) => axiosInstance.delete(`/reviewers/${id}`),
+    getAll: () => axiosInstance.get('/managers'),
+    getById: (id: number) => axiosInstance.get(`/managers/${id}`), // Добавлен метод getById
+    create: (data: any) => axiosInstance.post('/managers', data),
+    update: (id: number, data: any) => axiosInstance.put(`/managers/${id}`, data),
+    delete: (id: number) => axiosInstance.delete(`/managers/${id}`),
   },
   contractors: {
     getAll: () => axiosInstance.get('/contractors'),

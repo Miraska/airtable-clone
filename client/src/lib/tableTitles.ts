@@ -1,6 +1,7 @@
 export default {
     orders: { key: "orders", label: "Заявка №" },
     managers: { key: "managers", label: "Менеджер" },
+    reviewers: { key: "reviewers", label: "Проверяющий" },
     contractors: { key: "contractors", label: "Котрагнет" },
     agents: { key: "agents", label: "Агент" },
     clients: { key: "clients", label: "Клиент" },
