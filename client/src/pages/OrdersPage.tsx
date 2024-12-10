@@ -7,6 +7,7 @@ import { OrderForm } from "../components/OrderForm";
 import { toast } from "react-toastify";
 import type { IOrder } from "../types";
 
+import FormulaEditor from "../components/FormulaEditor";
 import columns from "../lib/tableColumnsData/columnsOrder";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -144,6 +145,7 @@ export const OrdersPage = () => {
   
   const methods = useForm<IOrder>({ defaultValues: defaultValue})
   const { reset } = methods
+  
 
   return (
     <div className="h-full flex flex-col">
