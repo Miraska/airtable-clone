@@ -28,7 +28,7 @@ const navItems = [
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [dark, setDark] = useState(true)
+  const [dark, setDark] = useState(false)
 
   return (
     <div

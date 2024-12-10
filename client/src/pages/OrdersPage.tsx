@@ -129,6 +129,7 @@ export const OrdersPage = () => {
     }
   };
   const submit = (data: IOrder) => {
+    console.log(data)
     if (typeof data.id === "number") {
       updateMutation.mutate(data);
     } else {

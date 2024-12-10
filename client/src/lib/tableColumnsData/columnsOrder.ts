@@ -4,7 +4,7 @@ const columns = [
   { key: "status", label: "Статус", sortable: true, type: "option" },
   { key: "order_number", label: "№ заявки", sortable: true, type: "text" },
   { key: "managers", label: "Менеджеры", sortable: false, type: "related" },
-  { key: "reviewers", label: "Проверяющие", sortable: false, type: "related" },
+  { key: "reviewers", label: "Проверяющие", sortable: false, type: "reviewers" },
   { key: "date", label: "Дата размещения", sortable: true, type: "date" },
   { key: "date_hired", label: "Взята в работу", sortable: true, type: "date" },
   { key: "contractors", label: "Контрагент", sortable: false, type: "related" },

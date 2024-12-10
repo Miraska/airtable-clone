@@ -1,4 +1,4 @@
-ximport React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import { RelatedDataModal } from "./RelatedData";
 import {
@@ -23,6 +23,9 @@ import { RelationshipSelect } from "./RelationshipSelect";
 import { queryClient } from "../lib/queryClient";
 import { IClient, ISubagent } from "../types";
 import PayersSelect from "./PayersSelect";
+import ReviewOrdersSelect from "./ReviewOrdersSelect";
+import ReviewManagersSelect from "./ReviewManagersSelect";
+import { api } from "../api";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -53,24 +56,40 @@ export const CellModal: React.FC<CellModalProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
   const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
+  const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([])
+  const [selectedManagersID, setSelectedManagersID] = useState<number[]>([])
 
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
   const { register, handleSubmit, setValue: setFormValue, getValues, watch } = methods;
   const [title, setTitle] = useState(column.label);
-
+  
   useEffect(() => {
-    if (column.key == "subagentPayers") {
-      const cashedSubagent = queryClient.getQueryData(['subagents'])
-      const selectedSubagent = cashedSubagent.data.filter(subagent => data.subagents?.includes(subagent.id))
-      const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
-      const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
-      setSelectedPayersID(uniquePayersID)
-      console.log(uniquePayersID, data.subagents)
+    async function fetchData() {
+      try {
+        if (column.key == "subagentPayers" || column.key == "subagents") {
+          const cashedSubagent = await queryClient.fetchQuery(['subagents'], api.subagents.getAll)
+          const selectedSubagent = cashedSubagent.data.filter(subagent => data.subagents?.includes(subagent.id))
+          const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
+          const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
+          setSelectedPayersID(uniquePayersID)
+          console.log(selectedSubagent)
+        } else if (column.key == "reviews") {
+          const selectedOrders = data.orders
+          setSelectedOrdersID(selectedOrders)
+        } else if (column.key == "reviewers") {
+          const selectedManagers = data.managers
+          setSelectedManagersID(selectedManagers)
+        } else {
+          setValue(initialValue || data[column.key]);
+          setFormValue(column.key, initialValue || data[column.key]);
+        }
+      } catch {
+        console.error("Ошибка загрузки данных:", error);
+      }
     }
-    setValue(initialValue || data[column.key]);
-    setFormValue(column.key, initialValue || data[column.key]);
+    fetchData()
   }, [initialValue, data, column.key, setFormValue]);
 
   const handleSave = async () => {
@@ -79,14 +98,14 @@ export const CellModal: React.FC<CellModalProps> = ({
     let updatedData;
     
     if (column.key == "clients") {
-      const cashedClient = queryClient.getQueryData(['clients']);
+      const cashedClient = await queryClient.fetchQuery(['clients'], api.clients.getAll);
       const selectedClient = cashedClient.data.filter(client => updatedValue?.includes(client.id))
       const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
       updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
     } else if (column.key == "subagentPayers") {
       updatedData = { ...data, [column.key]: selectedPayersID }
     } else {
-      updatedData = { ...data, [column.key]: updatedValue }
+      updatedData = { ...data, [column.key]: updatedValue, subagentPayers: selectedPayersID }
     }
     try {
       onSave(updatedData);
@@ -234,15 +253,30 @@ export const CellModal: React.FC<CellModalProps> = ({
             </FormProvider>
           </div>
         );
-        case "payers":
-          return (
-            <div className="space-y-4">
-              <FormProvider {...methods}>
-                <PayersSelect canSelect={selectedPayersID}/>
-              </FormProvider>
-            </div>
-          );
-
+      case "review":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+              <ReviewOrdersSelect cantSelect={selectedOrdersID}/>
+            </FormProvider>
+          </div>
+        );
+      case "payers":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+              <PayersSelect canSelect={selectedPayersID}/>
+            </FormProvider>
+          </div>
+        );
+      case "reviewers":
+        return (
+          <div className="space-y-4">
+            <FormProvider {...methods}>
+              <ReviewManagersSelect cantSelect={selectedManagersID}/>
+            </FormProvider>
+          </div>
+        );
       default:
         return (
           <input

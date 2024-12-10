@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { api } from '../api';
 import { DataTable } from '../components/DataTable';
@@ -11,6 +11,7 @@ import OrdersSelect from '../components/OrdersSelect';
 import { toast } from 'react-toastify';
 
 import columns from '../lib/tableColumnsData/columnsManager';
+import ReviewOrdersSelect from '../components/ReviewOrdersSelect';
 
 export const ManagersPage = () => {
   const defaultValue = {
@@ -81,7 +82,9 @@ export const ManagersPage = () => {
   };
   
   const methods = useForm<IManager>({ defaultValues: defaultValue })
-  const { register, handleSubmit, control, reset } = methods
+  const { register, handleSubmit, reset, watch } = methods
+  
+  const selectedOrdersID = watch("orders")
 
   return (
     <>
@@ -142,24 +145,7 @@ export const ManagersPage = () => {
               />
             </div>
             <OrdersSelect/>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Проверяю
-              </label>
-              <Controller
-                name='review_table'
-                control={control}
-                render={({field}) => (
-                  <RelationshipSelect
-                    type='reviewers'
-                    value={field.value || []}
-                    onChange={field.onChange}
-                    placeholder='Выберите заявки'
-                  />
-                )}
-              />
-            </div>
-  
+            <ReviewOrdersSelect cantSelect={selectedOrdersID} />
             <div className="flex justify-end gap-2 mt-6">
               <button
                 type="button"

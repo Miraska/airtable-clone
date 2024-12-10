@@ -9,6 +9,7 @@ import CountriesSelect from './CountriesSelect';
 import { statusOptions, swiftStatus, currencyOptions, transactionOptions, conditionOptions } from '../lib/options';
 import { IClient } from '../types';
 import PayersSelect from './PayersSelect';
+import ReviewManagersSelect from './ReviewManagersSelect';
 
 interface OrderFormProps {
   onSubmit: (data: IOrder) => void;
@@ -27,6 +28,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   const cashedClient = queryClient.getQueryData(['clients'])
   const selectedSubagentsID = watch("subagents")
   const cashedSubagent = queryClient.getQueryData(['subagents'])
+  const selectedManagers = watch("managers")
   
   const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
   
@@ -89,21 +91,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <label className="block text-sm font-medium mb-1">
-            Проверяющий
-          </label>
-          <Controller
-            name="reviewers"
-            control={control}
-            render={({ field }) => (
-              <RelationshipSelect
-                type="reviewers"
-                value={field.value || []}
-                onChange={field.onChange}
-                placeholder="Выберите проверяющего"
-              />
-            )}
-          />
+          <ReviewManagersSelect cantSelect={selectedManagers} />
         </div> 
         
         <FormField
