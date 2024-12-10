@@ -8,7 +8,8 @@ const upload = multer({ dest: 'uploads/' });
 
 const s3Client = new S3Client({ 
   region: 'ru-central1', 
-  endpoint: 'https://storage.yandexcloud.net'
+  endpoint: 'https://storage.yandexcloud.net',
+  
 }); 
 
 const BUCKET_NAME = 'airtable-clone'; 

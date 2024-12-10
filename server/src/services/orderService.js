@@ -15,7 +15,7 @@ class OrderService extends BaseService {
   constructor() {
     super(Order, [
       { model: Manager, as: 'managers' },
-      { model: Reviewer, as: 'reviewers' },
+      { model: Manager, as: 'reviewers' },
       { model: Contractor, as: 'contractors' },
       { model: Agent, as: 'agents' },
       { model: Client, as: 'clients' },

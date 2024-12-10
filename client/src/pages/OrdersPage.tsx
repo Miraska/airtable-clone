@@ -147,7 +147,7 @@ export const OrdersPage = () => {
   const { reset } = methods
   
 
-  return (
+  return ( 
     <div className="h-full flex flex-col">
       <div className="flex-1 overflow-hidden">
         <DataTable

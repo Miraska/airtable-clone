@@ -20,6 +20,7 @@ import {
   nameMistakeOptions,
 } from "../lib/options";
 import { RelationshipSelect } from "./RelationshipSelect";
+import UploadFiles from "./UploadFiles";
 import { queryClient } from "../lib/queryClient";
 import { IClient, ISubagent } from "../types";
 import PayersSelect from "./PayersSelect";
@@ -298,10 +299,7 @@ export const CellModal: React.FC<CellModalProps> = ({
           (
             <form>
               <div className="space-y-4">
-                <input
-                  type="file"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 placeholder:text-gray-700 dark:placeholder:text-gray-100 dark:border-transparent focus:ring-blue-500 focus:border-blue-500"
-                />
+                <UploadFiles />
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="primary"
@@ -335,7 +333,10 @@ export const CellModal: React.FC<CellModalProps> = ({
                   >
                     Закрыть
                   </Button>
-                  <Button type="submit">Сохранить</Button>
+                  <Button type="submit" onClick={() => {
+                    console.log(value);
+                    console.log();
+                  }}>Сохранить</Button>
                 </div>
               </div>
             </form>
