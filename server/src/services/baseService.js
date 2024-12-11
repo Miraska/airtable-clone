@@ -1,10 +1,10 @@
-const calculateFields = require("../utils/calculation"); // Импорт функции расчетов
-const sequelize = require("../db/connection"); // Подключаем sequelize правильно
+const calculateFields = require("../utils/calculation");
+const sequelize = require("../db/connection"); 
 
 class BaseService {
   constructor(model, includes = []) {
     this.model = model;
-    this.includes = includes; // Массив связанных моделей
+    this.includes = includes; 
   }
 
   extractIds(data) {
@@ -18,12 +18,37 @@ class BaseService {
 
   filterSingleRecord(record) {
     const filteredRecord = { ...record.toJSON() };
+
     this.includes.forEach((include) => {
       const alias = include.as;
+
       if (filteredRecord[alias]) {
-        filteredRecord[alias] = this.extractIds(filteredRecord[alias]);
+        if (Array.isArray(filteredRecord[alias])) {
+          filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
+            if (alias === "files") {
+              return {
+                id: relatedRecord.id,
+                name: relatedRecord.name || relatedRecord.fileName,
+                link: relatedRecord.fileUrl || null,
+                type: relatedRecord.type || alias,
+              };
+            }
+            return relatedRecord;
+          });
+        } else {
+          const relatedRecord = filteredRecord[alias];
+          if (alias === "files") {
+            filteredRecord[alias] = {
+              id: relatedRecord.id,
+              name: relatedRecord.name || relatedRecord.fileName,
+              link: relatedRecord.fileUrl || null,
+              type: relatedRecord.type || alias,
+            };
+          }
+        }
       }
     });
+
     return filteredRecord;
   }
 

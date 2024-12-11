@@ -93,6 +93,30 @@ const Order = sequelize.define('Order', {
 }, { timestamps: false });
 
 
+const File = sequelize.define('File', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  fileName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  fileUrl: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  orderId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+}, {timestamps: false});
+
 // Менеджер
 const Manager = sequelize.define('Manager', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -147,5 +171,6 @@ module.exports = {
   Subagent,
   SubagentPayer,
   Country,
-  Reviewer
+  Reviewer,
+  File
 };

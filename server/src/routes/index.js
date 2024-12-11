@@ -8,6 +8,7 @@ const contractorRoutes = require('./contractorRoutes');
 const subagentRoutes = require('./subagentRoutes');
 const subagentPayerRoutes = require('./subagentPayerRoutes');
 const countryRoutes = require('./countryRoutes');
+const uploadRoutes = require('../routes/uploadRoutes');
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use('/contractors', contractorRoutes);
 router.use('/subagents', subagentRoutes);
 router.use('/subagent-payers', subagentPayerRoutes);
 router.use('/countries', countryRoutes);
+router.use('/', uploadRoutes);
 
 module.exports = router;

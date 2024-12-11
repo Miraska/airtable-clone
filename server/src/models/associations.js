@@ -1,4 +1,4 @@
-const { Agent, Client, Order, Manager, Contractor, Subagent, SubagentPayer, Country, Reviewer } = require('./entities');
+const { Agent, Client, Order, Manager, Contractor, Subagent, SubagentPayer, Country, File } = require('./entities');
 
 const associateModels = () => {
   // Связь "Заявка" и "Агенты"
@@ -37,6 +37,18 @@ const associateModels = () => {
   // Связь "Заявка" и "Плательщики субагентов"
   Order.belongsToMany(SubagentPayer, { through: 'OrderSubagentPayers', as: 'subagentPayers', onDelete: 'CASCADE' });
   SubagentPayer.belongsToMany(Order, { through: 'OrderSubagentPayers', as: 'orders', onDelete: 'CASCADE' });
+
+  // Связь один ко многим: один заказ может иметь много файлов
+  Order.hasMany(File, {
+    foreignKey: "orderId", // Внешний ключ в таблице File
+    as: "files", // Опционально: псевдоним для связи
+  });
+
+  // Связь обратная: каждый файл принадлежит одному заказу
+  File.belongsTo(Order, {
+    foreignKey: "orderId", // Внешний ключ в таблице File
+    as: "order", // Опционально: псевдоним для связи
+  });
 };
 
 module.exports = { associateModels };
