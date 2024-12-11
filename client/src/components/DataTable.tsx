@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshCw, Plus, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCw, Plus, Search, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 import { TableActions } from './TableActions';
 import { useTableSort } from '../hooks/useTableSort';
@@ -12,6 +12,14 @@ interface Column {
   sortable?: boolean;
   type: string;
   render?: (value: any) => React.ReactNode;
+  readonly?: boolean;
+}
+
+interface FileItem {
+  id: number;
+  name: string;
+  link: string;
+  type: string;
 }
 
 interface DataTableProps {
@@ -40,37 +48,53 @@ export const DataTable: React.FC<DataTableProps> = ({
   const { sortedData, sortConfig, handleSort } = useTableSort(data || []);
   const { filteredData, searchTerm, setSearchTerm } = useTableFilter(sortedData);
   const [isRelationShip, setIsRelationShip] = useState(false);
-  const [selectedCellRelationShip, setSelectedCellRelationShip] = useState<{
-    data: any;
-    column: Column;
-    value?: any;
-  } | null>(null);
-
   const [selectedCell, setSelectedCell] = useState<{
     data: any;
     column: Column;
     value?: any;
   } | null>(null);
 
+  const handleTagClick = (item: any, column: Column, tag: string) => {
+    setIsRelationShip(true);
+    setSelectedCell({ data: item, column, value: tag });
+  };
+
+  const handleCellClick = (item: any, column: Column) => {
+    setIsRelationShip(false);
+    setSelectedCell({ data: item, column });
+  };
+
+  const handleCellUpdate = (value: any) => {
+    if (selectedCell && onCellUpdate) {
+      onCellUpdate(value);
+      setSelectedCell(null);
+    }
+  };
+
   const renderCell = (item: any, column: Column) => {
     const value = item[column.key];
-  
+
     if (column.render) {
       return column.render(value);
     }
+
+    // Отображение статуса
     if (column.key === 'status') {
       return <StatusBadge status={value} />;
     }
+
+    // Отображение boolean
     if (typeof value === 'boolean') {
       return value ? 'Да' : 'Нет';
     }
 
-    if (Array.isArray(value)) {
-      if (value.length === 0) return "-";
+    // Если это массив не-файлов (например связи, теги и т.д.)
+    if (Array.isArray(value) && column.type !== 'file') {
+      if (value.length === 0) return '-';
 
       return (
         <div className="flex flex-wrap gap-2">
-          {value.map((tag, index) => (
+          {value.map((tag: any, index: number) => (
             <span
               key={index}
               onClick={(e) => {
@@ -85,26 +109,38 @@ export const DataTable: React.FC<DataTableProps> = ({
         </div>
       );
     }
-    return value || '-';
-  };
-  
-  // Обработчик кликов на тег
-  const handleTagClick = (item: any, column: Column, tag: string) => {
-    setIsRelationShip(true);
-    setSelectedCell({ data: item, column, value: tag });
-  };
-  
-  // Обработчик кликов на ячейку
-  const handleCellClick = (item: any, column: Column) => {
-    setIsRelationShip(false);
-    setSelectedCell({ data: item, column });
-  };
 
-  const handleCellUpdate = (value: any) => {
-    if (selectedCell && onCellUpdate) {
-      onCellUpdate(value);
-      setSelectedCell(null);
+    // Если это файлы
+    if (column.type === 'file') {
+      // Ищем соответствующие файлы в item.files по типу ключа столбца
+      const allFiles: FileItem[] = item.files || [];
+      const matchedFiles = allFiles.filter(file => file.type === column.key);
+
+      if (matchedFiles.length === 0) {
+        return 'Нет файла';
+      }
+
+      return (
+        <div className="flex flex-wrap gap-2">
+          {matchedFiles.map((file: FileItem) => (
+            <a
+              key={file.id}
+              href={file.link}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <FileText size={16} />
+              <span className="underline">{file.name}</span>
+            </a>
+          ))}
+        </div>
+      );
     }
+
+    // Обычные значения
+    return value || '-';
   };
 
   return (
@@ -209,9 +245,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                       className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-400"
                       onClick={() => handleCellClick(item, column)}
                     >
-                      {
-                        renderCell(item, column)
-                      }
+                      {renderCell(item, column)}
                     </td>
                   ))}
                 </tr>
@@ -221,7 +255,6 @@ export const DataTable: React.FC<DataTableProps> = ({
         </div>
       </div>
 
-      {/* Обычное модальное окно со значением в ячейке либо со связью на другое модальное окно */}
       {selectedCell && (
         <CellModal
           isOpen={!!selectedCell}
@@ -229,20 +262,6 @@ export const DataTable: React.FC<DataTableProps> = ({
           data={selectedCell.data}
           column={selectedCell.column}
           value={selectedCell.value}
-          onSave={handleCellUpdate}
-          isRelationShip={isRelationShip}
-          setSelectedCell={setSelectedCell}
-        />
-      )}
-
-      {/* Связи в модальном окне */}
-      {selectedCellRelationShip && (
-        <CellModal
-          isOpen={!!selectedCellRelationShip}
-          onClose={() => setSelectedCellRelationShip(null)}
-          data={selectedCellRelationShip.data}
-          column={selectedCellRelationShip.column}
-          value={selectedCellRelationShip.value}
           onSave={handleCellUpdate}
           isRelationShip={isRelationShip}
           setSelectedCell={setSelectedCell}
