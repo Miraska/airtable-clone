@@ -5,11 +5,22 @@ const fileController = require("../controllers/uploadController");
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-router.post("/upload", upload.single("file"), fileController.uploadFile);
-router.post("/upload-multiple", upload.array("files"), fileController.uploadMultipleFiles);
+// Создание
+router.post("/files/", upload.single("file"), fileController.uploadFile);
+router.post("/files/upload-multiple", upload.array("files"), fileController.uploadMultipleFiles);
 
+// Чтение
+router.get("/files/", fileController.getAllFiles);
+router.get("/files/id/:id", fileController.getFileById);
+router.get("/files/name/:fileName", fileController.getFileByName);
+router.get("/files/type/:type", fileController.getFilesByType);
+router.get("/files/order/:orderId", fileController.getFilesByOrderId);
 
-router.delete("/:fileName", fileController.deleteFile);
-router.get("/:fileName", fileController.getFileLink);
+// Обновление
+router.put("/files/:id", fileController.updateFileById);
+
+// Удаление
+router.delete("/files/name/:fileName", fileController.deleteFileByName);
+router.delete("/files/id/:id", fileController.deleteFileById);
 
 module.exports = router;
