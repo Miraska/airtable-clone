@@ -86,12 +86,6 @@ export const CellModal: React.FC<CellModalProps> = ({
           const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
           const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
           setSelectedPayersID(uniquePayersID)
-        } else if (column.key === "reviews") {
-          const selectedOrders = data.orders
-          setSelectedOrdersID(selectedOrders)
-        } else if (column.key === "reviewers") {
-          const selectedManagers = data.managers
-          setSelectedManagersID(selectedManagers)
         } else {
           setValue(initialValue || data[column.key]);
           setFormValue(column.key, initialValue || data[column.key]);
@@ -422,7 +416,7 @@ export const CellModal: React.FC<CellModalProps> = ({
                     {value.map((tag: any, index: number) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
                       >
                         {tag}
                       </span>

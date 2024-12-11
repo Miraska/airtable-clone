@@ -145,7 +145,7 @@ export const ManagersPage = () => {
               />
             </div>
             <OrdersSelect/>
-            <ReviewOrdersSelect cantSelect={selectedOrdersID} />
+            <ReviewOrdersSelect />
             <div className="flex justify-end gap-2 mt-6">
               <button
                 type="button"

@@ -15,6 +15,11 @@ export default {
     apiMethod: api.orders.getById,
     label: 'Заявки'
   },
+  reviews: {
+    columns: columnsOrder,
+    apiMethod: api.orders.getById,
+    label: 'Заявки'
+  },
   managers: {
     columns: columnsManager,
     apiMethod: api.managers.getById,
@@ -24,7 +29,11 @@ export default {
     columns: columnsContractor,
     apiMethod: api.contractors.getById,
     label: 'Контрагент'
-
+  },
+  reviewers: {
+    columns: columnsManager,
+    apiMethod: api.managers.getById,
+    label: 'Менеджеры'
   },
   agents: {
     columns: columnsAgent,
