@@ -22,5 +22,7 @@ router.put("/files/:id", fileController.updateFileById);
 // Удаление
 router.delete("/files/name/:fileName", fileController.deleteFileByName);
 router.delete("/files/id/:id", fileController.deleteFileById);
+router.delete("/files/all", fileController.deleteAllFiles);
+
 
 module.exports = router;

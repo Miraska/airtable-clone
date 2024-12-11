@@ -75,7 +75,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               key={index}
               onClick={(e) => {
                 e.stopPropagation();
-                handleTagClick(item, column, tag.id);
+                handleTagClick(item, column, tag);
               }}
               className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-600 hover:bg-gray-300"
             >

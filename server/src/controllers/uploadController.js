@@ -192,14 +192,19 @@ exports.getFilesByOrderId = async (req, res) => {
     const { orderId } = req.params;
     const files = await File.findAll({ where: { orderId } });
     if (!files || files.length === 0) {
-      return res.status(404).json({ message: "No files found for this orderId" });
+      return res
+        .status(404)
+        .json({ message: "No files found for this orderId" });
     }
     res.json({ files });
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Failed to get files by orderId", error: error.message });
+      .json({
+        message: "Failed to get files by orderId",
+        error: error.message,
+      });
   }
 };
 
@@ -286,3 +291,33 @@ exports.deleteFileById = async (req, res) => {
       .json({ message: "Failed to delete file", error: error.message });
   }
 };
+
+// Удаление всех файлов
+exports.deleteAllFiles = async (req, res) => {
+  try {
+    const files = await File.findAll();
+
+    if (files.length === 0) {
+      return res.status(404).json({ message: "No files found to delete" });
+    }
+
+    for (const fileRecord of files) {
+      const params = {
+        Bucket: BUCKET_NAME,
+        Key: fileRecord.fileName,
+      };
+      const command = new DeleteObjectCommand(params);
+      await s3Client.send(command);
+    }
+
+    await File.destroy({ where: {} });
+
+    res.json({ message: "All files deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Failed to delete all files", error: error.message });
+  }
+};
+
