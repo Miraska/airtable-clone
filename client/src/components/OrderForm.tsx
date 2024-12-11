@@ -28,7 +28,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   const cashedClient = queryClient.getQueryData(['clients'])
   const selectedSubagentsID = watch("subagents")
   const cashedSubagent = queryClient.getQueryData(['subagents'])
-  const selectedManagers = watch("managers")
   
   const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
   
@@ -91,7 +90,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </div>
         
         <div className="col-span-2">
-          <ReviewManagersSelect cantSelect={selectedManagers} />
+          <ReviewManagersSelect />
         </div> 
         
         <FormField

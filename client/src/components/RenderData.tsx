@@ -129,7 +129,7 @@ const RenderData: React.FC<RenderDataProps> = ({
         {filteredData.map((item, index) => (
           <li key={index}>
             <button
-              className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-black-600 hover:bg-gray-300"
+              className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 cursor-pointer hover:text-black-600 dark:hover:bg-gray-600 hover:bg-gray-300"
               onClick={async () => {
                 const relatedConfig =
                   columnsConfig[parentKey as keyof typeof columnsConfig];
