@@ -1,10 +1,10 @@
-const calculateFields = require("../utils/calculation"); // Импорт функции расчетов
-const sequelize = require("../db/connection"); // Подключаем sequelize правильно
+const calculateFields = require("../utils/calculation");
+const sequelize = require("../db/connection"); 
 
 class BaseService {
   constructor(model, includes = []) {
     this.model = model;
-    this.includes = includes; // Массив связанных моделей
+    this.includes = includes; 
   }
 
   extractIds(data) {
@@ -18,36 +18,39 @@ class BaseService {
 
   filterSingleRecord(record) {
     const filteredRecord = { ...record.toJSON() };
-    
-    // Преобразуем каждую связанную модель в массив объектов
+
     this.includes.forEach((include) => {
-      const alias = include.as; // Алиас связи
-      
+      const alias = include.as;
+
       if (filteredRecord[alias]) {
-        // Если это массив, преобразуем каждый объект
         if (Array.isArray(filteredRecord[alias])) {
-          filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => ({
-            id: relatedRecord.id,
-            name: relatedRecord.name || relatedRecord.fileName, // Используем поле name или fileName
-            link: relatedRecord.fileUrl || null, // Если есть ссылка, добавляем её
-            type: alias, // Тип для обозначения
-          }));
+          filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
+            if (alias === "files") {
+              return {
+                id: relatedRecord.id,
+                name: relatedRecord.name || relatedRecord.fileName,
+                link: relatedRecord.fileUrl || null,
+                type: relatedRecord.type || alias,
+              };
+            }
+            return relatedRecord;
+          });
         } else {
-          // Если это один объект
           const relatedRecord = filteredRecord[alias];
-          filteredRecord[alias] = {
-            id: relatedRecord.id,
-            name: relatedRecord.name || relatedRecord.fileName,
-            link: relatedRecord.fileUrl || null,
-            type: alias,
-          };
+          if (alias === "files") {
+            filteredRecord[alias] = {
+              id: relatedRecord.id,
+              name: relatedRecord.name || relatedRecord.fileName,
+              link: relatedRecord.fileUrl || null,
+              type: relatedRecord.type || alias,
+            };
+          }
         }
       }
     });
-  
+
     return filteredRecord;
   }
-  
 
   filterResponse(data) {
     if (Array.isArray(data)) {
@@ -56,7 +59,6 @@ class BaseService {
       return this.filterSingleRecord(data);
     }
   }
-  
 
   async getAll() {
     try {
