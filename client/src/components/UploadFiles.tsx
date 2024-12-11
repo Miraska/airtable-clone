@@ -1,10 +1,11 @@
 import React, { useState, useEffect, ChangeEvent, DragEvent, useRef } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { Button } from "./Button";
+import { api } from '../api/index'; // Импортируем экземпляр API с вынесенными методами
 
 interface Props {
   editingHandler: (state: boolean) => void;
+  data?: FileData;
   typeCell: string;
   orderId: number;
 }
@@ -31,12 +32,7 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
     const fetchFiles = async () => {
       if (!orderId) return;
       try {
-        const res = await axios.get(`http://localhost:5000/api/files/order/${orderId}`, {
-          headers: {
-            'ngrok-skip-browser-warning': '1',
-          },
-        });
-
+        const res = await api.files.getByOrderId(orderId);
         if (res.status === 200) {
           if (res.data.message && res.data.message === "No files found for this orderId") {
             setServerFiles([]);
@@ -45,7 +41,6 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
           }
         }
       } catch (error: any) {
-        // Если ответ от сервера 404, это значит, что просто нет файлов. Тогда не выводим никакие ошибки.
         if (error.response && error.response.status === 404) {
           setServerFiles([]);
         } else {
@@ -85,6 +80,28 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
     setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
+  const updateServerFilesList = async () => {
+    if (orderId) {
+      try {
+        const updatedFilesRes = await api.files.getByOrderId(orderId);
+        if (updatedFilesRes.status === 200) {
+          if (updatedFilesRes.data.message && updatedFilesRes.data.message === "No files found for this orderId") {
+            setServerFiles([]);
+          } else {
+            setServerFiles(updatedFilesRes.data);
+          }
+        }
+      } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+          setServerFiles([]);
+        } else {
+          console.error("Ошибка при обновлении списка файлов:", error);
+          toast.error("Ошибка при обновлении списка файлов.");
+        }
+      }
+    }
+  };
+
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (files.length === 0) {
@@ -98,39 +115,11 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
 
     try {
       setIsLoading(true);
-      const res = await axios.post("http://localhost:5000/api/files/upload-multiple", formData, {
-        headers: {
-          'Content-Type': "multipart/form-data",
-          'ngrok-skip-browser-warning': '1',
-        },
-      });
+      const res = await api.files.uploadMultiple(formData);
       if (res.status === 200) {
         toast.success("Файлы успешно отправлены!");
-        // Обновляем список файлов с сервера
-        if (orderId) {
-          try {
-            const updatedFilesRes = await axios.get(`http://localhost:5000/api/files/order/${orderId}`, {
-              headers: {
-                'ngrok-skip-browser-warning': '1',
-              },
-            });
-            if (updatedFilesRes.status === 200) {
-              if (updatedFilesRes.data.message && updatedFilesRes.data.message === "No files found for this orderId") {
-                setServerFiles([]);
-              } else {
-                setServerFiles(updatedFilesRes.data);
-              }
-            }
-          } catch (error: any) {
-            if (error.response && error.response.status === 404) {
-              setServerFiles([]);
-            } else {
-              console.error("Ошибка при обновлении списка файлов:", error);
-              toast.error("Ошибка при обновлении списка файлов.");
-            }
-          }
-        }
-        setFiles([]); // Очищаем локальный список файлов
+        await updateServerFilesList();
+        setFiles([]);
       } else {
         console.log("Ошибка", res);
         throw new Error();
@@ -146,15 +135,10 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
 
   const handleDeleteFileById = async (fileId: string) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/files/id/${fileId}`, {
-        headers: {
-          'ngrok-skip-browser-warning': '1',
-        },
-      });
+      const res = await api.files.deleteById(fileId);
       if (res.status === 200) {
-        // Если сервер вернул сообщение о том, что файл не найден
         if (res.data.message && res.data.message === "File not found") {
-          // Не выводим сообщение, просто ничего не делаем.
+          // Не делаем ничего
         } else {
           toast.success("Файл успешно удалён!");
           setServerFiles((prev) => prev.filter((file) => file._id !== fileId));
@@ -174,8 +158,7 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
   const handleUpdateFile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingFileId) return;
-    
-    // Проверяем, существует ли файл, который мы собираемся обновить, в списке serverFiles
+
     const fileToUpdate = serverFiles.find((f) => f._id === editingFileId);
     if (!fileToUpdate) {
       setEditingFileId(null);
@@ -184,14 +167,7 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
     }
 
     try {
-      const res = await axios.put(`http://localhost:5000/api/files/${editingFileId}`, {
-        originalname: editingFileName
-      },{
-        headers: {
-          'ngrok-skip-browser-warning': '1',
-        },
-      });
-
+      const res = await api.files.updateById(editingFileId, { originalname: editingFileName });
       if (res.status === 200) {
         if (res.data.message && res.data.message === "File not found") {
           setEditingFileId(null);

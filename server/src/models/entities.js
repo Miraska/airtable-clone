@@ -100,11 +100,11 @@ const File = sequelize.define('File', {
     primaryKey: true,
   },
   fileName: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   fileUrl: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   orderId: {

@@ -337,7 +337,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         {isEditing ? 
         ( column.type === "file" ? 
           (
-            <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} orderId={data?.id}/>
+            <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} orderId={data?.id} data={data}/>
           ) : (
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="space-y-4">
