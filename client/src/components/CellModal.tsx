@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import { RelatedDataModal } from "./RelatedData";
-import {
-  Controller,
-  FormProvider,
-  useForm
-} from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button } from "./Button";
 import Select from "react-select";
 import axios from "axios";
@@ -46,11 +42,14 @@ interface CellModalProps {
 }
 
 interface FileData {
-  _id: string;
-  originalname: string;
-  filename: string;
+  _id?: string;
+  id?: number;
+  originalname?: string;
+  filename?: string;
+  fileName?: string;
+  fileUrl?: string;
   type: string;
-  orderId: string;
+  orderId?: string | number;
 }
 
 export const CellModal: React.FC<CellModalProps> = ({
@@ -65,12 +64,12 @@ export const CellModal: React.FC<CellModalProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
-  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
-  const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([])
-  const [selectedManagersID, setSelectedManagersID] = useState<number[]>([])
+  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([]);
+  const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([]);
+  const [selectedManagersID, setSelectedManagersID] = useState<number[]>([]);
 
   const [serverFiles, setServerFiles] = useState<FileData[]>([]);
-  
+
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
@@ -81,11 +80,18 @@ export const CellModal: React.FC<CellModalProps> = ({
     async function fetchData() {
       try {
         if (column.key === "subagentPayers" || column.key === "subagents") {
-          const cashedSubagent = await queryClient.fetchQuery(['subagents'], api.subagents.getAll)
-          const selectedSubagent = cashedSubagent.data.filter((subagent: ISubagent) => data.subagents?.includes(subagent.id))
-          const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
+          const cashedSubagent = await queryClient.fetchQuery(
+            ["subagents"],
+            api.subagents.getAll
+          );
+          const selectedSubagent = cashedSubagent.data.filter(
+            (subagent: ISubagent) => data.subagents?.includes(subagent.id)
+          );
+          const selectedPayers = selectedSubagent.map(
+            (subagent: ISubagent) => subagent.subagentPayers
+          );
           const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
-          setSelectedPayersID(uniquePayersID)
+          setSelectedPayersID(uniquePayersID);
         } else {
           setValue(initialValue || data[column.key]);
           setFormValue(column.key, initialValue || data[column.key]);
@@ -94,21 +100,42 @@ export const CellModal: React.FC<CellModalProps> = ({
         console.error("Ошибка загрузки данных:", error);
       }
     }
-    fetchData()
+    fetchData();
   }, [initialValue, data, column.key, setFormValue]);
 
-  // Если тип столбца - файл, то при открытии модалки и при неактивном редактировании загружаем список файлов
+  // Загрузка файлов при открытии модалки и при неактивном редактировании
   useEffect(() => {
-    if (!isEditing && column.type === "file" && isOpen && data?.id) {
+    if (
+      !isEditing &&
+      (column.type === "file" || column.type === "invoice_file") &&
+      isOpen &&
+      data?.id
+    ) {
       const fetchFiles = async () => {
         try {
-          const res = await axios.get(`http://localhost:5000/api/files/order/${data.id}`, {
-            headers: {
-              'ngrok-skip-browser-warning': '1',
-            },
-          });
+          const res = await axios.get(
+            `http://localhost:5000/api/files/order/${data.id}`,
+            {
+              headers: {
+                "ngrok-skip-browser-warning": "1",
+              },
+            }
+          );
           if (res.status === 200) {
-            setServerFiles(res.data);
+            // В зависимости от типа столбца фильтруем файлы
+            let files = res.data;
+            if (column.type === "file") {
+              // Для типа file отобразим order_file
+              files = files.filter(
+                (file: FileData) => file.type === "order_file"
+              );
+            } else if (column.type === "invoice_file") {
+              // Для типа invoice_file отобразим invoice_file
+              files = files.filter(
+                (file: FileData) => file.type === "invoice_file"
+              );
+            }
+            setServerFiles(files);
           }
         } catch (error) {
           console.error("Ошибка при получении списка файлов:", error);
@@ -118,15 +145,20 @@ export const CellModal: React.FC<CellModalProps> = ({
     }
   }, [column.type, data?.id, isOpen, isEditing]);
 
-  const handleDeleteFileById = async (fileId: string) => {
+  const handleDeleteFileById = async (fileId: string | number) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/files/id/${fileId}`, {
-        headers: {
-          'ngrok-skip-browser-warning': '1',
-        },
-      });
+      const res = await axios.delete(
+        `http://localhost:5000/api/files/id/${fileId}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "1",
+          },
+        }
+      );
       if (res.status === 200) {
-        setServerFiles((prev) => prev.filter((file) => file._id !== fileId));
+        setServerFiles((prev) =>
+          prev.filter((file) => file._id !== fileId && file.id !== fileId)
+        );
       }
     } catch (error) {
       console.error("Ошибка при удалении файла:", error);
@@ -137,16 +169,31 @@ export const CellModal: React.FC<CellModalProps> = ({
     const formData = getValues();
     const updatedValue = formData[column.key];
     let updatedData;
-    
+
     if (column.key === "clients") {
-      const cashedClient = await queryClient.fetchQuery(['clients'], api.clients.getAll);
-      const selectedClient = cashedClient.data.filter((client: IClient) => updatedValue?.includes(client.id))
-      const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
-      updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
+      const cashedClient = await queryClient.fetchQuery(
+        ["clients"],
+        api.clients.getAll
+      );
+      const selectedClient = cashedClient.data.filter((client: IClient) =>
+        updatedValue?.includes(client.id)
+      );
+      const selectedINN = selectedClient
+        .map((client: IClient) => client.inn)
+        .join(", ");
+      updatedData = {
+        ...data,
+        [column.key]: updatedValue,
+        client_inn: selectedINN,
+      };
     } else if (column.key === "subagentPayers") {
-      updatedData = { ...data, [column.key]: selectedPayersID }
+      updatedData = { ...data, [column.key]: selectedPayersID };
     } else {
-      updatedData = { ...data, [column.key]: updatedValue, subagentPayers: selectedPayersID }
+      updatedData = {
+        ...data,
+        [column.key]: updatedValue,
+        subagentPayers: selectedPayersID,
+      };
     }
     try {
       onSave(updatedData);
@@ -276,21 +323,21 @@ export const CellModal: React.FC<CellModalProps> = ({
         return (
           <div className="space-y-4">
             <FormProvider {...methods}>
-                <Controller
-                  name={column.key}
-                  control={methods.control}
-                  render={({ field }) => (
-                    <RelationshipSelect
-                      type={column.key}
-                      value={field.value || []}
-                      onChange={(newValue) => {
-                        setValue(newValue);
-                        setFormValue(column.key, newValue);
-                      }}
-                      placeholder="Выберите связь"
-                    />
-                  )}
-                />
+              <Controller
+                name={column.key}
+                control={methods.control}
+                render={({ field }) => (
+                  <RelationshipSelect
+                    type={column.key}
+                    value={field.value || []}
+                    onChange={(newValue) => {
+                      setValue(newValue);
+                      setFormValue(column.key, newValue);
+                    }}
+                    placeholder="Выберите связь"
+                  />
+                )}
+              />
             </FormProvider>
           </div>
         );
@@ -298,7 +345,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         return (
           <div className="space-y-4">
             <FormProvider {...methods}>
-              <ReviewOrdersSelect cantSelect={selectedOrdersID}/>
+              <ReviewOrdersSelect cantSelect={selectedOrdersID} />
             </FormProvider>
           </div>
         );
@@ -306,7 +353,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         return (
           <div className="space-y-4">
             <FormProvider {...methods}>
-              <PayersSelect canSelect={selectedPayersID}/>
+              <PayersSelect canSelect={selectedPayersID} />
             </FormProvider>
           </div>
         );
@@ -314,7 +361,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         return (
           <div className="space-y-4">
             <FormProvider {...methods}>
-              <ReviewManagersSelect cantSelect={selectedManagersID}/>
+              <ReviewManagersSelect cantSelect={selectedManagersID} />
             </FormProvider>
           </div>
         );
@@ -332,12 +379,22 @@ export const CellModal: React.FC<CellModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} setIsEditing={setIsEditing} isEditing={isEditing}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      setIsEditing={setIsEditing}
+      isEditing={isEditing}
+    >
       <div className="space-y-4">
-        {isEditing ? 
-        ( column.type === "file" ? 
-          (
-            <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} orderId={data?.id} data={data}/>
+        {isEditing ? (
+          column.type === "file" || column.type === "invoice_file" ? (
+            <UploadFiles
+              editingHandler={() => setIsEditing(false)}
+              typeCell={column.key}
+              orderId={data?.id}
+              data={data}
+            />
           ) : (
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="space-y-4">
@@ -374,41 +431,37 @@ export const CellModal: React.FC<CellModalProps> = ({
                   setTitle={setTitle}
                   setSelectedCell={setSelectedCell}
                 />
-              ) : column.type === "file" ? (
+              ) : column.type === "file" || column.type === "invoice_file" ? (
                 <div className="space-y-4">
-                  <h2 className="text-lg font-bold">Загруженные файлы</h2>
-                  {serverFiles.length > 0 ? (
+                  {data?.files && data.files.length > 0 ? (
                     <ul className="space-y-2">
-                      {serverFiles.map((file) => (
-                        <li
-                          key={file._id}
-                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
-                        >
-                          <span className="truncate flex-1">{file.originalname}</span>
-                          <div className="flex gap-2">
-                            <Button
-                              type="button"
-                              onClick={() => handleDeleteFileById(file._id)}
-                              className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
-                            >
-                              Удалить
-                            </Button>
-                          </div>
-                        </li>
-                      ))}
+                      {data?.files
+                        .filter((file) => file.type === column.key)
+                        .map((file) => (
+                          <li
+                            key={file._id || file.id}
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
+                          >
+                            <span className="truncate flex-1">
+                              {file.originalname || file.name}
+                            </span>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                onClick={() =>
+                                  handleDeleteFileById(file.id || file.id!)
+                                }
+                                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
+                              >
+                                Удалить
+                              </Button>
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   ) : (
                     <p>Нет загруженных файлов</p>
                   )}
-                  <div className="flex justify-end">
-                    <Button
-                      variant="primary"
-                      onClick={() => setIsEditing(true)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-all"
-                    >
-                      Редактировать файлы
-                    </Button>
-                  </div>
                 </div>
               ) : Array.isArray(value) ? (
                 <div>
