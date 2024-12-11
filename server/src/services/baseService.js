@@ -20,37 +20,44 @@ class BaseService {
     const filteredRecord = { ...record.toJSON() };
 
     this.includes.forEach((include) => {
-      const alias = include.as;
+        const alias = include.as;
 
-      if (filteredRecord[alias]) {
-        if (Array.isArray(filteredRecord[alias])) {
-          filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
-            if (alias === "files") {
-              return {
-                id: relatedRecord.id,
-                name: relatedRecord.name || relatedRecord.fileName,
-                link: relatedRecord.fileUrl || null,
-                type: relatedRecord.type || alias,
-              };
+        if (filteredRecord[alias]) {
+            if (Array.isArray(filteredRecord[alias])) {
+                filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
+                    if (alias === "files") {
+                        // Полная информация только для files
+                        return {
+                            id: relatedRecord.id,
+                            name: relatedRecord.name || relatedRecord.fileName,
+                            link: relatedRecord.fileUrl || null,
+                            type: relatedRecord.type || alias,
+                        };
+                    }
+                    // Для других таблиц возвращаем только id
+                    return relatedRecord.id;
+                });
+            } else {
+                const relatedRecord = filteredRecord[alias];
+                if (alias === "files") {
+                    // Полная информация только для files
+                    filteredRecord[alias] = {
+                        id: relatedRecord.id,
+                        name: relatedRecord.name || relatedRecord.fileName,
+                        link: relatedRecord.fileUrl || null,
+                        type: relatedRecord.type || alias,
+                    };
+                } else {
+                    // Для других таблиц возвращаем только id
+                    filteredRecord[alias] = relatedRecord.id;
+                }
             }
-            return relatedRecord;
-          });
-        } else {
-          const relatedRecord = filteredRecord[alias];
-          if (alias === "files") {
-            filteredRecord[alias] = {
-              id: relatedRecord.id,
-              name: relatedRecord.name || relatedRecord.fileName,
-              link: relatedRecord.fileUrl || null,
-              type: relatedRecord.type || alias,
-            };
-          }
         }
-      }
     });
 
     return filteredRecord;
-  }
+}
+
 
   filterResponse(data) {
     if (Array.isArray(data)) {
