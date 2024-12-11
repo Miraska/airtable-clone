@@ -10,11 +10,7 @@ interface Option {
   label: string;
 };
 
-interface Props {
-  cantSelect: number[];
-}
-
-export default function ReviewOrdersSelect({cantSelect}: Props) {
+export default function ReviewOrdersSelect() {
   const { control } = useFormContext()
   
   const { data, isLoading } = useQuery(['orders'], () => api.orders.getAll());
@@ -22,12 +18,11 @@ export default function ReviewOrdersSelect({cantSelect}: Props) {
   const options: Option[] = useMemo(() => {
     if (!data?.data) return [];
     return data.data
-      .filter((item: any) => !cantSelect.includes(item.id))
       .map((item: any) => ({
         value: item.id,
         label: item.name ?? item.id,
       }));
-  }, [data, cantSelect]);
+  }, [data]);
   
   return (
     <div>
