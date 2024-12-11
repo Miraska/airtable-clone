@@ -1,3 +1,5 @@
 node_modules
 .hintrc
 README.md
+.idea
+.gigaide

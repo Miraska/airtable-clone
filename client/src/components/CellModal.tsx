@@ -74,19 +74,27 @@ export const CellModal: React.FC<CellModalProps> = ({
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
-  const { register, handleSubmit, setValue: setFormValue, getValues } = methods;
+  const { register, handleSubmit, setValue: setFormValue, getValues, watch } = methods;
   const [title, setTitle] = useState(column.label);
+  const watchSubagent = watch("subagents");
 
   useEffect(() => {
     async function fetchData() {
       try {
-        if (column.key === "subagentPayers" || column.key === "subagents") {
+        if (column.key === "subagentPayers" ) {
           const cashedSubagent = await queryClient.fetchQuery(['subagents'], api.subagents.getAll)
           const selectedSubagent = cashedSubagent.data.filter((subagent: ISubagent) => data.subagents?.includes(subagent.id))
           const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
           const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
-          setSelectedPayersID(uniquePayersID)
-        } else {
+          setSelectedPayersID(uniquePayersID);
+        } else if (column.key === "subagents") {
+            const cashedSubagent = await queryClient.fetchQuery(['subagents'], api.subagents.getAll)
+             const selectedSubagent = cashedSubagent.data.filter((subagent: ISubagent) => watchSubagent?.includes(subagent.id))
+             const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
+             const canSelectPayersID = Array.from(new Set(selectedPayers.flat()));
+             const uniquePayers = canSelectPayersID.filter((id: number) => data.subagents.includes(id));
+            setSelectedPayersID(uniquePayers);
+            } else {
           setValue(initialValue || data[column.key]);
           setFormValue(column.key, initialValue || data[column.key]);
         }
@@ -95,7 +103,7 @@ export const CellModal: React.FC<CellModalProps> = ({
       }
     }
     fetchData()
-  }, [initialValue, data, column.key, setFormValue]);
+  }, [initialValue, data, column.key, setFormValue, watchSubagent]);
 
   // Если тип столбца - файл, то при открытии модалки и при неактивном редактировании загружаем список файлов
   useEffect(() => {
@@ -144,9 +152,12 @@ export const CellModal: React.FC<CellModalProps> = ({
       const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
       updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
     } else if (column.key === "subagentPayers") {
-      updatedData = { ...data, [column.key]: selectedPayersID }
+      updatedData = { ...data, [column.key]: updatedValue }
+    } else if (column.key === "subagents") {
+        updatedData = { ...data, [column.key]: updatedValue, "subagentPayers": selectedPayersID }
     } else {
-      updatedData = { ...data, [column.key]: updatedValue, subagentPayers: selectedPayersID }
+        console.log(selectedPayersID)
+        updatedData = { ...data, [column.key]: updatedValue }
     }
     try {
       onSave(updatedData);

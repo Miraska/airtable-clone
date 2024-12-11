@@ -41,6 +41,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       const selectedSubagent = cashedSubagent.data.filter(subagent => selectedSubagentsID?.includes(subagent.id))
       const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
       const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
+      console.log(uniquePayersID)
       setSelectedPayersID(uniquePayersID)
     }
   }, [cashedClient, cashedSubagent, selectedClientsID, selectedSubagentsID])
