@@ -416,7 +416,7 @@ export const CellModal: React.FC<CellModalProps> = ({
                     {value.map((tag: any, index: number) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
                       >
                         {tag}
                       </span>
