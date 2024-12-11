@@ -20,37 +20,44 @@ class BaseService {
     const filteredRecord = { ...record.toJSON() };
 
     this.includes.forEach((include) => {
-      const alias = include.as;
+        const alias = include.as;
 
-      if (filteredRecord[alias]) {
-        if (Array.isArray(filteredRecord[alias])) {
-          filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
-            if (alias === "files") {
-              return {
-                id: relatedRecord.id,
-                name: relatedRecord.name || relatedRecord.fileName,
-                link: relatedRecord.fileUrl || null,
-                type: relatedRecord.type || alias,
-              };
+        if (filteredRecord[alias]) {
+            if (Array.isArray(filteredRecord[alias])) {
+                filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
+                    if (alias === "files") {
+                        // Полная информация только для files
+                        return {
+                            id: relatedRecord.id,
+                            name: relatedRecord.name || relatedRecord.fileName,
+                            link: relatedRecord.fileUrl || null,
+                            type: relatedRecord.type || alias,
+                        };
+                    }
+                    // Для других таблиц возвращаем только id
+                    return relatedRecord.id;
+                });
+            } else {
+                const relatedRecord = filteredRecord[alias];
+                if (alias === "files") {
+                    // Полная информация только для files
+                    filteredRecord[alias] = {
+                        id: relatedRecord.id,
+                        name: relatedRecord.name || relatedRecord.fileName,
+                        link: relatedRecord.fileUrl || null,
+                        type: relatedRecord.type || alias,
+                    };
+                } else {
+                    // Для других таблиц возвращаем только id
+                    filteredRecord[alias] = relatedRecord.id;
+                }
             }
-            return relatedRecord;
-          });
-        } else {
-          const relatedRecord = filteredRecord[alias];
-          if (alias === "files") {
-            filteredRecord[alias] = {
-              id: relatedRecord.id,
-              name: relatedRecord.name || relatedRecord.fileName,
-              link: relatedRecord.fileUrl || null,
-              type: relatedRecord.type || alias,
-            };
-          }
         }
-      }
     });
 
     return filteredRecord;
-  }
+}
+
 
   filterResponse(data) {
     if (Array.isArray(data)) {
@@ -140,7 +147,7 @@ class BaseService {
 
   async update(id, data) {
     let transaction;
-
+  
     try {
       // Создаем транзакцию
       transaction = await sequelize.transaction();
@@ -151,38 +158,43 @@ class BaseService {
       console.error("Error creating transaction:", err);
       throw new Error("Transaction creation failed.");
     }
-
+  
     try {
       // Находим существующую запись
       const entity = await this.model.findByPk(id, { transaction });
       if (!entity) {
         throw new Error(`Record with id ${id} not found.`);
       }
-
+  
       // Вычисление данных перед обновлением
       const calculatedData = calculateFields(data);
-
+  
       // Объединяем оригинальные и вычисленные данные
       const dataToUpdate = { ...data, ...calculatedData };
-
+  
       // Обновляем запись
       await entity.update(dataToUpdate, { transaction });
-
+  
       // Обрабатываем связанные сущности
       for (const include of this.includes) {
         const alias = include.as;
-        const methodName = `set${
-          alias.charAt(0).toUpperCase() + alias.slice(1)
-        }`;
-
+        const methodName = `set${alias.charAt(0).toUpperCase() + alias.slice(1)}`;
+  
         if (data[alias] && typeof entity[methodName] === "function") {
-          await entity[methodName](data[alias], { transaction });
+          // Если нужно преобразовать данные для files (или другой связи)
+          let relatedData = data[alias];
+          if (alias === 'files') {
+            // Предполагается, что data.files - это массив объектов вида { id: number, ... }
+            relatedData = data[alias].map(file => file.id);
+          }
+  
+          await entity[methodName](relatedData, { transaction });
         }
       }
-
+  
       // Подтверждаем транзакцию
       await transaction.commit();
-
+  
       // Возвращаем обработанную запись
       return this.filterSingleRecord(entity);
     } catch (error) {
@@ -192,6 +204,7 @@ class BaseService {
       throw new Error("Failed to update record.");
     }
   }
+  
 
   async delete(id) {
     try {

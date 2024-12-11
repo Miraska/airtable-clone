@@ -8,6 +8,7 @@ import {
 } from "react-hook-form";
 import { Button } from "./Button";
 import Select from "react-select";
+import axios from "axios";
 
 import {
   statusOptions,
@@ -44,6 +45,14 @@ interface CellModalProps {
   setSelectedCell: React.Dispatch<any>;
 }
 
+interface FileData {
+  _id: string;
+  originalname: string;
+  filename: string;
+  type: string;
+  orderId: string;
+}
+
 export const CellModal: React.FC<CellModalProps> = ({
   isOpen,
   onClose,
@@ -60,50 +69,87 @@ export const CellModal: React.FC<CellModalProps> = ({
   const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([])
   const [selectedManagersID, setSelectedManagersID] = useState<number[]>([])
 
+  const [serverFiles, setServerFiles] = useState<FileData[]>([]);
+  
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
   const { register, handleSubmit, setValue: setFormValue, getValues } = methods;
   const [title, setTitle] = useState(column.label);
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
-        if (column.key == "subagentPayers" || column.key == "subagents") {
+        if (column.key === "subagentPayers" || column.key === "subagents") {
           const cashedSubagent = await queryClient.fetchQuery(['subagents'], api.subagents.getAll)
-          const selectedSubagent = cashedSubagent.data.filter(subagent => data.subagents?.includes(subagent.id))
+          const selectedSubagent = cashedSubagent.data.filter((subagent: ISubagent) => data.subagents?.includes(subagent.id))
           const selectedPayers = selectedSubagent.map((subagent: ISubagent) => subagent.subagentPayers);
           const uniquePayersID = Array.from(new Set(selectedPayers.flat()));
           setSelectedPayersID(uniquePayersID)
-          console.log(selectedSubagent)
-        } else if (column.key == "reviews") {
+        } else if (column.key === "reviews") {
           const selectedOrders = data.orders
           setSelectedOrdersID(selectedOrders)
-        } else if (column.key == "reviewers") {
+        } else if (column.key === "reviewers") {
           const selectedManagers = data.managers
           setSelectedManagersID(selectedManagers)
         } else {
           setValue(initialValue || data[column.key]);
           setFormValue(column.key, initialValue || data[column.key]);
         }
-      } catch {
+      } catch (error) {
         console.error("Ошибка загрузки данных:", error);
       }
     }
     fetchData()
   }, [initialValue, data, column.key, setFormValue]);
 
+  // Если тип столбца - файл, то при открытии модалки и при неактивном редактировании загружаем список файлов
+  useEffect(() => {
+    if (!isEditing && column.type === "file" && isOpen && data?.id) {
+      const fetchFiles = async () => {
+        try {
+          const res = await axios.get(`http://localhost:5000/api/files/order/${data.id}`, {
+            headers: {
+              'ngrok-skip-browser-warning': '1',
+            },
+          });
+          if (res.status === 200) {
+            setServerFiles(res.data);
+          }
+        } catch (error) {
+          console.error("Ошибка при получении списка файлов:", error);
+        }
+      };
+      fetchFiles();
+    }
+  }, [column.type, data?.id, isOpen, isEditing]);
+
+  const handleDeleteFileById = async (fileId: string) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/files/id/${fileId}`, {
+        headers: {
+          'ngrok-skip-browser-warning': '1',
+        },
+      });
+      if (res.status === 200) {
+        setServerFiles((prev) => prev.filter((file) => file._id !== fileId));
+      }
+    } catch (error) {
+      console.error("Ошибка при удалении файла:", error);
+    }
+  };
+
   const handleSave = async () => {
     const formData = getValues();
     const updatedValue = formData[column.key];
     let updatedData;
     
-    if (column.key == "clients") {
+    if (column.key === "clients") {
       const cashedClient = await queryClient.fetchQuery(['clients'], api.clients.getAll);
-      const selectedClient = cashedClient.data.filter(client => updatedValue?.includes(client.id))
+      const selectedClient = cashedClient.data.filter((client: IClient) => updatedValue?.includes(client.id))
       const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
       updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
-    } else if (column.key == "subagentPayers") {
+    } else if (column.key === "subagentPayers") {
       updatedData = { ...data, [column.key]: selectedPayersID }
     } else {
       updatedData = { ...data, [column.key]: updatedValue, subagentPayers: selectedPayersID }
@@ -292,12 +338,12 @@ export const CellModal: React.FC<CellModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} setIsEditing={setIsEditing}isEditing={isEditing}>
+    <Modal isOpen={isOpen} onClose={onClose} title={title} setIsEditing={setIsEditing} isEditing={isEditing}>
       <div className="space-y-4">
         {isEditing ? 
-        ( column.type == "file" ? 
+        ( column.type === "file" ? 
           (
-            <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} />
+            <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} orderId={data?.id}/>
           ) : (
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="space-y-4">
@@ -317,10 +363,7 @@ export const CellModal: React.FC<CellModalProps> = ({
                   >
                     Закрыть
                   </Button>
-                  <Button type="submit" onClick={() => {
-                    console.log(value);
-                    console.log();
-                  }}>Сохранить</Button>
+                  <Button type="submit">Сохранить</Button>
                 </div>
               </div>
             </form>
@@ -337,16 +380,49 @@ export const CellModal: React.FC<CellModalProps> = ({
                   setTitle={setTitle}
                   setSelectedCell={setSelectedCell}
                 />
+              ) : column.type === "file" ? (
+                <div className="space-y-4">
+                  <h2 className="text-lg font-bold">Загруженные файлы</h2>
+                  {serverFiles.length > 0 ? (
+                    <ul className="space-y-2">
+                      {serverFiles.map((file) => (
+                        <li
+                          key={file._id}
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
+                        >
+                          <span className="truncate flex-1">{file.originalname}</span>
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              onClick={() => handleDeleteFileById(file._id)}
+                              className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
+                            >
+                              Удалить
+                            </Button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Нет загруженных файлов</p>
+                  )}
+                  <div className="flex justify-end">
+                    <Button
+                      variant="primary"
+                      onClick={() => setIsEditing(true)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-all"
+                    >
+                      Редактировать файлы
+                    </Button>
+                  </div>
+                </div>
               ) : Array.isArray(value) ? (
                 <div>
                   <div className="flex flex-wrap gap-2">
-                    {value.map((tag, index) => (
+                    {value.map((tag: any, index: number) => (
                       <span
                         key={index}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-600 hover:bg-gray-300"
+                        className="inline-flex items-center px-8 py-1 rounded-xl text-sm font-medium bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                       >
                         {tag}
                       </span>
