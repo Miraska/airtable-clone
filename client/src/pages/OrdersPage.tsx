@@ -12,7 +12,8 @@ import columns from "../lib/tableColumnsData/columnsOrder";
 import { FormProvider, useForm } from "react-hook-form";
 
 export const OrdersPage = () => {
-  const defaultValue = { // ЗАЯВКИ
+  const defaultValue = {
+    // ЗАЯВКИ
     status: null, // Статус (закрыта, открыта, в работе и т. д.)
     order_number: null, // Номер (№) заявки
     managers: [], // Менеджеры (может хранится много менеджеров которые в другой таблице)
@@ -34,7 +35,7 @@ export const OrdersPage = () => {
     sum_order: null, // Сумма заявки
     vip_condition: null, // Условия VIP
     vip_commission: null, // VIP комиссия
-    hide_commission: null,  // Скрытая комиссия
+    hide_commission: null, // Скрытая комиссия
     commision_plus_percent: null, // Комиссия +% банка
     commision_plus_accredit: null, // Комиссия + аккредитив
     commision_plus_escrow: null, // Комиссия + эскроу
@@ -78,34 +79,38 @@ export const OrdersPage = () => {
     stuck_money_name: null, // Какая валюта зависла?
     stuck_money_sum: null, // Сумма зависла
     mistake_is_it_name: null, // Чья ошибка?
-    money_gone: false
-  }
-  
+    money_gone: false,
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalHeader, setModalHeader] = useState("")
-  
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+  const [modalHeader, setModalHeader] = useState("");
+
+  const handleView = () => {
+    setIsModalViewOpen(true);
+  };
+
   const closeModal = () => {
-    setIsModalOpen(false)
-    reset(defaultValue)
+    setIsModalViewOpen(false);
+    setIsModalOpen(false);
+    reset(defaultValue);
   };
 
   const queryClient = useQueryClient();
-  const { data, refetch } = useQuery("orders", () => api.orders.getAll(),
-  {
-    staleTime: 0.1 * 60 * 1000, 
-    cacheTime: 10 * 60 * 1000, 
+  const { data, refetch } = useQuery("orders", () => api.orders.getAll(), {
+    staleTime: 0.1 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    enabled: true
-  }
-);
+    enabled: true,
+  });
 
   const createMutation = useMutation(
-    (newOrder: IOrder) => api.orders.create(newOrder), 
+    (newOrder: IOrder) => api.orders.create(newOrder),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("orders");
-        closeModal()
+        closeModal();
         toast.success("Заявка успешно создана!");
       },
     }
@@ -116,14 +121,17 @@ export const OrdersPage = () => {
       toast.success("Заявка удалена успешно!");
     },
   });
-  const updateMutation = useMutation((data: IOrder) => api.orders.update(data.id as number, data), {
-    onSuccess: () => {
-      queryClient.invalidateQueries("orders");
-      closeModal()
-      toast.success("Заявка обновлена успешно!");
-    },
-  });
-  
+  const updateMutation = useMutation(
+    (data: IOrder) => api.orders.update(data.id as number, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("orders");
+        closeModal();
+        toast.success("Заявка обновлена успешно!");
+      },
+    }
+  );
+
   const handleDelete = async (order: IOrder) => {
     if (window.confirm("Удалить заявку?")) {
       deleteMutation.mutate(order.id!);
@@ -137,16 +145,17 @@ export const OrdersPage = () => {
     }
   };
   const handleEdit = (order: IOrder) => {
-    reset(order)
+    reset(order);
     setIsModalOpen(true);
-    setModalHeader("Изменить заявку")
+    setModalHeader("Изменить заявку");
   };
-  
-  const methods = useForm<IOrder>({ defaultValues: defaultValue})
-  const { reset } = methods
+
   
 
-  return ( 
+  const methods = useForm<IOrder>({ defaultValues: defaultValue });
+  const { reset } = methods;
+
+  return (
     <div className="h-full flex flex-col">
       <div className="flex-1 overflow-hidden">
         <DataTable
@@ -156,19 +165,18 @@ export const OrdersPage = () => {
           onRefresh={() => refetch()}
           onAdd={() => {
             setIsModalOpen(true);
-            setModalHeader("Добавить новую заявку")
+            setModalHeader("Добавить новую заявку");
           }}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
         />
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title={modalHeader}
-      >
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={modalHeader}>
         <FormProvider {...methods}>
           <OrderForm
             onSubmit={submit}

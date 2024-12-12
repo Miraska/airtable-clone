@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { RefreshCw, Plus, Search, ChevronDown, ChevronUp, FileText } from 'lucide-react';
-import { StatusBadge } from './StatusBadge';
-import { TableActions } from './TableActions';
-import { useTableSort } from '../hooks/useTableSort';
-import { useTableFilter } from '../hooks/useTableFilter';
-import { CellModal } from './CellModal';
+import React, { useState } from "react";
+import {
+  RefreshCw,
+  Plus,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+} from "lucide-react";
+import { StatusBadge } from "./StatusBadge";
+import { TableActions } from "./TableActions";
+import { useTableSort } from "../hooks/useTableSort";
+import { useTableFilter } from "../hooks/useTableFilter";
+import { CellModal } from "./CellModal";
+import { Modal } from "./Modal";
 
 interface Column {
   key: string;
@@ -32,6 +40,8 @@ interface DataTableProps {
   onView?: (item: any) => void;
   onCellUpdate?: (data: any) => void;
   title: string;
+  isModalViewOpen: boolean;
+  closeModal: () => any;
 }
 
 interface DataObject {
@@ -48,33 +58,38 @@ export const DataTable: React.FC<DataTableProps> = ({
   onView,
   onCellUpdate,
   title,
+  isModalViewOpen,
+  closeModal,
 }) => {
   function formatDate(dateString: string): string {
-    const parts = dateString.split('-');
+    const parts = dateString.split("-");
     return `${parts[2]}.${parts[1]}.${parts[0]}`;
   }
 
   function formatDatesInArray(arr: DataObject[]): DataObject[] {
-    return arr.map(item => {
-        const formattedItem: DataObject = { ...item };
+    return arr.map((item) => {
+      const formattedItem: DataObject = { ...item };
 
-        for (const key in item) {
-            if (
-                typeof item[key] === "string" &&
-                /^\d{4}-\d{2}-\d{2}$/.test(item[key] as string)
-            ) {
-              formattedItem[key] = formatDate(item[key] as string);
-            }
+      for (const key in item) {
+        if (
+          typeof item[key] === "string" &&
+          /^\d{4}-\d{2}-\d{2}$/.test(item[key] as string)
+        ) {
+          formattedItem[key] = formatDate(item[key] as string);
         }
+      }
 
-        return formattedItem;
+      return formattedItem;
     });
   }
 
   const formattedData = formatDatesInArray(data);
 
-  const { sortedData, sortConfig, handleSort } = useTableSort(formattedData || []);
-  const { filteredData, searchTerm, setSearchTerm } = useTableFilter(sortedData);
+  const { sortedData, sortConfig, handleSort } = useTableSort(
+    formattedData || []
+  );
+  const { filteredData, searchTerm, setSearchTerm } =
+    useTableFilter(sortedData);
   const [isRelationShip, setIsRelationShip] = useState(false);
   const [selectedCell, setSelectedCell] = useState<{
     data: any;
@@ -107,18 +122,18 @@ export const DataTable: React.FC<DataTableProps> = ({
     }
 
     // Отображение статуса
-    if (column.key === 'status') {
+    if (column.key === "status") {
       return <StatusBadge status={value} />;
     }
 
     // Отображение boolean
-    if (typeof value === 'boolean') {
-      return value ? 'Да' : 'Нет';
+    if (typeof value === "boolean") {
+      return value ? "Да" : "Нет";
     }
 
     // Если это массив не-файлов (например связи, теги и т.д.)
-    if (Array.isArray(value) && column.type !== 'file') {
-      if (value.length === 0) return '-';
+    if (Array.isArray(value) && column.type !== "file") {
+      if (value.length === 0) return "-";
 
       return (
         <div className="flex flex-wrap gap-2">
@@ -139,13 +154,13 @@ export const DataTable: React.FC<DataTableProps> = ({
     }
 
     // Если это файлы
-    if (column.type === 'file') {
+    if (column.type === "file") {
       // Ищем соответствующие файлы в item.files по типу ключа столбца
       const allFiles: FileItem[] = item.files || [];
-      const matchedFiles = allFiles.filter(file => file.type === column.key);
+      const matchedFiles = allFiles.filter((file) => file.type === column.key);
 
       if (matchedFiles.length === 0) {
-        return 'Нет файла';
+        return "Нет файла";
       }
 
       return (
@@ -168,7 +183,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     }
 
     // Обычные значения
-    return value || '-';
+    return value || "-";
   };
 
   return (
@@ -189,7 +204,10 @@ export const DataTable: React.FC<DataTableProps> = ({
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-600"
                 title="Refresh"
               >
-                <RefreshCw size={20} className="text-gray-600 dark:text-gray-400" />
+                <RefreshCw
+                  size={20}
+                  className="text-gray-600 dark:text-gray-400"
+                />
               </button>
             </div>
             <div className="relative">
@@ -197,24 +215,32 @@ export const DataTable: React.FC<DataTableProps> = ({
                 type="text"
                 placeholder="Поиск..."
                 value={searchTerm}
-                id='search'
+                id="search"
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg dark:text-white border border-gray-300 dark:border-gray-500 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            {title}
+          </h2>
         </div>
       </div>
 
       <div className="flex-1 overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-500 transition-all">
-            <thead className="bg-gray-50 dark:bg-gray-700" >
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 {(onView || onEdit || onDelete) && (
-                  <th scope="col" className="relative px-6 py-3 top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-100 dark:bg-gray-700">
+                  <th
+                    scope="col"
+                    className="relative px-6 py-3 top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-100 dark:bg-gray-700"
+                  >
                     Действия
                   </th>
                 )}
@@ -224,7 +250,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     scope="col"
                     className="px-6 py-5 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-gray-50 dark:bg-gray-700"
                     onClick={() => column.sortable && handleSort(column.key)}
-                    style={{ cursor: column.sortable ? 'pointer' : 'default' }}
+                    style={{ cursor: column.sortable ? "pointer" : "default" }}
                   >
                     <div className="flex items-center gap-1">
                       {column.label}
@@ -234,18 +260,18 @@ export const DataTable: React.FC<DataTableProps> = ({
                             size={12}
                             className={
                               sortConfig?.key === column.key &&
-                              sortConfig?.direction === 'asc'
-                                ? 'text-blue-600'
-                                : 'text-gray-400 dark:text-gray-300'
+                              sortConfig?.direction === "asc"
+                                ? "text-blue-600"
+                                : "text-gray-400 dark:text-gray-300"
                             }
                           />
                           <ChevronDown
                             size={12}
                             className={
                               sortConfig?.key === column.key &&
-                              sortConfig?.direction === 'desc'
-                                ? 'text-blue-600'
-                                : 'text-gray-400 dark:text-gray-300'
+                              sortConfig?.direction === "desc"
+                                ? "text-blue-600"
+                                : "text-gray-400 dark:text-gray-300"
                             }
                           />
                         </div>
@@ -256,28 +282,34 @@ export const DataTable: React.FC<DataTableProps> = ({
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-600 divide-y divide-gray-200 dark:divide-gray-500">
-              {Array.isArray(filteredData) && filteredData.map((item, index) => (
-                <tr key={item.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-500">
-                  {(onView || onEdit || onDelete) && (
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <TableActions
-                        onView={() => onView?.(item)}
-                        onEdit={() => { onEdit?.(item) }}
-                        onDelete={() => onDelete?.(item)}
-                      />
-                    </td>
-                  )}
-                  {columns.map((column) => (
-                    <td
-                      key={column.key}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-400"
-                      onClick={() => handleCellClick(item, column)}
-                    >
-                      {renderCell(item, column)}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {Array.isArray(filteredData) &&
+                filteredData.map((item, index) => (
+                  <tr
+                    key={item.id || index}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-500"
+                  >
+                    {(onView || onEdit || onDelete) && (
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <TableActions
+                          onView={() => onView?.(item)}
+                          onEdit={() => {
+                            onEdit?.(item);
+                          }}
+                          onDelete={() => onDelete?.(item)}
+                        />
+                      </td>
+                    )}
+                    {columns.map((column) => (
+                      <td
+                        key={column.key}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-400"
+                        onClick={() => handleCellClick(item, column)}
+                      >
+                        {renderCell(item, column)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -295,6 +327,14 @@ export const DataTable: React.FC<DataTableProps> = ({
           setSelectedCell={setSelectedCell}
         />
       )}
+
+      <Modal
+        isOpen={isModalViewOpen}
+        onClose={closeModal}
+        title={title}
+      >
+        Hello
+      </Modal>
     </div>
   );
 };
