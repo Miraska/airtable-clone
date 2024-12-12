@@ -301,8 +301,8 @@ export const DataTable: React.FC<DataTableProps> = ({
       )}
 
       <Modal
-        isOpen={isModalViewOpen}
-        onClose={closeModal}
+        isOpen={!!isModalViewOpen}
+        onClose={() => closeModal}
         title={title}
       >
         Hello
