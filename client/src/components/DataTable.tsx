@@ -1,17 +1,11 @@
-import React, { useState } from "react";
-import {
-  RefreshCw,
-  Plus,
-  Search,
-  ChevronDown,
-  ChevronUp,
-  FileText,
-} from "lucide-react";
-import { StatusBadge } from "./StatusBadge";
-import { TableActions } from "./TableActions";
-import { useTableSort } from "../hooks/useTableSort";
-import { useTableFilter } from "../hooks/useTableFilter";
-import { CellModal } from "./CellModal";
+import React, { useState } from 'react';
+import { RefreshCw, Plus, Search, ChevronDown, ChevronUp, FileText } from 'lucide-react';
+import { StatusBadge } from './StatusBadge';
+import { TableActions } from './TableActions';
+import { useTableSort } from '../hooks/useTableSort';
+import { useTableFilter } from '../hooks/useTableFilter';
+import { CellModal } from './CellModal';
+import { formatDatesInArray } from '../lib/dateFormateer';
 import { Modal } from "./Modal";
 
 interface Column {
@@ -61,29 +55,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   isModalViewOpen,
   closeModal,
 }) => {
-  function formatDate(dateString: string): string {
-    const parts = dateString.split("-");
-    return `${parts[2]}.${parts[1]}.${parts[0]}`;
-  }
-
-  function formatDatesInArray(arr: DataObject[]): DataObject[] {
-    return arr.map((item) => {
-      const formattedItem: DataObject = { ...item };
-
-      for (const key in item) {
-        if (
-          typeof item[key] === "string" &&
-          /^\d{4}-\d{2}-\d{2}$/.test(item[key] as string)
-        ) {
-          formattedItem[key] = formatDate(item[key] as string);
-        }
-      }
-
-      return formattedItem;
-    });
-  }
-
-  const formattedData = formatDatesInArray(data);
+  const formattedData = formatDatesInArray(data)
 
   const { sortedData, sortConfig, handleSort } = useTableSort(
     formattedData || []
