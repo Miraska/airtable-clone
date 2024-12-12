@@ -10,6 +10,7 @@ import type { IOrder } from "../types";
 import FormulaEditor from "../components/FormulaEditor";
 import columns from "../lib/tableColumnsData/columnsOrder";
 import { FormProvider, useForm } from "react-hook-form";
+import { reverseTransformDates } from "../lib/dateFormateer";
 
 export const OrdersPage = () => {
   const defaultValue = { // ЗАЯВКИ
@@ -137,7 +138,7 @@ export const OrdersPage = () => {
     }
   };
   const handleEdit = (order: IOrder) => {
-    reset(order)
+    reset(reverseTransformDates(order))
     setIsModalOpen(true);
     setModalHeader("Изменить заявку")
   };

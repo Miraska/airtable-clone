@@ -10,6 +10,7 @@ import { CellModalInputRenderer } from "./CellModalInputRenderer";
 import { CellModalFileView } from "./CellModalFileView";
 import { CellModalFileEditForm } from "./CellModalFileEditForm";
 import { RelatedDataModal } from "./RelatedData";
+import { reverseTransformDate } from "../lib/dateFormateer";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export const CellModal: React.FC<CellModalProps> = ({
             setSelectedPayersID(uniquePayers);
             } else {
           setValue(initialValue || data[column.key]);
-          setFormValue(column.key, initialValue || data[column.key]);
+          setFormValue(column.key, initialValue || reverseTransformDate(data[column.key]));
         }
       } catch (error) {
         console.error("Ошибка загрузки данных:", error);

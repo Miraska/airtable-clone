@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 
 import columns from '../lib/tableColumnsData/columnsManager';
 import ReviewOrdersSelect from '../components/ReviewOrdersSelect';
+import { reverseTransformDates } from '../lib/dateFormateer';
 
 export const ManagersPage = () => {
   const defaultValue = {
@@ -76,7 +77,7 @@ export const ManagersPage = () => {
     }
   };
   const edit = (manager: IManager) => {
-    reset(manager)
+    reset(reverseTransformDates(manager))
     setIsModalOpen(true)
     setModalHeader("Изменить менеджера")
   };
