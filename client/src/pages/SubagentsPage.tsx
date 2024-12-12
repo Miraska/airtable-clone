@@ -20,9 +20,15 @@ export const SubagentsPage = () => {
   
   const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+
+  const handleView = () => {
+    setIsModalViewOpen(true);
+  };
   
   const closeModal = () => {
     setIsModalOpen(false)
+    setIsModalViewOpen(false);
     reset(defaultValue)
   }
 
@@ -84,18 +90,21 @@ export const SubagentsPage = () => {
   return (
     <>
       <DataTable
-        title="Субагенты"
-        data={data?.data || []}
-        columns={columns}
-        onRefresh={() => refetch()}
-        onAdd={() => { 
-          setIsModalOpen(true)
-          setModalHeader("Добавить нового субагента")
-        }}
-        onDelete={deleteSubagent}
-        onEdit={edit}
-        onCellUpdate={submit}
-      />
+          title="Субагенты"
+          data={data?.data || []}
+          columns={columns}
+          onRefresh={() => refetch()}
+          onAdd={() => {
+            setIsModalOpen(true);
+            setModalHeader("Добавить нового субагента");
+          }}
+          onEdit={edit}
+          onDelete={deleteSubagent}
+          onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
+        />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}

@@ -18,9 +18,15 @@ export const AgentsPage = () => {
   
   const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+
+  const handleView = () => {
+    setIsModalViewOpen(true);
+  };
   
   const closeModal = () => {
     setIsModalOpen(false)
+    setIsModalViewOpen(false);
     reset(defaultValue)
   }
 
@@ -82,18 +88,21 @@ export const AgentsPage = () => {
   return (
     <>
       <DataTable
-        title="Агенты"
-        data={data?.data || []}
-        columns={columns}
-        onRefresh={() => refetch()}
-        onAdd={() => { 
-          setIsModalOpen(true)
-          setModalHeader("Добавить нового агента")
-        }}
-        onCellUpdate={submit}
-        onDelete={deleteAgents}
-        onEdit={edit}
-      />
+          title="Агенты"
+          data={data?.data || []}
+          columns={columns}
+          onRefresh={() => refetch()}
+          onAdd={() => {
+            setIsModalOpen(true);
+            setModalHeader("Добавить нового агента");
+          }}
+          onEdit={edit}
+          onDelete={deleteAgents}
+          onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
+        />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}

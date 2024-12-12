@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import { RefreshCw, Plus, Search, ChevronDown, ChevronUp, FileText } from 'lucide-react';
-import { StatusBadge } from './StatusBadge';
-import { TableActions } from './TableActions';
-import { useTableSort } from '../hooks/useTableSort';
-import { useTableFilter } from '../hooks/useTableFilter';
-import { CellModal } from './CellModal';
-import { formatDatesInArray } from '../lib/dateFormateer';
+import React, { useState } from "react";
+import {
+  RefreshCw,
+  Plus,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+} from "lucide-react";
+import { StatusBadge } from "./StatusBadge";
+import { TableActions } from "./TableActions";
+import { useTableSort } from "../hooks/useTableSort";
+import { useTableFilter } from "../hooks/useTableFilter";
+import { CellModal } from "./CellModal";
+import { formatDatesInArray } from "../lib/dateFormateer";
 import { Modal } from "./Modal";
 
 interface Column {
@@ -55,7 +62,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   isModalViewOpen,
   closeModal,
 }) => {
-  const formattedData = formatDatesInArray(data)
+  const formattedData = formatDatesInArray(data);
 
   const { sortedData, sortConfig, handleSort } = useTableSort(
     formattedData || []
@@ -301,8 +308,8 @@ export const DataTable: React.FC<DataTableProps> = ({
       )}
 
       <Modal
-        isOpen={isModalViewOpen}
-        onClose={closeModal}
+        isOpen={isModalViewOpen ? true : false}
+        onClose={() => closeModal()}
         title={title}
       >
         Hello
