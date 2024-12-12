@@ -1,13 +1,9 @@
-import React, {
-  useState,
-  useEffect,
-  ChangeEvent,
-  DragEvent,
-  useRef,
-} from "react";
+import React, { useState, useEffect, ChangeEvent, DragEvent, useRef } from "react";
 import { toast } from "react-toastify";
 import { api } from "../api/index";
-import { Trash2 } from "lucide-react";
+import { FileDragAndDropArea } from "./FileDragAndDropArea";
+import { LocalFileList } from "./LocalFileList";
+import { ServerFileList } from "./ServerFileList";
 
 interface Props {
   editingHandler: (state: boolean) => void;
@@ -32,9 +28,7 @@ const UploadFiles: React.FC<Props> = ({
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [serverFiles, setServerFiles] = useState<FileData[]>([]);
-  const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
   const [editingFileId, setEditingFileId] = useState<string | null>(null);
   const [editingFileName, setEditingFileName] = useState<string>("");
 
@@ -71,22 +65,6 @@ const UploadFiles: React.FC<Props> = ({
     if (inputRef.current) {
       inputRef.current.value = "";
     }
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    setFiles((prevFiles) => [...prevFiles, ...droppedFiles]);
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragOver(false);
   };
 
   const handleRemoveLocalFile = (indexToRemove: number) => {
@@ -219,63 +197,28 @@ const UploadFiles: React.FC<Props> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col items-center justify-center min-h-[150px] bg-gray-100 dark:bg-transparent px-4">
-        <div
-          className={`w-full max-w-lg p-6 border-2 border-dashed rounded-lg transition-all ${
-            isDragOver
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <p className="text-gray-600 text-lg mb-4 dark:text-gray-400">
-            Перетащите файлы сюда или выберите ниже:
-          </p>
-          <input
-            type="file"
-            id="file_input"
-            className="hidden"
-            multiple
-            onChange={handleFileChange}
-            ref={inputRef}
-          />
-          <label
-            htmlFor="file_input"
-            className="cursor-pointer bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all"
-          >
-            Выбрать файлы
-          </label>
-          {files.length > 0 && (
-            <form onSubmit={() => console.log(data)}>
-              <ul className="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
-                {files.map((file, index) => (
-                  <li
-                    key={index}
-                    className="p-2 bg-gray-100 dark:bg-gray-800 rounded shadow-sm text-sm flex justify-between items-center truncate"
-                  >
-                    <span className="truncate">{file.name}</span>
-                    <button
-                      type="submit"
-                      onClick={() => handleRemoveLocalFile(index)}
-                      className="p-1 text-gray-500 dark:text-gray-300 hover:text-red-600 transition-colors"
-                      title="Удалить"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </form>
-          )}
-        </div>
+      <form onSubmit={handleUpload}>
+        <FileDragAndDropArea
+          handleFileChange={handleFileChange}
+          inputRef={inputRef}
+        />
         {files.length > 0 && (
-          <span className="p-2 my-4 bg-green-500 rounded shadow-sm text-sm flex justify-between items-center truncate">
-            Теперь вы можете загрузить файлы.
-          </span>
+          <>
+            <LocalFileList files={files} handleRemoveLocalFile={handleRemoveLocalFile} />
+          </>
         )}
-      </div>
+      </form>
+
+      <ServerFileList
+        serverFiles={serverFiles}
+        handleDeleteFileById={handleDeleteFileById}
+        editingFileId={editingFileId}
+        editingFileName={editingFileName}
+        startEditingFile={startEditingFile}
+        setEditingFileName={setEditingFileName}
+        handleUpdateFile={handleUpdateFile}
+        cancelEditing={cancelEditing}
+      />
     </div>
   );
 };
