@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
 import { api } from "../api"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import Select from "react-select"
 
 interface Option {

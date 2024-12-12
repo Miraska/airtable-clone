@@ -34,6 +34,10 @@ interface DataTableProps {
   title: string;
 }
 
+interface DataObject {
+  [key: string]: any; // Позволяет объекту иметь любые ключи с любыми значениями
+}
+
 export const DataTable: React.FC<DataTableProps> = ({
   data,
   columns,
@@ -45,7 +49,31 @@ export const DataTable: React.FC<DataTableProps> = ({
   onCellUpdate,
   title,
 }) => {
-  const { sortedData, sortConfig, handleSort } = useTableSort(data || []);
+  function formatDate(dateString: string): string {
+    const parts = dateString.split('-');
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  }
+
+  function formatDatesInArray(arr: DataObject[]): DataObject[] {
+    return arr.map(item => {
+        const formattedItem: DataObject = { ...item };
+
+        for (const key in item) {
+            if (
+                typeof item[key] === "string" &&
+                /^\d{4}-\d{2}-\d{2}$/.test(item[key] as string)
+            ) {
+              formattedItem[key] = formatDate(item[key] as string);
+            }
+        }
+
+        return formattedItem;
+    });
+  }
+
+  const formattedData = formatDatesInArray(data);
+
+  const { sortedData, sortConfig, handleSort } = useTableSort(formattedData || []);
   const { filteredData, searchTerm, setSearchTerm } = useTableFilter(sortedData);
   const [isRelationShip, setIsRelationShip] = useState(false);
   const [selectedCell, setSelectedCell] = useState<{
