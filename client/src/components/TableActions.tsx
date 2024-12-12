@@ -1,5 +1,5 @@
-import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import React from "react";
+import { Edit, Trash2, SquareGantt } from "lucide-react";
 
 interface TableActionsProps {
   onView?: () => void;
@@ -10,6 +10,7 @@ interface TableActionsProps {
 export const TableActions: React.FC<TableActionsProps> = ({
   onEdit,
   onDelete,
+  onView,
 }) => {
   return (
     <div className="flex items-center gap-2">
@@ -26,9 +27,18 @@ export const TableActions: React.FC<TableActionsProps> = ({
         <button
           onClick={onEdit}
           className="p-1 text-gray-500 dark:text-gray-300 hover:text-yellow-600 transition-colors"
-          title="Edit"
+          title="Редактировать"
         >
           <Edit size={18} />
+        </button>
+      )}
+      {onView && (
+        <button
+          onClick={onView}
+          className="p-1 text-gray-500 dark:text-gray-300 hover:text-blue-600 transition-colors"
+          title="Посмотреть в модальном окне"
+        >
+          <SquareGantt size={18} />
         </button>
       )}
     </div>
