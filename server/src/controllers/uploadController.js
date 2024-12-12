@@ -4,28 +4,35 @@ const {
   PutObjectCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
-const { File } = require("../models/entities"); // Подключаем модель файла
+const { File } = require("../models/entities");
 
 // Имя бакета в Яндекс Облаке
 const BUCKET_NAME = "airtable-clone";
 
-// Инициализация клиента S3
+// Инициализация клиента S3 с поддержкой UTF-8
 const s3Client = new S3Client({
   region: "ru-central1",
   endpoint: "https://storage.yandexcloud.net",
 });
 
+// Функция установки заголовка для корректной кодировки ответа
+function setUtf8Header(res) {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+}
+
 // Создание (Загрузка) одного файла
 exports.uploadFile = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: "No file provided" });
+      setUtf8Header(res);
+      return res.status(400).json({ message: "Файл не был предоставлен" });
     }
 
     if (!fs.existsSync(req.file.path)) {
+      setUtf8Header(res);
       return res
         .status(400)
-        .json({ message: "File not found in local storage" });
+        .json({ message: "Файл не найден во временном хранилище" });
     }
 
     const fileContent = fs.readFileSync(req.file.path);
@@ -38,18 +45,16 @@ exports.uploadFile = async (req, res) => {
       ContentType: type,
     };
 
-    console.log("Uploading file with params:", params);
+    console.log("Загрузка файла с параметрами:", params);
 
     const command = new PutObjectCommand(params);
     const result = await s3Client.send(command);
 
     fs.unlinkSync(req.file.path); // Удаляем временный файл
 
-    const fileUrl = `https://${BUCKET_NAME}.storage.yandexcloud.net/${params.Key}`;
-    console.log("Upload successful:", result);
+    const fileUrl = `https://${BUCKET_NAME}.storage.yandexcloud.net/${encodeURIComponent(params.Key)}`;
+    console.log("Загрузка успешна:", result);
 
-    // Если вам нужно сохранять в БД — добавьте запись о файле в таблицу File
-    // Если в модели есть поля orderId или type, можете передать их через req.body
     const { orderId, type: fileType } = req.body || {};
     const newFile = await File.create({
       fileName: req.file.originalname,
@@ -58,47 +63,46 @@ exports.uploadFile = async (req, res) => {
       type: fileType || null,
     });
 
-    res.json({ message: "File uploaded successfully", file: newFile });
+    setUtf8Header(res);
+    res.json({ message: "Файл успешно загружен", file: newFile });
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.error("Ошибка при загрузке файла:", error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to upload file", error: error.message });
+      .json({ message: "Не удалось загрузить файл", error: error.message });
   }
 };
 
 // Создание (Загрузка) нескольких файлов
 exports.uploadMultipleFiles = async (req, res) => {
   try {
-    const { orderId, type: fileType } = req.body; // Получаем orderId/type из тела запроса
+    const { orderId, type: fileType } = req.body;
 
     if (!orderId) {
-      return res.status(400).json({ message: "orderId is required" });
+      setUtf8Header(res);
+      return res.status(400).json({ message: "orderId обязателен" });
     }
 
     const uploadedFiles = [];
 
     for (const file of req.files) {
-      const fileContent = fs.readFileSync(file.path); // Читаем файл из временного хранилища
+      const fileContent = fs.readFileSync(file.path);
 
       const params = {
         Bucket: BUCKET_NAME,
-        Key: file.originalname, // Имя файла
-        Body: fileContent, // Содержимое файла
-        ContentType: file.mimetype, // MIME-тип файла
+        Key: file.originalname,
+        Body: fileContent,
+        ContentType: file.mimetype,
       };
 
       const command = new PutObjectCommand(params);
-      await s3Client.send(command); // Загружаем файл в облачное хранилище
+      await s3Client.send(command);
 
-      fs.unlinkSync(file.path); // Удаляем временный файл после загрузки
+      fs.unlinkSync(file.path);
 
-      // Генерируем URL для доступа к файлу
-      const fileUrl = `https://${BUCKET_NAME}.storage.yandexcloud.net/${encodeURIComponent(
-        file.originalname
-      )}`;
+      const fileUrl = `https://${BUCKET_NAME}.storage.yandexcloud.net/${encodeURIComponent(file.originalname)}`;
 
-      // Сохраняем запись в базе данных
       const newFile = await File.create({
         fileName: file.originalname,
         fileUrl,
@@ -109,12 +113,14 @@ exports.uploadMultipleFiles = async (req, res) => {
       uploadedFiles.push(newFile);
     }
 
-    res.json({ message: "Files uploaded successfully", files: uploadedFiles });
+    setUtf8Header(res);
+    res.json({ message: "Файлы успешно загружены", files: uploadedFiles });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to upload files", error: error.message });
+      .json({ message: "Не удалось загрузить файлы", error: error.message });
   }
 };
 
@@ -125,15 +131,18 @@ exports.getFileByName = async (req, res) => {
 
     const fileRecord = await File.findOne({ where: { fileName } });
     if (!fileRecord) {
-      return res.status(404).json({ message: "File not found in database" });
+      setUtf8Header(res);
+      return res.status(404).json({ message: "Файл не найден в базе данных" });
     }
 
+    setUtf8Header(res);
     res.json({ file: fileRecord });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to get file", error: error.message });
+      .json({ message: "Не удалось получить файл", error: error.message });
   }
 };
 
@@ -144,15 +153,18 @@ exports.getFileById = async (req, res) => {
 
     const fileRecord = await File.findByPk(id);
     if (!fileRecord) {
-      return res.status(404).json({ message: "File not found in database" });
+      setUtf8Header(res);
+      return res.status(404).json({ message: "Файл не найден в базе данных" });
     }
 
+    setUtf8Header(res);
     res.json({ file: fileRecord });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to get file", error: error.message });
+      .json({ message: "Не удалось получить файл", error: error.message });
   }
 };
 
@@ -160,12 +172,14 @@ exports.getFileById = async (req, res) => {
 exports.getAllFiles = async (req, res) => {
   try {
     const files = await File.findAll();
+    setUtf8Header(res);
     res.json({ files });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to get files", error: error.message });
+      .json({ message: "Не удалось получить файлы", error: error.message });
   }
 };
 
@@ -175,14 +189,22 @@ exports.getFilesByType = async (req, res) => {
     const { type } = req.params;
     const files = await File.findAll({ where: { type } });
     if (!files || files.length === 0) {
-      return res.status(404).json({ message: "No files found for this type" });
+      setUtf8Header(res);
+      return res
+        .status(404)
+        .json({ message: "Не найдено файлов для данного типа" });
     }
+    setUtf8Header(res);
     res.json({ files });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to get files by type", error: error.message });
+      .json({
+        message: "Не удалось получить файлы по типу",
+        error: error.message,
+      });
   }
 };
 
@@ -192,23 +214,26 @@ exports.getFilesByOrderId = async (req, res) => {
     const { orderId } = req.params;
     const files = await File.findAll({ where: { orderId } });
     if (!files || files.length === 0) {
+      setUtf8Header(res);
       return res
         .status(404)
-        .json({ message: "No files found for this orderId" });
+        .json({ message: "Не найдено файлов для данного orderId" });
     }
+    setUtf8Header(res);
     res.json({ files });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
       .json({
-        message: "Failed to get files by orderId",
+        message: "Не удалось получить файлы по orderId",
         error: error.message,
       });
   }
 };
 
-// Обновление (Update) информации о файле (например, сменить orderId или type)
+// Обновление (Update) информации о файле
 exports.updateFileById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -216,21 +241,23 @@ exports.updateFileById = async (req, res) => {
 
     const fileRecord = await File.findByPk(id);
     if (!fileRecord) {
-      return res.status(404).json({ message: "File not found in database" });
+      setUtf8Header(res);
+      return res.status(404).json({ message: "Файл не найден в базе данных" });
     }
 
-    // Обновляем нужные поля
     if (orderId !== undefined) fileRecord.orderId = orderId;
     if (fileType !== undefined) fileRecord.type = fileType;
 
     await fileRecord.save();
 
-    res.json({ message: "File updated successfully", file: fileRecord });
+    setUtf8Header(res);
+    res.json({ message: "Файл успешно обновлен", file: fileRecord });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to update file", error: error.message });
+      .json({ message: "Не удалось обновить файл", error: error.message });
   }
 };
 
@@ -241,7 +268,8 @@ exports.deleteFileByName = async (req, res) => {
 
     const fileRecord = await File.findOne({ where: { fileName } });
     if (!fileRecord) {
-      return res.status(404).json({ message: "File not found in database" });
+      setUtf8Header(res);
+      return res.status(404).json({ message: "Файл не найден в базе данных" });
     }
 
     const params = {
@@ -254,12 +282,14 @@ exports.deleteFileByName = async (req, res) => {
 
     await fileRecord.destroy();
 
-    res.json({ message: `File ${fileName} deleted successfully` });
+    setUtf8Header(res);
+    res.json({ message: `Файл ${fileName} успешно удален` });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to delete file", error: error.message });
+      .json({ message: "Не удалось удалить файл", error: error.message });
   }
 };
 
@@ -270,7 +300,8 @@ exports.deleteFileById = async (req, res) => {
 
     const fileRecord = await File.findByPk(id);
     if (!fileRecord) {
-      return res.status(404).json({ message: "File not found in database" });
+      setUtf8Header(res);
+      return res.status(404).json({ message: "Файл не найден в базе данных" });
     }
 
     const params = {
@@ -283,12 +314,14 @@ exports.deleteFileById = async (req, res) => {
 
     await fileRecord.destroy();
 
-    res.json({ message: `File with id ${id} deleted successfully` });
+    setUtf8Header(res);
+    res.json({ message: `Файл с id ${id} успешно удален` });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to delete file", error: error.message });
+      .json({ message: "Не удалось удалить файл", error: error.message });
   }
 };
 
@@ -298,7 +331,8 @@ exports.deleteAllFiles = async (req, res) => {
     const files = await File.findAll();
 
     if (files.length === 0) {
-      return res.status(404).json({ message: "No files found to delete" });
+      setUtf8Header(res);
+      return res.status(404).json({ message: "Нет файлов для удаления" });
     }
 
     for (const fileRecord of files) {
@@ -312,12 +346,13 @@ exports.deleteAllFiles = async (req, res) => {
 
     await File.destroy({ where: {} });
 
-    res.json({ message: "All files deleted successfully" });
+    setUtf8Header(res);
+    res.json({ message: "Все файлы успешно удалены" });
   } catch (error) {
     console.error(error);
+    setUtf8Header(res);
     res
       .status(500)
-      .json({ message: "Failed to delete all files", error: error.message });
+      .json({ message: "Не удалось удалить все файлы", error: error.message });
   }
 };
-

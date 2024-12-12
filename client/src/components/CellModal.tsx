@@ -1,33 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "./Modal";
-import { RelatedDataModal } from "./RelatedData";
-import {
-  Controller,
-  FormProvider,
-  useForm
-} from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button } from "./Button";
-import Select from "react-select";
-import axios from "axios";
-
-import {
-  statusOptions,
-  currencyOptions,
-  swiftStatus,
-  booleanStatus,
-  conditionOptions,
-  transactionOptions,
-  stageProblemOptions,
-  nameMistakeOptions,
-} from "../lib/options";
-import { RelationshipSelect } from "./RelationshipSelect";
-import UploadFiles from "./UploadFiles";
 import { queryClient } from "../lib/queryClient";
 import { IClient, ISubagent } from "../types";
-import PayersSelect from "./PayersSelect";
-import ReviewOrdersSelect from "./ReviewOrdersSelect";
-import ReviewManagersSelect from "./ReviewManagersSelect";
 import { api } from "../api";
+
+import { CellModalInputRenderer } from "./CellModalInputRenderer";
+import { CellModalFileView } from "./CellModalFileView";
+import { CellModalFileEditForm } from "./CellModalFileEditForm";
+import { RelatedDataModal } from "./RelatedData";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -45,14 +27,6 @@ interface CellModalProps {
   setSelectedCell: React.Dispatch<any>;
 }
 
-interface FileData {
-  _id: string;
-  originalname: string;
-  filename: string;
-  type: string;
-  orderId: string;
-}
-
 export const CellModal: React.FC<CellModalProps> = ({
   isOpen,
   onClose,
@@ -65,10 +39,10 @@ export const CellModal: React.FC<CellModalProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
-  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
+  const [selectedPayersID, setSelectedPayersID] = useState<number[]>([]);
+  const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([]);
+  const [selectedManagersID, setSelectedManagersID] = useState<number[]>([]);
 
-  const [serverFiles, setServerFiles] = useState<FileData[]>([]);
-  
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
@@ -103,36 +77,11 @@ export const CellModal: React.FC<CellModalProps> = ({
     fetchData()
   }, [initialValue, data, column.key, setFormValue, watchSubagent]);
 
-  // Если тип столбца - файл, то при открытии модалки и при неактивном редактировании загружаем список файлов
-  useEffect(() => {
-    if (!isEditing && column.type === "file" && isOpen && data?.id) {
-      const fetchFiles = async () => {
-        try {
-          const res = await axios.get(`http://localhost:5000/api/files/order/${data.id}`, {
-            headers: {
-              'ngrok-skip-browser-warning': '1',
-            },
-          });
-          if (res.status === 200) {
-            setServerFiles(res.data);
-          }
-        } catch (error) {
-          console.error("Ошибка при получении списка файлов:", error);
-        }
-      };
-      fetchFiles();
-    }
-  }, [column.type, data?.id, isOpen, isEditing]);
-
-  const handleDeleteFileById = async (fileId: string) => {
+  const handleDeleteFileById = async (fileId: string | number) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/files/id/${fileId}`, {
-        headers: {
-          'ngrok-skip-browser-warning': '1',
-        },
-      });
+      const res = await api.files.deleteById(String(fileId));
       if (res.status === 200) {
-        setServerFiles((prev) => prev.filter((file) => file._id !== fileId));
+        // обновляем локальный стейт файлов при необходимости
       }
     } catch (error) {
       console.error("Ошибка при удалении файла:", error);
@@ -143,12 +92,23 @@ export const CellModal: React.FC<CellModalProps> = ({
     const formData = getValues();
     const updatedValue = formData[column.key];
     let updatedData;
-    
+
     if (column.key === "clients") {
-      const cashedClient = await queryClient.fetchQuery(['clients'], api.clients.getAll);
-      const selectedClient = cashedClient.data.filter((client: IClient) => updatedValue?.includes(client.id))
-      const selectedINN = selectedClient.map((client: IClient) => client.inn).join(', ')
-      updatedData = { ...data, [column.key]: updatedValue, "client_inn": selectedINN };
+      const cashedClient = await queryClient.fetchQuery(
+        ["clients"],
+        api.clients.getAll
+      );
+      const selectedClient = cashedClient.data.filter((client: IClient) =>
+        updatedValue?.includes(client.id)
+      );
+      const selectedINN = selectedClient
+        .map((client: IClient) => client.inn)
+        .join(", ");
+      updatedData = {
+        ...data,
+        [column.key]: updatedValue,
+        client_inn: selectedINN,
+      };
     } else if (column.key === "subagentPayers") {
       updatedData = { ...data, [column.key]: updatedValue }
     } else if (column.key === "subagents") {
@@ -339,21 +299,42 @@ export const CellModal: React.FC<CellModalProps> = ({
         );
     }
   };
-
+    
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} setIsEditing={setIsEditing} isEditing={isEditing}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      setIsEditing={setIsEditing}
+      isEditing={isEditing}
+    >
       <div className="space-y-4">
-        {isEditing ? 
-        ( column.type === "file" ? 
-          (
-            <UploadFiles editingHandler={() => setIsEditing(false)} typeCell={column.key} orderId={data?.id}/>
+        {isEditing ? (
+          column.type === "file" ? (
+            <CellModalFileEditForm
+              handleSubmit={handleSubmit}
+              handleSave={handleSave}
+              setIsEditing={setIsEditing}
+              column={column}
+              data={data}
+            />
           ) : (
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="space-y-4">
                 {isRelationShip ? (
                   <div>Здесь будет изменение столбца или значений</div>
                 ) : (
-                  renderInputByType()
+                  <CellModalInputRenderer
+                    column={column}
+                    value={value}
+                    setValue={setValue}
+                    setFormValue={setFormValue}
+                    register={register}
+                    methods={methods}
+                    selectedPayersID={selectedPayersID}
+                    selectedOrdersID={selectedOrdersID}
+                    selectedManagersID={selectedManagersID}
+                  />
                 )}
 
                 <div className="flex justify-end gap-2">
@@ -384,41 +365,12 @@ export const CellModal: React.FC<CellModalProps> = ({
                   setSelectedCell={setSelectedCell}
                 />
               ) : column.type === "file" ? (
-                <div className="space-y-4">
-                  <h2 className="text-lg font-bold">Загруженные файлы</h2>
-                  {serverFiles.length > 0 ? (
-                    <ul className="space-y-2">
-                      {serverFiles.map((file) => (
-                        <li
-                          key={file._id}
-                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
-                        >
-                          <span className="truncate flex-1">{file.originalname}</span>
-                          <div className="flex gap-2">
-                            <Button
-                              type="button"
-                              onClick={() => handleDeleteFileById(file._id)}
-                              className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
-                            >
-                              Удалить
-                            </Button>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>Нет загруженных файлов</p>
-                  )}
-                  <div className="flex justify-end">
-                    <Button
-                      variant="primary"
-                      onClick={() => setIsEditing(true)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-all"
-                    >
-                      Редактировать файлы
-                    </Button>
-                  </div>
-                </div>
+                <CellModalFileView
+                  data={data}
+                  column={column}
+                  handleDeleteFileById={handleDeleteFileById}
+                  handleSave={handleSave}
+                />
               ) : Array.isArray(value) ? (
                 <div>
                   <div className="flex flex-wrap gap-2">
