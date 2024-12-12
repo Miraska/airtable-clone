@@ -66,8 +66,6 @@ export const CellModal: React.FC<CellModalProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || data[column.key]);
   const [selectedPayersID, setSelectedPayersID] = useState<number[]>([])
-  const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([])
-  const [selectedManagersID, setSelectedManagersID] = useState<number[]>([])
 
   const [serverFiles, setServerFiles] = useState<FileData[]>([]);
   
@@ -309,7 +307,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         return (
           <div className="space-y-4">
             <FormProvider {...methods}>
-              <ReviewOrdersSelect cantSelect={selectedOrdersID}/>
+              <ReviewOrdersSelect/>
             </FormProvider>
           </div>
         );
@@ -325,7 +323,7 @@ export const CellModal: React.FC<CellModalProps> = ({
         return (
           <div className="space-y-4">
             <FormProvider {...methods}>
-              <ReviewManagersSelect cantSelect={selectedManagersID}/>
+              <ReviewManagersSelect/>
             </FormProvider>
           </div>
         );
