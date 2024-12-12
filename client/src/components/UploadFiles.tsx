@@ -4,6 +4,7 @@ import { api } from "../api/index";
 import { FileDragAndDropArea } from "./FileDragAndDropArea";
 import { LocalFileList } from "./LocalFileList";
 import { ServerFileList } from "./ServerFileList";
+import { Button } from "./Button";
 
 interface Props {
   editingHandler: (state: boolean) => void;
@@ -109,6 +110,10 @@ const UploadFiles: React.FC<Props> = ({
     formData.append("orderId", orderId.toString());
     formData.append("type", typeCell);
 
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value)
+    }
+
     try {
       const res = await api.files.uploadMultiple(formData);
       if (res.status === 200) {
@@ -207,6 +212,16 @@ const UploadFiles: React.FC<Props> = ({
             <LocalFileList files={files} handleRemoveLocalFile={handleRemoveLocalFile} />
           </>
         )}
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="primary"
+            className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
+            onClick={() => editingHandler(false)}
+          >
+            Закрыть
+          </Button>
+          <Button type="submit">Сохранить</Button>
+        </div>
       </form>
 
       <ServerFileList
