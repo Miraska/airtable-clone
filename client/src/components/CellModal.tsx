@@ -5,7 +5,7 @@ import { Button } from "./Button";
 import { queryClient } from "../lib/queryClient";
 import { IClient, ISubagent } from "../types";
 import { api } from "../api";
-
+import Select from 'react-select';
 import { CellModalInputRenderer } from "./CellModalInputRenderer";
 import { CellModalFileView } from "./CellModalFileView";
 import { CellModalFileEditForm } from "./CellModalFileEditForm";
@@ -312,7 +312,6 @@ export const CellModal: React.FC<CellModalProps> = ({
         {isEditing ? (
           column.type === "file" ? (
             <CellModalFileEditForm
-              handleSubmit={handleSubmit}
               handleSave={handleSave}
               setIsEditing={setIsEditing}
               column={column}
