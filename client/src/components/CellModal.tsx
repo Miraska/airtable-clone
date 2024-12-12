@@ -4,7 +4,6 @@ import { RelatedDataModal } from "./RelatedData";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button } from "./Button";
 import Select from "react-select";
-import axios from "axios";
 
 import {
   statusOptions,
@@ -24,6 +23,7 @@ import PayersSelect from "./PayersSelect";
 import ReviewOrdersSelect from "./ReviewOrdersSelect";
 import ReviewManagersSelect from "./ReviewManagersSelect";
 import { api } from "../api";
+import { Trash2 } from "lucide-react";
 
 interface CellModalProps {
   isOpen: boolean;
@@ -68,8 +68,6 @@ export const CellModal: React.FC<CellModalProps> = ({
   const [selectedOrdersID, setSelectedOrdersID] = useState<number[]>([]);
   const [selectedManagersID, setSelectedManagersID] = useState<number[]>([]);
 
-  const [serverFiles, setServerFiles] = useState<FileData[]>([]);
-
   const methods = useForm({
     defaultValues: { [column.key]: initialValue || data[column.key] },
   });
@@ -103,42 +101,19 @@ export const CellModal: React.FC<CellModalProps> = ({
     fetchData();
   }, [initialValue, data, column.key, setFormValue]);
 
-  // Загрузка файлов при открытии модалки и при неактивном редактировании
+  const [serverFiles, setServerFiles] = useState<FileData[]>([]);
+
   useEffect(() => {
-    if (
-      !isEditing &&
-      (column.type === "file" || column.type === "invoice_file") &&
-      isOpen &&
-      data?.id
-    ) {
+    if (!isEditing && column.type === "file") {
       const fetchFiles = async () => {
         try {
-          const res = await axios.get(
-            `http://localhost:5000/api/files/order/${data.id}`,
-            {
-              headers: {
-                "ngrok-skip-browser-warning": "1",
-              },
-            }
-          );
-          if (res.status === 200) {
-            // В зависимости от типа столбца фильтруем файлы
+          const res = await api.files.getByOrderId(data.id);
+          if (res.status === 200 && res.data.length > 0) {
             let files = res.data;
-            if (column.type === "file") {
-              // Для типа file отобразим order_file
-              files = files.filter(
-                (file: FileData) => file.type === "order_file"
-              );
-            } else if (column.type === "invoice_file") {
-              // Для типа invoice_file отобразим invoice_file
-              files = files.filter(
-                (file: FileData) => file.type === "invoice_file"
-              );
-            }
             setServerFiles(files);
           }
-        } catch (error) {
-          console.error("Ошибка при получении списка файлов:", error);
+        } catch {
+          console.log("Файлов еще нет");
         }
       };
       fetchFiles();
@@ -147,14 +122,8 @@ export const CellModal: React.FC<CellModalProps> = ({
 
   const handleDeleteFileById = async (fileId: string | number) => {
     try {
-      const res = await axios.delete(
-        `http://localhost:5000/api/files/id/${fileId}`,
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "1",
-          },
-        }
-      );
+      const res = await api.files.deleteById(String(fileId));
+
       if (res.status === 200) {
         setServerFiles((prev) =>
           prev.filter((file) => file._id !== fileId && file.id !== fileId)
@@ -388,13 +357,30 @@ export const CellModal: React.FC<CellModalProps> = ({
     >
       <div className="space-y-4">
         {isEditing ? (
-          column.type === "file" || column.type === "invoice_file" ? (
-            <UploadFiles
-              editingHandler={() => setIsEditing(false)}
-              typeCell={column.key}
-              orderId={data?.id}
-              data={data}
-            />
+          column.type === "file" ? (
+            <form onSubmit={handleSubmit(handleSave)}>
+              <div className="space-y-4">
+                <UploadFiles
+                  editingHandler={() => setIsEditing(false)}
+                  typeCell={column.key}
+                  orderId={data?.id}
+                  data={data}
+                />
+
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="primary"
+                    className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
+                    onClick={() => {
+                      setIsEditing(false);
+                    }}
+                  >
+                    Закрыть
+                  </Button>
+                  <Button type="submit">Сохранить</Button>
+                </div>
+              </div>
+            </form>
           ) : (
             <form onSubmit={handleSubmit(handleSave)}>
               <div className="space-y-4">
@@ -431,38 +417,43 @@ export const CellModal: React.FC<CellModalProps> = ({
                   setTitle={setTitle}
                   setSelectedCell={setSelectedCell}
                 />
-              ) : column.type === "file" || column.type === "invoice_file" ? (
-                <div className="space-y-4">
-                  {data?.files && data.files.length > 0 ? (
-                    <ul className="space-y-2">
-                      {data?.files
-                        .filter((file) => file.type === column.key)
-                        .map((file) => (
-                          <li
-                            key={file._id || file.id}
-                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
-                          >
-                            <span className="truncate flex-1">
-                              {file.originalname || file.name}
-                            </span>
-                            <div className="flex gap-2">
-                              <Button
-                                type="button"
-                                onClick={() =>
-                                  handleDeleteFileById(file.id || file.id!)
-                                }
-                                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
-                              >
-                                Удалить
-                              </Button>
-                            </div>
-                          </li>
-                        ))}
-                    </ul>
-                  ) : (
-                    <p>Нет загруженных файлов</p>
-                  )}
-                </div>
+              ) : column.type === "file" ? (
+                <form onSubmit={handleSubmit(handleSave)}>
+                  <div className="space-y-4">
+                    {data?.files && data.files.length > 0 ? (
+                      <ul className="space-y-2">
+                        {data?.files
+                          .filter((file) => file.type === column.key)
+                          .map((file) => (
+                            <li
+                              key={file._id || file.id}
+                              className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
+                            >
+                              <span className="truncate flex-1">
+                                {file.originalname || file.name}
+                              </span>
+                              <div className="flex gap-2">
+                                <button
+                                  type="submit"
+                                  onClick={() => {
+                                    handleDeleteFileById(file.id || file.id!);
+                                    setIsEditing(false);
+                                    handleSave();
+                                  }}
+                                  className="p-1 text-gray-500 dark:text-gray-300 hover:text-red-600 transition-colors"
+                                  title="Удалить"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                      </ul>
+                    ) : (
+                      <p>Нет загруженных файлов</p>
+                    )}
+                  </div>
+                </form>
               ) : Array.isArray(value) ? (
                 <div>
                   <div className="flex flex-wrap gap-2">

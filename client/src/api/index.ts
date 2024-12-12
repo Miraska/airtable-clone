@@ -102,5 +102,6 @@ export const api = {
     }),
     deleteById: (fileId: string) => axiosInstance.delete(`/files/id/${fileId}`),
     updateById: (fileId: string, data: { originalname: string }) => axiosInstance.put(`/files/${fileId}`, data),
+    getAll: () => axiosInstance.get('/files'),
   },
 };

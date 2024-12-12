@@ -1,29 +1,39 @@
-import React, { useState, useEffect, ChangeEvent, DragEvent, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  DragEvent,
+  useRef,
+} from "react";
 import { toast } from "react-toastify";
-import { Button } from "./Button";
-import { api } from '../api/index'; // Импортируем экземпляр API с вынесенными методами
+import { api } from "../api/index";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   editingHandler: (state: boolean) => void;
-  data?: FileData;
+  data: FileData;
   typeCell: string;
   orderId: number;
 }
 
 interface FileData {
-  _id: string;          // id файла в базе
-  originalname: string; // оригинальное имя файла
-  filename: string;     // имя файла на сервере
-  type: string;         // тип файла
-  orderId: string;      // orderId, к которому относится файл
+  id: string;
+  originalname: string;
+  filename: string;
+  type: string;
+  orderId: string;
 }
 
-const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => {
+const UploadFiles: React.FC<Props> = ({
+  editingHandler,
+  typeCell,
+  orderId,
+  data
+}) => {
   const [files, setFiles] = useState<File[]>([]);
   const [serverFiles, setServerFiles] = useState<FileData[]>([]);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [editingFileId, setEditingFileId] = useState<string | null>(null);
   const [editingFileName, setEditingFileName] = useState<string>("");
@@ -34,7 +44,10 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
       try {
         const res = await api.files.getByOrderId(orderId);
         if (res.status === 200) {
-          if (res.data.message && res.data.message === "No files found for this orderId") {
+          if (
+            res.data.message &&
+            res.data.message === "No files found for this orderId"
+          ) {
             setServerFiles([]);
           } else {
             setServerFiles(res.data);
@@ -77,7 +90,9 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
   };
 
   const handleRemoveLocalFile = (indexToRemove: number) => {
-    setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
+    setFiles((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const updateServerFilesList = async () => {
@@ -85,7 +100,10 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
       try {
         const updatedFilesRes = await api.files.getByOrderId(orderId);
         if (updatedFilesRes.status === 200) {
-          if (updatedFilesRes.data.message && updatedFilesRes.data.message === "No files found for this orderId") {
+          if (
+            updatedFilesRes.data.message &&
+            updatedFilesRes.data.message === "No files found for this orderId"
+          ) {
             setServerFiles([]);
           } else {
             setServerFiles(updatedFilesRes.data);
@@ -114,7 +132,6 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
     formData.append("type", typeCell);
 
     try {
-      setIsLoading(true);
       const res = await api.files.uploadMultiple(formData);
       if (res.status === 200) {
         toast.success("Файлы успешно отправлены!");
@@ -128,7 +145,6 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
       console.error("Ошибка при отправке файлов:", error);
       toast.error("Ошибка при отправке файлов.");
     } finally {
-      setIsLoading(false);
       editingHandler(false);
     }
   };
@@ -141,7 +157,7 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
           // Не делаем ничего
         } else {
           toast.success("Файл успешно удалён!");
-          setServerFiles((prev) => prev.filter((file) => file._id !== fileId));
+          setServerFiles((prev) => prev.filter((file) => file.id !== fileId));
         }
       }
     } catch (error) {
@@ -151,7 +167,7 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
   };
 
   const startEditingFile = (file: FileData) => {
-    setEditingFileId(file._id);
+    setEditingFileId(file.id);
     setEditingFileName(file.originalname);
   };
 
@@ -159,7 +175,7 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
     e.preventDefault();
     if (!editingFileId) return;
 
-    const fileToUpdate = serverFiles.find((f) => f._id === editingFileId);
+    const fileToUpdate = serverFiles.find((f) => f.id === editingFileId);
     if (!fileToUpdate) {
       setEditingFileId(null);
       setEditingFileName("");
@@ -167,7 +183,9 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
     }
 
     try {
-      const res = await api.files.updateById(editingFileId, { originalname: editingFileName });
+      const res = await api.files.updateById(editingFileId, {
+        originalname: editingFileName,
+      });
       if (res.status === 200) {
         if (res.data.message && res.data.message === "File not found") {
           setEditingFileId(null);
@@ -176,7 +194,9 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
           toast.success("Файл успешно обновлён!");
           setServerFiles((prev) =>
             prev.map((file) =>
-              file._id === editingFileId ? { ...file, originalname: editingFileName } : file
+              file.id === editingFileId
+                ? { ...file, originalname: editingFileName }
+                : file
             )
           );
           setEditingFileId(null);
@@ -198,35 +218,37 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
   };
 
   return (
-    <form onSubmit={handleUpload}>
-      <div className="space-y-4">
-        <div className="flex flex-col items-center justify-center min-h-[150px] bg-gray-100 dark:bg-transparent px-4">
-          <div
-            className={`w-full max-w-lg p-6 border-2 border-dashed rounded-lg transition-all ${
-              isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
+    <div className="space-y-4">
+      <div className="flex flex-col items-center justify-center min-h-[150px] bg-gray-100 dark:bg-transparent px-4">
+        <div
+          className={`w-full max-w-lg p-6 border-2 border-dashed rounded-lg transition-all ${
+            isDragOver
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <p className="text-gray-600 text-lg mb-4 dark:text-gray-400">
+            Перетащите файлы сюда или выберите ниже:
+          </p>
+          <input
+            type="file"
+            id="file_input"
+            className="hidden"
+            multiple
+            onChange={handleFileChange}
+            ref={inputRef}
+          />
+          <label
+            htmlFor="file_input"
+            className="cursor-pointer bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all"
           >
-            <p className="text-gray-600 text-lg mb-4 dark:text-gray-400">
-              Перетащите файлы сюда или выберите ниже:
-            </p>
-            <input
-              type="file"
-              id="file_input"
-              className="hidden"
-              multiple
-              onChange={handleFileChange}
-              ref={inputRef}
-            />
-            <label
-              htmlFor="file_input"
-              className="cursor-pointer bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all"
-            >
-              Выбрать файлы
-            </label>
-            {files.length > 0 && (
+            Выбрать файлы
+          </label>
+          {files.length > 0 && (
+            <form onSubmit={() => console.log(data)}>
               <ul className="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
                 {files.map((file, index) => (
                   <li
@@ -235,85 +257,26 @@ const UploadFiles: React.FC<Props> = ({ editingHandler, typeCell, orderId }) => 
                   >
                     <span className="truncate">{file.name}</span>
                     <button
-                      type="button"
+                      type="submit"
                       onClick={() => handleRemoveLocalFile(index)}
-                      className="ml-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-all text-xs"
+                      className="p-1 text-gray-500 dark:text-gray-300 hover:text-red-600 transition-colors"
+                      title="Удалить"
                     >
-                      Удалить
+                      <Trash2 size={18} />
                     </button>
                   </li>
                 ))}
               </ul>
-            )}
-          </div>
-          {files.length > 0 && (
-            <span className="p-2 my-4 bg-green-500 rounded shadow-sm text-sm flex justify-between items-center truncate">Теперь вы можете загрузить файлы.</span>
+            </form>
           )}
         </div>
-
-        {serverFiles.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold">Загруженные файлы</h2>
-            <ul className="space-y-2">
-              {serverFiles.map((file) => (
-                <li
-                  key={file._id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded"
-                >
-                  {editingFileId === file._id ? (
-                    <form className="flex flex-col sm:flex-row sm:items-center sm:gap-2 w-full" onSubmit={handleUpdateFile}>
-                      <input
-                        className="flex-grow p-1 border border-gray-400 rounded"
-                        value={editingFileName}
-                        onChange={(e) => setEditingFileName(e.target.value)}
-                      />
-                      <div className="flex gap-2 mt-2 sm:mt-0">
-                        <Button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded">Сохранить</Button>
-                        <Button type="button" onClick={cancelEditing} className="bg-gray-300 hover:bg-gray-400 text-black py-1 px-2 rounded">Отмена</Button>
-                      </div>
-                    </form>
-                  ) : (
-                    <>
-                      <span className="truncate flex-1">{file.originalname}</span>
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          onClick={() => startEditingFile(file)}
-                          className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 text-sm"
-                        >
-                          Редактировать
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={() => handleDeleteFileById(file._id)}
-                          className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-sm"
-                        >
-                          Удалить
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {files.length > 0 && (
+          <span className="p-2 my-4 bg-green-500 rounded shadow-sm text-sm flex justify-between items-center truncate">
+            Теперь вы можете загрузить файлы.
+          </span>
         )}
-
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            variant="primary"
-            className="px-4 py-2 text-sm font-medium border border-transparent rounded-md bg-red-600 hover:bg-red-700 transition-all duration-300 text-white"
-            onClick={() => editingHandler(false)}
-          >
-            Закрыть
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Сохранение...' : 'Сохранить'}
-          </Button>
-        </div>
       </div>
-    </form>
+    </div>
   );
 };
 
