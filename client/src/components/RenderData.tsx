@@ -174,6 +174,7 @@ const RenderData: React.FC<RenderDataProps> = ({
           .filter(([, value]) => !isEmpty(value))
           .map(([key, value]) => {
             const label = columns.find((col) => col.key === key)?.label;
+            transformDate
             return (
               <div key={key}>
                 <strong>{label}:</strong> {renderValue(transformDate(value), key)}
