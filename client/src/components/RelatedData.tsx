@@ -6,11 +6,11 @@ import titleMappings from "../lib/tableTitles";
 
 interface RelatedDataModalProps {
   isOpen: boolean;
-  relatedName: string;
+  relatedName?: string;
   relatedKey: any;
   cellItem: any;
   setTitle: (value: string) => void;
-  setSelectedCell: React.Dispatch<any>;
+  setSelectedCell?: React.Dispatch<any>;
 }
 
 const setNewTitle = (relatedName: string) => {

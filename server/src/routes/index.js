@@ -12,9 +12,9 @@ const uploadRoutes = require('../routes/uploadRoutes');
 
 const router = express.Router();
 
+router.use('/orders', orderRoutes);
 router.use('/agents', agentRoutes);
 router.use('/clients', clientRoutes);
-router.use('/orders', orderRoutes);
 router.use('/managers', managerRoutes);
 router.use('/reviewers', reviewerRoutes);
 router.use('/contractors', contractorRoutes);

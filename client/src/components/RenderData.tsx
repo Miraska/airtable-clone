@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import columnsConfig from "../lib/tableColumnsData/index";
+import { transformDate } from "../lib/dateFormateer";
 
 interface RenderDataProps {
   data: any;
@@ -175,7 +176,7 @@ const RenderData: React.FC<RenderDataProps> = ({
             const label = columns.find((col) => col.key === key)?.label;
             return (
               <div key={key}>
-                <strong>{label}:</strong> {renderValue(value, key)}
+                <strong>{label}:</strong> {renderValue(transformDate(value), key)}
               </div>
             );
           })}

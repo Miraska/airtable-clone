@@ -22,8 +22,11 @@ export const SubagentPayersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalViewOpen, setIsModalViewOpen] = useState(false);
 
-  const handleView = () => {
+  const [item, setItem] = useState({});
+
+  const handleView = (item: any) => {
     setIsModalViewOpen(true);
+    setItem(item);
   };
   
   const closeModal = () => {
@@ -104,6 +107,8 @@ export const SubagentPayersPage = () => {
           onView={handleView}
           isModalViewOpen={isModalViewOpen}
           closeModal={closeModal}
+          item={item}
+          relatedName={'subagentPayers'}
         />
 
       <Modal

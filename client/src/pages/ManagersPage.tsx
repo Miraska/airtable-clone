@@ -85,8 +85,11 @@ export const ManagersPage = () => {
     setModalHeader("Изменить менеджера")
   };
 
-  const handleView = () => {
+  const [item, setItem] = useState({});
+
+  const handleView = (item: any) => {
     setIsModalViewOpen(true);
+    setItem(item);
   };
   
   const methods = useForm<IManager>({ defaultValues: defaultValue })
@@ -111,6 +114,8 @@ export const ManagersPage = () => {
           onView={handleView}
           isModalViewOpen={isModalViewOpen}
           closeModal={closeModal}
+          item={item}
+          relatedName={'managers'}
         />
       <Modal
         isOpen={isModalOpen}

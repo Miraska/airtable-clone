@@ -14,6 +14,9 @@ import { useTableFilter } from "../hooks/useTableFilter";
 import { CellModal } from "./CellModal";
 import { formatDatesInArray } from "../lib/dateFormateer";
 import { Modal } from "./Modal";
+import { Button } from "./Button";
+import { RelatedDataModal } from "./RelatedData";
+import tableTitles from "../lib/tableTitles";
 
 interface Column {
   key: string;
@@ -43,6 +46,8 @@ interface DataTableProps {
   title: string;
   isModalViewOpen: boolean;
   closeModal: () => any;
+  item: Object;
+  relatedName?: string;
 }
 
 interface DataObject {
@@ -61,8 +66,11 @@ export const DataTable: React.FC<DataTableProps> = ({
   title,
   isModalViewOpen,
   closeModal,
+  item,
+  relatedName,
 }) => {
   const formattedData = formatDatesInArray(data);
+  const [newTitle, setNewTitle] = useState("");
 
   const { sortedData, sortConfig, handleSort } = useTableSort(
     formattedData || []
@@ -295,24 +303,32 @@ export const DataTable: React.FC<DataTableProps> = ({
       </div>
 
       {selectedCell && (
-        <CellModal
-          isOpen={!!selectedCell}
-          onClose={() => setSelectedCell(null)}
-          data={selectedCell.data}
-          column={selectedCell.column}
-          value={selectedCell.value}
-          onSave={handleCellUpdate}
-          isRelationShip={isRelationShip}
-          setSelectedCell={setSelectedCell}
-        />
+        <div>
+          <CellModal
+            isOpen={!!selectedCell}
+            onClose={() => setSelectedCell(null)}
+            data={selectedCell.data}
+            column={selectedCell.column}
+            value={selectedCell.value}
+            onSave={handleCellUpdate}
+            isRelationShip={isRelationShip}
+            setSelectedCell={setSelectedCell}
+          />
+        </div>
       )}
 
       <Modal
         isOpen={isModalViewOpen ? true : false}
         onClose={() => closeModal()}
-        title={title}
+        title={newTitle}
       >
-        Hello
+        <RelatedDataModal
+          isOpen={isModalViewOpen}
+          cellItem={item}
+          relatedKey={item.id}
+          relatedName={relatedName}
+          setTitle={setNewTitle}
+        />
       </Modal>
     </div>
   );
