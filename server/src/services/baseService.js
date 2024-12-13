@@ -1,10 +1,10 @@
 const calculateFields = require("../utils/calculation");
-const sequelize = require("../db/connection"); 
+const sequelize = require("../db/connection");
 
 class BaseService {
   constructor(model, includes = []) {
     this.model = model;
-    this.includes = includes; 
+    this.includes = includes;
   }
 
   extractIds(data) {
@@ -20,44 +20,71 @@ class BaseService {
     const filteredRecord = { ...record.toJSON() };
 
     this.includes.forEach((include) => {
-        const alias = include.as;
+      const alias = include.as;
 
-        if (filteredRecord[alias]) {
-            if (Array.isArray(filteredRecord[alias])) {
-                filteredRecord[alias] = filteredRecord[alias].map((relatedRecord) => {
-                    if (alias === "files") {
-                        // Полная информация только для files
-                        return {
-                            id: relatedRecord.id,
-                            name: relatedRecord.name || relatedRecord.fileName,
-                            link: relatedRecord.fileUrl || null,
-                            type: relatedRecord.type || alias,
-                        };
-                    }
-                    // Для других таблиц возвращаем только id
-                    return relatedRecord.id;
-                });
+      if (filteredRecord[alias]) {
+        if (Array.isArray(filteredRecord[alias])) {
+          if (alias === "files") {
+            filteredRecord[alias] = filteredRecord[alias].map(
+              (relatedRecord) => ({
+                id: relatedRecord.id,
+                name: relatedRecord.name || relatedRecord.fileName,
+                link: relatedRecord.fileUrl || null,
+                type: relatedRecord.type || alias,
+              })
+            );
+          } else if (alias === "orders" || alias === "reviews") {
+            filteredRecord[alias] = filteredRecord[alias].map(
+              (relatedRecord) => relatedRecord.id
+            );
+          } else {
+            filteredRecord[alias] = filteredRecord[alias].map(
+              (relatedRecord) => relatedRecord.id
+            );
+
+            filteredRecord[`${alias}WithName`] = filteredRecord[alias].map(
+              (id, index) => {
+                const relatedRecord = record[alias][index];
+                return {
+                  id: relatedRecord.id,
+                  name: relatedRecord.name || null,
+                };
+              }
+            );
+          }
+        } else {
+          const relatedRecord = filteredRecord[alias];
+
+          if (relatedRecord) {
+            if (alias === "files") {
+              filteredRecord[alias] = {
+                id: relatedRecord.id,
+                name: relatedRecord.name || relatedRecord.fileName,
+                link: relatedRecord.fileUrl || null,
+                type: relatedRecord.type || alias,
+              };
+            } else if (alias === "orders" || alias === "reviews") {
+              filteredRecord[alias] = [relatedRecord.id];
             } else {
-                const relatedRecord = filteredRecord[alias];
-                if (alias === "files") {
-                    // Полная информация только для files
-                    filteredRecord[alias] = {
-                        id: relatedRecord.id,
-                        name: relatedRecord.name || relatedRecord.fileName,
-                        link: relatedRecord.fileUrl || null,
-                        type: relatedRecord.type || alias,
-                    };
-                } else {
-                    // Для других таблиц возвращаем только id
-                    filteredRecord[alias] = relatedRecord.id;
-                }
+              filteredRecord[alias] = [relatedRecord.id];
+
+              filteredRecord[`${alias}WithName`] = [
+                {
+                  id: relatedRecord.id,
+                  name: relatedRecord.name || null,
+                },
+              ];
             }
+          } else {
+            filteredRecord[alias] = [];
+            filteredRecord[`${alias}WithName`] = [];
+          }
         }
+      }
     });
 
     return filteredRecord;
-}
-
+  }
 
   filterResponse(data) {
     if (Array.isArray(data)) {
@@ -111,16 +138,12 @@ class BaseService {
     }
 
     try {
-      // Вычисление данных перед сохранением
       const calculatedData = calculateFields(data);
 
-      // Объединяем оригинальные и вычисленные данные
       const dataToSave = { ...data, ...calculatedData };
 
-      // Создаем новую запись
       const newEntity = await this.model.create(dataToSave, { transaction });
 
-      // Обрабатываем связанные сущности
       for (const include of this.includes) {
         const alias = include.as;
         const methodName = `set${
@@ -132,13 +155,10 @@ class BaseService {
         }
       }
 
-      // Подтверждаем транзакцию
       await transaction.commit();
 
-      // Возвращаем обработанную запись
       return this.filterSingleRecord(newEntity);
     } catch (error) {
-      // Откатываем транзакцию в случае ошибки
       if (transaction) await transaction.rollback();
       console.error(`Error creating record for ${this.model.name}:`, error);
       throw new Error("Failed to create record.");
@@ -147,9 +167,8 @@ class BaseService {
 
   async update(id, data) {
     let transaction;
-  
+
     try {
-      // Создаем транзакцию
       transaction = await sequelize.transaction();
       if (!transaction) {
         throw new Error("Unable to create transaction");
@@ -158,53 +177,44 @@ class BaseService {
       console.error("Error creating transaction:", err);
       throw new Error("Transaction creation failed.");
     }
-  
+
     try {
-      // Находим существующую запись
       const entity = await this.model.findByPk(id, { transaction });
       if (!entity) {
         throw new Error(`Record with id ${id} not found.`);
       }
-  
-      // Вычисление данных перед обновлением
+
       const calculatedData = calculateFields(data);
-  
-      // Объединяем оригинальные и вычисленные данные
+
       const dataToUpdate = { ...data, ...calculatedData };
-  
-      // Обновляем запись
+
       await entity.update(dataToUpdate, { transaction });
-  
-      // Обрабатываем связанные сущности
+
       for (const include of this.includes) {
         const alias = include.as;
-        const methodName = `set${alias.charAt(0).toUpperCase() + alias.slice(1)}`;
-  
+        const methodName = `set${
+          alias.charAt(0).toUpperCase() + alias.slice(1)
+        }`;
+
         if (data[alias] && typeof entity[methodName] === "function") {
-          // Если нужно преобразовать данные для files (или другой связи)
           let relatedData = data[alias];
-          if (alias === 'files') {
-            // Предполагается, что data.files - это массив объектов вида { id: number, ... }
-            relatedData = data[alias].map(file => file.id);
+          if (alias === "files") {
+            relatedData = data[alias].map((file) => file.id);
           }
-  
+
           await entity[methodName](relatedData, { transaction });
         }
       }
-  
-      // Подтверждаем транзакцию
+
       await transaction.commit();
-  
-      // Возвращаем обработанную запись
+
       return this.filterSingleRecord(entity);
     } catch (error) {
-      // Откатываем транзакцию в случае ошибки
       if (transaction) await transaction.rollback();
       console.error(`Error updating record for ${this.model.name}:`, error);
       throw new Error("Failed to update record.");
     }
   }
-  
 
   async delete(id) {
     try {

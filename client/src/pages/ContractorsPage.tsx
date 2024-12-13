@@ -17,10 +17,19 @@ export const ContractorsPage = () => {
   };
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalHeader, setModalHeader] = useState("")
+  const [modalHeader, setModalHeader] = useState("");
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+
+  const [item, setItem] = useState({});
+
+  const handleView = (item: any) => {
+    setIsModalViewOpen(true);
+    setItem(item);
+  };
   
   const closeModal = () => {
     setIsModalOpen(false)
+    setIsModalViewOpen(false);
     reset(defaultValue)
   }
 
@@ -82,18 +91,23 @@ export const ContractorsPage = () => {
   return (
     <>
       <DataTable
-        title="Контрагенты"
-        data={data?.data || []}
-        columns={columns}
-        onRefresh={() => refetch()}
-        onAdd={() => { 
-          setIsModalOpen(true)
-          setModalHeader("Добавить нового контрагента")
-        }}
-        onDelete={deleteContragent}
-        onEdit={edit}
-        onCellUpdate={submit}
-      />
+          title="Котрагенты"
+          data={data?.data || []}
+          columns={columns}
+          onRefresh={() => refetch()}
+          onAdd={() => {
+            setIsModalOpen(true);
+            setModalHeader("Добавить нового контрагента");
+          }}
+          onEdit={edit}
+          onDelete={deleteContragent}
+          onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
+          item={item}
+          relatedName={'contractors'}
+        />
 
       <Modal
         isOpen={isModalOpen}

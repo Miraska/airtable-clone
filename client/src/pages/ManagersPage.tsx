@@ -24,9 +24,12 @@ export const ManagersPage = () => {
   
   const [modalHeader, setModalHeader] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+
   
   const closeModal = () => {
     setIsModalOpen(false)
+    setIsModalViewOpen(false);
     reset(defaultValue)
   };
 
@@ -81,6 +84,13 @@ export const ManagersPage = () => {
     setIsModalOpen(true)
     setModalHeader("Изменить менеджера")
   };
+
+  const [item, setItem] = useState({});
+
+  const handleView = (item: any) => {
+    setIsModalViewOpen(true);
+    setItem(item);
+  };
   
   const methods = useForm<IManager>({ defaultValues: defaultValue })
   const { register, handleSubmit, reset, watch } = methods
@@ -90,18 +100,23 @@ export const ManagersPage = () => {
   return (
     <>
       <DataTable
-        title="Менеджеры"
-        data={data?.data || []}
-        columns={columns}
-        onRefresh={() => refetch()}
-        onAdd={() => { 
-          setIsModalOpen(true)
-          setModalHeader("Добавить нового клиента")
-        }}
-        onDelete={deleteManager}
-        onEdit={edit}
-        onCellUpdate={submit}
-      />
+          title="Менеджеры"
+          data={data?.data || []}
+          columns={columns}
+          onRefresh={() => refetch()}
+          onAdd={() => {
+            setIsModalOpen(true);
+            setModalHeader("Добавить нового менеджера");
+          }}
+          onEdit={edit}
+          onDelete={deleteManager}
+          onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
+          item={item}
+          relatedName={'managers'}
+        />
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}

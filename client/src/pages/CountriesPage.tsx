@@ -20,9 +20,18 @@ export const CountriesPage = () => {
   
   const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+
+  const [item, setItem] = useState({});
+
+  const handleView = (item: any) => {
+    setIsModalViewOpen(true);
+    setItem(item);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false)
+    setIsModalViewOpen(false);
     reset(defaultValue)
   };
 
@@ -82,18 +91,23 @@ export const CountriesPage = () => {
   return (
     <>
       <DataTable
-        title="Страны"
-        data={data?.data || []}
-        columns={columns}
-        onRefresh={() => refetch()}
-        onAdd={() => { 
-          setIsModalOpen(true)
-          setModalHeader("Добавить новую страну")
-        }}
-        onDelete={deleteCountry}
-        onEdit={edit}
-        onCellUpdate={submit}
-      />
+          title="Страны"
+          data={data?.data || []}
+          columns={columns}
+          onRefresh={() => refetch()}
+          onAdd={() => {
+            setIsModalOpen(true);
+            setModalHeader("Добавить новую страну");
+          }}
+          onEdit={edit}
+          onDelete={deleteCountry}
+          onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
+          item={item}
+          relatedName={'countries'}
+        />
 
       <Modal
         isOpen={isModalOpen}

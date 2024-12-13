@@ -20,9 +20,18 @@ export const SubagentPayersPage = () => {
   
   const [modalHeader, setModalHeader] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+
+  const [item, setItem] = useState({});
+
+  const handleView = (item: any) => {
+    setIsModalViewOpen(true);
+    setItem(item);
+  };
   
   const closeModal = () => {
     setIsModalOpen(false)
+    setIsModalViewOpen(false);
     reset(defaultValue)
   }
 
@@ -84,18 +93,23 @@ export const SubagentPayersPage = () => {
   return (
     <>
       <DataTable
-        title="Плательщики субагента"
-        data={data?.data || []}
-        columns={columns}
-        onRefresh={() => refetch()}
-        onAdd={() => { 
-          setIsModalOpen(true)
-          setModalHeader("Добавить нового плательщика субагента")
-        }}
-        onDelete={deleteSubagentPayer}
-        onEdit={edit}
-        onCellUpdate={submit}
-      />
+          title="Плаетльщики"
+          data={data?.data || []}
+          columns={columns}
+          onRefresh={() => refetch()}
+          onAdd={() => {
+            setIsModalOpen(true);
+            setModalHeader("Добавить нового плаетльщика");
+          }}
+          onEdit={edit}
+          onDelete={deleteSubagentPayer}
+          onCellUpdate={submit}
+          onView={handleView}
+          isModalViewOpen={isModalViewOpen}
+          closeModal={closeModal}
+          item={item}
+          relatedName={'subagentPayers'}
+        />
 
       <Modal
         isOpen={isModalOpen}
