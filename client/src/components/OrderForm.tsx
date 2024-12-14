@@ -6,7 +6,7 @@ import { FormField } from './FormField';
 import type { IOrder, ISubagent } from '../types';
 import { FormSelect } from './FormSelect';
 import CountriesSelect from './CountriesSelect';
-import { statusOptions, swiftStatus, currencyOptions, transactionOptions, conditionOptions } from '../lib/options';
+import options from '../lib/options';
 import { IClient } from '../types';
 import PayersSelect from './PayersSelect';
 import ReviewManagersSelect from './ReviewManagersSelect';
@@ -66,7 +66,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               required
               value={field.value as string}
               onChange={field.onChange}
-              options={statusOptions}
+              options={options.statusOptions}
             />
           )}
         />
@@ -200,7 +200,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               text='условие расчета'
               value={field.value as string}
               onChange={field.onChange}
-              options={conditionOptions}
+              options={options.conditionOptions}
             />
           )}
         />
@@ -212,7 +212,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormSelect
               labelText="Вид сделки"
               text='вид сделки'
-              options={transactionOptions}
+              options={options.transactionOptions}
               value={field.value as string}
               onChange={field.onChange}
             />
@@ -239,7 +239,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormSelect
               labelText="Валюта"
               text='валюту'
-              options={currencyOptions}
+              options={options.currencyOptions}
               value={field.value as string}
               onChange={field.onChange}
             />
@@ -502,7 +502,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             <FormSelect
               labelText="Статус SWIFT"
               text='Выберите статус SWIFT'
-              options={swiftStatus}
+              options={options.swiftStatus}
               value={field.value as string}
               onChange={field.onChange}
             />

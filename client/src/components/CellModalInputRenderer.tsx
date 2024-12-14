@@ -1,15 +1,6 @@
 import React from "react";
 import Select from "react-select";
-import {
-  statusOptions,
-  currencyOptions,
-  swiftStatus,
-  booleanStatus,
-  conditionOptions,
-  transactionOptions,
-  stageProblemOptions,
-  nameMistakeOptions,
-} from "../lib/options";
+import options from "../lib/options";
 import { Controller, FormProvider } from "react-hook-form";
 import { RelationshipSelect } from "./RelationshipSelect";
 import PayersSelect from "./PayersSelect";
@@ -67,8 +58,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "option":
         return (
           <Select
-            options={statusOptions}
-            value={statusOptions.find((opt) => opt.value === value)}
+            options={options.statusOptions}
+            value={options.statusOptions.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
@@ -78,8 +69,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "boolean":
         return (
           <Select
-            options={booleanStatus}
-            value={booleanStatus.find(
+            options={options.booleanStatus}
+            value={options.booleanStatus.find(
               (opt) => opt.value === value?.toString()
             )}
             onChange={(selectedOption) => {
@@ -92,8 +83,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "currency":
         return (
           <Select
-            options={currencyOptions}
-            value={currencyOptions.find((opt) => opt.value === value)}
+            options={options.currencyOptions}
+            value={options.currencyOptions.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
@@ -103,8 +94,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "swift":
         return (
           <Select
-            options={swiftStatus}
-            value={swiftStatus.find((opt) => opt.value === value)}
+            options={options.swiftStatus}
+            value={options.swiftStatus.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
@@ -114,8 +105,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "problem-stage":
         return (
           <Select
-            options={stageProblemOptions}
-            value={stageProblemOptions.find((opt) => opt.value === value)}
+            options={options.stageProblemOptions}
+            value={options.stageProblemOptions.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
@@ -125,8 +116,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "condition":
         return (
           <Select
-            options={conditionOptions}
-            value={conditionOptions.find((opt) => opt.value === value)}
+            options={options.conditionOptions}
+            value={options.conditionOptions.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
@@ -136,8 +127,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "name-mistake":
         return (
           <Select
-            options={nameMistakeOptions}
-            value={nameMistakeOptions.find((opt) => opt.value === value)}
+            options={options.nameMistakeOptions}
+            value={options.nameMistakeOptions.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
@@ -147,8 +138,8 @@ export const CellModalInputRenderer: React.FC<Props> = ({
       case "transaction":
         return (
           <Select
-            options={transactionOptions}
-            value={transactionOptions.find((opt) => opt.value === value)}
+            options={options.transactionOptions}
+            value={options.transactionOptions.find((opt) => opt.value === value)}
             onChange={(selectedOption) => {
               setValue(selectedOption?.value || "");
               setFormValue(column.key, selectedOption?.value || "");
